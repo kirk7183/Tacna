@@ -46,7 +46,7 @@
             display: flex;
             justify-content: center;
             // align-items: flex-start;
-            border: 1px solid red;
+            // border: 1px solid red;
             background: ("../assets/logo/tacna.png")
         }
         .group-left {
@@ -100,7 +100,7 @@
             cursor: pointer;
             border: none;
             padding: 0.25em 3em 0.25em 1em;
-            margin-top: 50%;
+            margin-top: 20%;
             text-align: left;
             background: linear-gradient(-120deg, transparent 1em, $main-color 1.05em, $main-color 1.5em, transparent 1.45em, transparent 2em, $main-color 2.05em) top no-repeat, linear-gradient(300deg, transparent 1em, $main-color 1.05em, $main-color 1.5em, transparent 1.45em, transparent 2em, $main-color 2.05em) bottom no-repeat;
             background-size: 100% 50%;
@@ -161,6 +161,7 @@
             font-size: 1.5rem;
             margin-top: 25px;
             text-align: center;
+            margin-bottom: 20px;
         }
         .naslov {
             font-weight: 700;

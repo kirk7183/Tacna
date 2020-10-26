@@ -55,14 +55,14 @@
           <p class="intro-paragraf naslov">Da li ste znali?</p>
           <p class="intro-paragraf">
             Da 8 od 10 osoba uspešno koristi internet za promovisanje svojih
-            proizvoda i usluga !
+            proizvoda i usluga!
           </p>
           <br />
           <p class="intro-paragraf">
-            Da 9 od 10 osoba koristi internet kao sredstvo informisanja !
+            Da 9 od 10 osoba koristi internet kao sredstvo informisanja!
           </p>
           <br />
-          <p class="intro-paragraf">Da li vaši sugradjani znaju šta nudite ?</p>
+          <p class="intro-paragraf">Da li vaši sugradjani znaju šta nudite?</p>
         </div>
       </div>
     </div>
