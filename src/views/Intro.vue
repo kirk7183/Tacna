@@ -23,9 +23,20 @@
             />
           </svg>
 
-          <div class="top-left">
-            <div class="group-left">
-              <img class="logo" src="../assets/logo/tacna.png" alt="logo-img" />
+          <div
+            class="top-left"
+            :class="$vuetify.breakpoint.smAndDown ? `top-left-sm` : ``"
+          >
+            <div
+              class="group-left"
+              :class="$vuetify.breakpoint.smAndDown ? `group-left-sm` : ``"
+            >
+              <img
+                class="logo"
+                :class="$vuetify.breakpoint.xs ? `logo-xs` : ``"
+                src="../assets/logo/tacna.png"
+                alt="logo-img"
+              />
               <ul>
                 <li>S</li>
                 <li>v</li>
@@ -118,7 +129,11 @@
               >
                 Da li vaši sugradjani znaju šta nudite?
               </p>
-              <button class="dobrodosli" v-if="$vuetify.breakpoint.smAndDown">
+              <button
+                class="dobrodosli"
+                v-if="$vuetify.breakpoint.smAndDown"
+                :class="$vuetify.breakpoint.smAndDown ? `dobrodosli-sm` : ``"
+              >
                 DOBRODOŠLI
               </button>
             </div>

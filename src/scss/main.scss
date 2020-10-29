@@ -31,6 +31,7 @@ html {
 div.col {
     margin: 0;
     padding: 0;
+    // height: 70vh;
 }
 
 .home {
@@ -56,12 +57,15 @@ div.col {
         }
         .top-left {
             // width: 50%;
-            height: 100%;
+            height: 70vh;
             display: flex;
             justify-content: center;
             // align-items: flex-start;
             // border: 1px solid red;
             // background: ("../assets/logo/tacna.png")
+        }
+        .top-left-sm {
+            height: 100%;
         }
         .group-left {
             width: 30%;
@@ -73,6 +77,10 @@ div.col {
             // border: 5px solid whitesmoke;
             // background: #fff;
         }
+        .group-left-sm {
+            margin-top: (5vh/1.1);
+            margin-bottom: (1vh);
+        }
         .logo {
             display: block;
             margin-left: auto;
@@ -81,6 +89,14 @@ div.col {
             width: 70%;
             height: auto;
             // padding-bottom: 10px;
+        }
+        .logo-xs {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 3%;
+            width: 20vw;
+            height: auto;
         }
         ul {
             // padding-top: 20px;
@@ -154,20 +170,23 @@ div.col {
                 -o-transform: translateX(0);
             }
         }
-        // .intro-svg-mdAndUp {
-        //     height: 57%;
-        // }
-        // .intro-svg-smAndDown {
-        //     display: none;
-        // }
+        .dobrodosli-sm {
+            margin-top: 5%;
+            height: 30px;
+            width: 120px;
+            font-size: .6rem;
+            margin-bottom: 15px;
+        }
         .top-right {
-            height: 80vh;
+            // margin-top: (10vh/1.1);
+            height: 70vh;
             // display: flex;
             // justify-content: center;
             // align-items: center;
             // border: 2px solid yellow;
         }
         .top-right-sm {
+            height: 100%;
             position: relative;
             // top: 2%;
             display: flex;
@@ -194,21 +213,21 @@ div.col {
         //     padding: 20px;
         // }
         .group-right-sm {
-            margin-top: (10vh/1.1);
+            // margin-top: (10vh/1.1);
             width: 90%;
-            height: 35%;
+            // height: 35%;
             padding: 15px;
         }
         .group-right-md {
             margin-top: (10vh/1.1);
             width: 80%;
-            height: 50%;
+            // height: 50%;
             padding: 20px;
         }
         .group-right-lg {
             margin-top: (10vh/1.1);
             width: 80%;
-            height: 45%;
+            // height: 45%;
             padding: 20px;
         }
         // .group-right-smAndDown {
@@ -256,7 +275,7 @@ div.col {
     }
     .bottom {
         width: 100vw;
-        height: 40vh;
+        height: 30vh;
         // border: 2px solid blue;
     }
 }
