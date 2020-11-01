@@ -2,12 +2,7 @@
   <v-container class="home" fluid :class="breakpoints">
     <div class="top">
       <v-row wrap>
-        <v-col
-          cols="12"
-          md="6"
-          class="col"
-          :class="$vuetify.breakpoint.smAndDown ? `div-col-top-sm` : ``"
-        >
+        <v-col cols="12" md="6" class="col-left">
           <svg
             v-if="$vuetify.breakpoint.mdAndUp"
             version="1.1"
@@ -28,20 +23,9 @@
             />
           </svg>
 
-          <div
-            class="top-left"
-            :class="$vuetify.breakpoint.smAndDown ? `top-left-sm` : ``"
-          >
-            <div
-              class="group-left"
-              :class="$vuetify.breakpoint.smAndDown ? `group-left-sm` : ``"
-            >
-              <img
-                class="logo"
-                :class="$vuetify.breakpoint.xs ? `logo-xs` : ``"
-                src="../assets/logo/tacna.png"
-                alt="logo-img"
-              />
+          <div class="top-left">
+            <div class="group-left">
+              <img class="logo" src="../assets/logo/tacna.png" alt="logo-img" />
               <ul>
                 <li>S</li>
                 <li>v</li>
@@ -66,93 +50,24 @@
           </div>
         </v-col>
 
-        <v-col
-          cols="12"
-          md="6"
-          class="col"
-          :class="$vuetify.breakpoint.smAndDown ? `div-col-middle-sm` : ``"
-        >
-          <div
-            class="top-right"
-            :class="
-              $vuetify.breakpoint.smAndDown ? `top-right-sm` : `top-right-xs`
-            "
-          >
-            <!-- TERNARY OPERATOR sa vise uslova (uslova) -->
-            <div
-              class="group-right"
-              :class="
-                $vuetify.breakpoint.xs
-                  ? `group-right-xs`
-                  : $vuetify.breakpoint.smAndDown
-                  ? `group-right-sm`
-                  : $vuetify.breakpoint.md
-                  ? `group-right-md`
-                  : `group-right-lg`
-              "
-            >
-              <!-- :style="$vuetify.breakpoint.lg ? " -->
-              <p
-                class="intro-paragraf-naslov"
-                :class="
-                  $vuetify.breakpoint.smAndDown
-                    ? `intro-paragraf-naslov-sm`
-                    : $vuetify.breakpoint.md
-                    ? `intro-paragraf-naslov-md`
-                    : `intro-paragraf-naslov-lg`
-                "
-              >
-                Da li ste znali?
-              </p>
+        <v-col cols="12" md="6" class="col-right">
+          <div class="top-right">
+            <div class="group-right">
+              <p class="intro-paragraf-naslov">Da li ste znali?</p>
 
-              <p
-                class="intro-paragraf"
-                :class="
-                  $vuetify.breakpoint.smAndDown
-                    ? `intro-paragraf-sm`
-                    : $vuetify.breakpoint.md
-                    ? `intro-paragraf-md`
-                    : `intro-paragraf-lg`
-                "
-              >
+              <p class="intro-paragraf">
                 <i class="fas fa-arrow-circle-right"></i>
                 da 8 od 10 osoba uspešno koristi internet za promovisanje svojih
                 proizvoda i usluga!
               </p>
 
-              <p
-                class="intro-paragraf"
-                :class="
-                  $vuetify.breakpoint.smAndDown
-                    ? `intro-paragraf-sm`
-                    : $vuetify.breakpoint.md
-                    ? `intro-paragraf-md`
-                    : `intro-paragraf-lg`
-                "
-              >
+              <p class="intro-paragraf">
                 <i class="fas fa-arrow-circle-right"></i>
-                da 9 od 10 osoba koristi internet kao sredstvo informisanja!
+                dok 9 od 10 osoba koristi internet kao sredstvo informisanja!
               </p>
 
-              <p
-                class="nudite"
-                :class="
-                  $vuetify.breakpoint.xs
-                    ? `nudite-xs`
-                    : $vuetify.breakpoint.smAndDown
-                    ? `nudite-sm`
-                    : $vuetify.breakpoint.md
-                    ? `nudite-md`
-                    : `nudite-lg`
-                "
-              >
-                Da li vaši sugradjani znaju šta nudite?
-              </p>
-              <button
-                class="dobrodosli"
-                v-if="$vuetify.breakpoint.smAndDown"
-                :class="$vuetify.breakpoint.smAndDown ? `dobrodosli-sm` : ``"
-              >
+              <p class="nudite">Da li vaši sugradjani znaju šta nudite?</p>
+              <button class="dobrodosli" v-if="$vuetify.breakpoint.smAndDown">
                 DOBRODOŠLI
               </button>
             </div>
@@ -162,7 +77,7 @@
     </div>
     <div class="bottom">
       <div class="big-boxes">
-        <p class="natpis1">Saradnja:</p>
+        <p class="natpis">Saradnja:</p>
         <div class="boxes">
           <div class="img-boxes">
             <a target="_blank" :href="saradnja1()">
@@ -170,24 +85,34 @@
             </a>
           </div>
           <div class="img-boxes">
-            <img :src="saradnja2()" alt="img2-saradnja" />
+            <a target="_blank" :href="saradnja2()">
+              <img :src="saradnja2()" alt="img2-saradnja" />
+            </a>
           </div>
           <div class="img-boxes">
-            <img :src="saradnja3()" alt="img3-saradnja" />
+            <a target="_blank" :href="saradnja3()">
+              <img :src="saradnja3()" alt="img3-saradnja"
+            /></a>
           </div>
         </div>
       </div>
       <div class="big-boxes">
-        <p class="natpis1">Medijska podrška:</p>
+        <p class="natpis">Medijska podrška:</p>
         <div class="boxes">
           <div class="img-boxes">
-            <img :src="mediji1()" alt="img1-saradnja" />
+            <a target="_blank" :href="mediji1()">
+              <img :src="mediji1()" alt="img1-saradnja"
+            /></a>
           </div>
           <div class="img-boxes">
-            <img :src="mediji2()" alt="img2-saradnja" />
+            <a target="_blank" :href="mediji2()">
+              <img :src="mediji2()" alt="img2-saradnja"
+            /></a>
           </div>
           <div class="img-boxes">
-            <img :src="mediji3()" alt="img3-saradnja" />
+            <a target="_blank" :href="mediji3()">
+              <img :src="mediji3()" alt="img3-saradnja"
+            /></a>
           </div>
         </div>
       </div>
@@ -212,15 +137,20 @@ export default {
     breakpoints() {
       switch (this.$vuetify.breakpoint.name) {
         case "lg":
-          return { "lg-breakpoint": " " }; //mora da ima razmak zato sto je to parametar, medjutim
+          return {
+            "sm-breakpoint md-breakpoint lg-breakpoint": this.$vuetify
+              .breakpoint.lgAndUp,
+          }; //mora da ima razmak zato sto je to parametar, medjutim
         //posto je to naziv klase i nema parametar mora da ima prazno polje. Primer u projektu
         //"portfolio_igor_vasic" u projects.vue za :style
         case "md":
-          return { "md-breakpoint": " " };
+          return {
+            "sm-breakpoint md-breakpoint": this.$vuetify.breakpoint.mdAndUp,
+          };
         case "sm":
-          return { "sm-breakpoint": " " };
+          return { "sm-breakpoint": this.$vuetify.breakpoint.smAndUp };
         default:
-          return { "": "" }; //default je XS i pisemo normalno bez oznacavanja klase
+          return { "": this.$vuetify.breakpoint.xs }; //default je XS i pisemo normalno bez oznacavanja klase
       }
     },
   },
@@ -245,4 +175,14 @@ export default {
     },
   },
 };
+//ternarny operator sa vise uslova za Vuetify - ne brisati
+// :class="
+//                 $vuetify.breakpoint.xs
+//                   ? `group-right-xs`
+//                   : $vuetify.breakpoint.smAndDown
+//                   ? `group-right-sm`
+//                   : $vuetify.breakpoint.md
+//                   ? `group-right-md`
+//                   : `group-right-lg`
+//               "
 </script>
