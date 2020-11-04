@@ -1,0 +1,46 @@
+.mainPage {
+    .ispis-tacna {
+        @include tacna-ispis;
+        font-size: 25px;
+    }
+    .card-obavestenje {
+        // padding: 10px;
+        .card-text {
+            // padding: 0;
+            .naslov {
+                font-size: 20px;
+                padding-bottom: 15px;
+            }
+            .ceo-text {
+                font-size: 14px;
+            }
+            .ceo-text-podnaslov {
+                font-size: 17px;
+            }
+        }
+    }
+}
+
+.sm-breakpoint {
+    .ispis-tacna {
+        @include tacna-ispis;
+        font-size: 35px;
+    }
+    .card-obavestenje {
+        // padding: 10px;
+        .card-text {
+            padding: 24px;
+            .naslov {
+                font-size: 20px;
+                padding-bottom: 15px;
+            }
+            .ceo-text {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+.md-breakpoint {}
+
+.lg-breakpoint {}

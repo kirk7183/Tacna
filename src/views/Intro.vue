@@ -1,5 +1,5 @@
 <template>
-  <v-container class="home" fluid :class="breakpoints">
+  <v-container class="mainPage" fluid :class="breakpoints">
     <div class="top">
       <v-row wrap>
         <v-col cols="12" md="6" class="col-left">
@@ -43,7 +43,11 @@
                 <li>n</li>
                 <li>i</li>
               </ul>
-              <button class="dobrodosli" v-if="$vuetify.breakpoint.mdAndUp">
+              <button
+                class="dobrodosli"
+                v-if="$vuetify.breakpoint.mdAndUp"
+                @click="changePage()"
+              >
                 DOBRODOŠLI
               </button>
             </div>
@@ -67,7 +71,11 @@
               </p>
 
               <p class="nudite">Da li vaši sugradjani znaju šta nudite?</p>
-              <button class="dobrodosli" v-if="$vuetify.breakpoint.smAndDown">
+              <button
+                class="dobrodosli"
+                v-if="$vuetify.breakpoint.smAndDown"
+                @click="changePage()"
+              >
                 DOBRODOŠLI
               </button>
             </div>
@@ -140,9 +148,7 @@ export default {
           return {
             "sm-breakpoint md-breakpoint lg-breakpoint": this.$vuetify
               .breakpoint.lgAndUp,
-          }; //mora da ima razmak zato sto je to parametar, medjutim
-        //posto je to naziv klase i nema parametar mora da ima prazno polje. Primer u projektu
-        //"portfolio_igor_vasic" u projects.vue za :style
+          };
         case "md":
           return {
             "sm-breakpoint md-breakpoint": this.$vuetify.breakpoint.mdAndUp,
@@ -155,6 +161,9 @@ export default {
     },
   },
   methods: {
+    changePage() {
+      this.$router.push("/home");
+    },
     saradnja1() {
       return this.prva_saradnja;
     },
