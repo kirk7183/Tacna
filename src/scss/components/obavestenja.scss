@@ -1,0 +1,31 @@
+.card-obavestenje {
+    .card-text {
+        .naslov {
+            font-size: 20px;
+            padding-bottom: 15px;
+        }
+        .ceo-text {
+            text-align: justify !important;
+            font-size: 14px;
+            text-indent: 2em;
+        }
+        .ceo-text-podnaslov {
+            font-size: 17px;
+        }
+    }
+}
+
+.sm-breakpoint {
+    .card-obavestenje {
+        .card-text {
+            padding: 24px;
+            .naslov {
+                font-size: 20px;
+                padding-bottom: 15px;
+            }
+            .ceo-text {
+                font-size: 14px;
+            }
+        }
+    }
+}

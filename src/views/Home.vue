@@ -6,7 +6,7 @@
       <p class="ispis-tacna">Tacna</p>
       <v-spacer></v-spacer>
 
-      <v-btn icon>
+      <v-btn icon class="text-center">
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
     </v-app-bar>
@@ -17,109 +17,68 @@
           v-model="groupClose"
           active-class="deep-purple--text text--accent-4"
         >
-          <div class="d-flex">
+          <div class="nav-drawer d-flex">
             <v-subheader>TACNA</v-subheader><br />
             <v-spacer></v-spacer>
             <v-btn icon @click="iconClose" class="ml-3">
-              <i class="far fa-times-circle fa-2x black--text"></i>
+              <i class="far fa-times-circle fa-2x black--text pa-0"></i>
             </v-btn>
           </div>
-          <v-list-item>
-            <v-list-item-title>Aukcija</v-list-item-title>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-title>Ostale opcije</v-list-item-title>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-title>Ostale opcije</v-list-item-title>
+          <v-list-item
+            v-for="(jednaOpcija, i) in sveOpcije"
+            :key="i"
+            @click="changePage(jednaOpcija.broj)"
+          >
+            <v-list-item-title>{{ jednaOpcija.opcija }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
-
-    <!-- OBAVESTENJA-->
-    <v-card class="card-obavestenje ma-4" elevation="5">
-      <v-card-text class="card-text text-center">
-        <p class="naslov">Obaveštenje</p>
-        <p class="ceo-text">
-          Poštovani, obaveštavamo Vas da je aplikacija u fazi razvoja i shodno
-          tome želimo da znate da neke od opcija neće raditi kako je
-          predvidjeno. Ukoliko imate bilo kakvu preporuku za unapredjenje
-          aplikacije obratite nam se putem mail-a vasicigorjsp@gmail.com
-        </p>
-      </v-card-text>
-    </v-card>
-    <v-card class="card-obavestenje ma-4" elevation="5">
-      <v-card-text class="card-text text-center">
-        <p class="naslov">Upoznajte se sa načinom rada aplikacije</p>
-        <p class="ceo-text text-left">
-          Cilj aplikacije je da se skupe svi proizvodi i usluge iz našeg
-          komšiluka na jedno mesto. Postoji par razloga za to:
-        </p>
-        <p class="ceo-text text-left">
-          1. Stalno zapitkujemo po FB grupama da li neko zna gde ima da se kupi
-          neki proizvod ili da li znamo nekoga ko obavlja odredjenu uslugu.
-        </p>
-        <p class="ceo-text text-left">
-          2. Reklamirajući svoje usluge i proizvode konstantno se bombarduju
-          grupe koje nisu namenjene za to.
-        </p>
-        <p class="ceo-text text-left">
-          3. Potreba da možemo da vidimo odredjene proizvode/usluge na jednom
-          mestu, da ih sortiramo i da vidimo dodatne informacije kao sto su:
-          slika odredjenog proizvod, da li se odredjeni proizvod dostavlja na
-          kućnu adresu i kojim danima, da li drugi korisnici preporučuju
-          odredjenu uslugu ili proizvod itd.
-        </p>
-        <p class="ceo-text-podnaslov">
-          Postoje i dve stvari koje ce mnogima biti zanimljive a to su popusti i
-          licitacija proizvoda.
-        </p>
-        <p class="ceo-text text-left">
-          Popusti su nešto na šta ćemo posebno obratiti pažnju pre svega zbog
-          lažnih popusta. Ideja je da ukoliko neko želi da se njegov proizvod
-          ili usluga nadju u posebno namenjenoj grupi za popuste, moraće da budu
-          objavljeni na sajtu barem 2 nedelje pre toga, kako ne bi došlo do toga
-          da neko postavi odredjeni proizvod/uslugu i odmah napiše "popust,
-          sniženje ili akcija". Takodje proizvod ili usluga će morati biti
-          sniženi minimum 20% kako bi cela priča imala smisao. Razlog tome jeste
-          "DA POPUST BUDE POPUST" a ne marketinski trik gde će samo pisati da je
-          proizvod/usluga sa sniženom cenom.
-        </p>
-        <p class="ceo-text text-left">
-          Što se tiče licitacije pretpostavljamo da je tu sve jasno. Ukoliko
-          imate neki proizvod za koji ne znate za koju bi ste ga cenu prodali
-          ili Vam jednostavno ne treba, možete ga dati na licitaciju gde će
-          osoba sa najvećom ponudom moći da kupi odredjeni proizvod nakon isteka
-          24 ili 48h u zavisnosti od vaših podešavanja. Ove licitacije će
-          posebno biti zanimljive za humanitarne organizacije koje sredstva za
-          pomoć skupljaju na ovaj način.
-        </p>
-        <p class="ceo-text text-left">
-          Veoma je bitno da naglasimo da je ova aplikacija eksperimentalna i kao
-          takva ne služi za reklamiranje već kao sredstvo informisanja kako bi
-          se utvrdilo koliko je gradjanima ovako nešto potrebno. Sve uplate koje
-          se budu vršile a vezane su za ovu aplikaciju biće direktno uplaćivanje
-          od strane DONATORA na račun neke od humanitarnih organizacija.
-        </p>
-      </v-card-text>
-    </v-card>
+    <transition name="fade" mode="out-in">
+      <router-view> </router-view
+    ></transition>
+    <Footera></Footera>
   </v-container>
 </template>
 
 <script>
-// import router from "@/router";
+import Footera from "@/views/Footer.vue";
 export default {
+  components: { Footera },
   data() {
     return {
+      activePage: 1,
       drawer: false,
       groupClose: null,
+      sveOpcije: [
+        { opcija: "Početna strana - Obavestenja", broj: 1 },
+        { opcija: "Aukcija - u pripremi", broj: 2 },
+        { opcija: "Popusti - jos ne radi", broj: 3 },
+        { opcija: "Nudim - jos ne radi", broj: 4 },
+        { opcija: "Trazim - jos ne radi", broj: 5 },
+        { opcija: "Solidarnost Online - jos ne radi", broj: 6 },
+      ],
     };
   },
   watch: {
     groupClose() {
       this.drawer = false;
     },
+  },
+  created() {
+    if (this.$route.path == "/obavestenje") {
+      this.activePage = 1;
+    } else if (this.$route.path == "/aukcija") {
+      this.activePage = 2;
+    } else if (this.$route.path == "/popusti") {
+      this.activePage = 3;
+    } else if (this.$route.path == "/nudim") {
+      this.activePage = 4;
+    } else if (this.$route.path == "/trazim") {
+      this.activePage = 5;
+    } else if (this.$route.path == "/solidarnost_Online") {
+      this.activePage = 6;
+    }
   },
   computed: {
     breakpoints() {
@@ -141,6 +100,29 @@ export default {
     },
   },
   methods: {
+    changePage(broj) {
+      if (broj == this.activePage) {
+        this.activePage = 0;
+      } else if (broj == 1) {
+        this.$router.push("obavestenja");
+        this.activePage = 1;
+      } else if (broj == 2) {
+        this.$router.push("aukcija");
+        this.activePage = 2;
+      } else if (broj == 3) {
+        this.$router.push("popusti");
+        this.activePage = 3;
+      } else if (broj == 4) {
+        this.$router.push("nudim");
+        this.activePage = 4;
+      } else if (broj == 5) {
+        this.$router.push("trazim");
+        this.activePage = 5;
+      } else if (broj == 6) {
+        this.$router.push("solidarnost_Online");
+        this.activePage = 6;
+      }
+    },
     iconClose() {
       this.drawer = !this.drawer;
     },

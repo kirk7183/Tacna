@@ -2,6 +2,9 @@
 @import "variables";
 @import "./views/intro.scss";
 @import "./views/home.scss";
+@import "./views/footer.scss";
+@import "./views/aukcija.scss";
+@import "./components/obavestenja.scss";
 @font-face {
     font-family: "HennyPenny";
     src: local("HennyPenny"), url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");
@@ -10,6 +13,7 @@
 *,
 html,
 body,
+// footer,
 div.row {
     margin: 0;
     padding: 0;
@@ -19,8 +23,14 @@ div.row {
     color: black;
 }
 
+body,
+html {
+    height: 100%;
+}
+
 .mainPage {
     padding: 0 !important;
+    // min-height: 100vh !important;
 }
 
 *,
@@ -30,12 +40,12 @@ div.row {
 }
 
 div.col-left,
-div.col-right,
-{
+div.col-right {
     margin: 0;
     padding: 0;
 }
 
+//za APP.vue transition
 .v-main {
     .fade-enter-active,
     .fade-leave-active {
