@@ -32,14 +32,38 @@ const routes = [{
                 path: '/obavestenja',
                 name: 'Obavestenja',
                 component: () =>
-                    import ('../components/Obavestenja.vue')
+                    import ('../views/Meni/Obavestenja.vue')
             },
             {
                 path: '/aukcija',
                 name: 'Aukcija',
                 component: () =>
-                    import ('../views/Aukcija.vue')
-            }
+                    import ('../views/Meni/Aukcija.vue')
+            },
+            {
+                path: '/popusti',
+                name: 'Popusti',
+                component: () =>
+                    import ('../views/Meni/Popusti.vue')
+            },
+            {
+                path: '/nudim',
+                name: 'Nudim',
+                component: () =>
+                    import ('../views/Meni/Nudim.vue')
+            },
+            {
+                path: '/trazim',
+                name: 'Trazim',
+                component: () =>
+                    import ('../views/Meni/Trazim.vue')
+            },
+            {
+                path: '/solidarnost_online',
+                name: 'Solidarnost_online',
+                component: () =>
+                    import ('../views/Meni/Solidarnost_online.vue')
+            },
         ]
     },
     {

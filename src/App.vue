@@ -1,23 +1,24 @@
 <template>
   <v-app class="app">
-    <!-- <Intro /> -->
+    <Navbar v-if="this.$route.path != '/'"></Navbar>
     <v-main class="v-main">
       <transition name="fade" mode="out-in" class="pageTransition">
         <router-view></router-view>
       </transition>
-      <!-- <footerMoj v-if="this.$route.path != '/'"></footerMoj> -->
     </v-main>
+    <Footer v-if="this.$route.path != '/'"></Footer>
   </v-app>
 </template>
 
 <script>
-// import footerMoj from "./views/Footer.vue";
-
+import Footer from "./views/Footer.vue";
+import Navbar from "./views/Navbar.vue";
 export default {
   name: "App",
 
   components: {
-    // footerMoj,
+    Footer,
+    Navbar,
   },
 
   data: () => ({

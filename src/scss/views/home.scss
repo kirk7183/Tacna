@@ -2,26 +2,6 @@
         padding: 0;
         margin: 0;
         text-align: justify;
-        min-height: 100%;
-        position: relative;
-        .ispis-tacna {
-            @include tacna-ispis;
-            font-size: 25px;
-        }
-        button {
-            border: 1px solid #acb881;
-        }
-        i {
-            padding: 0;
-        }
-        .nav-drawer {
-            font-size: 12px !important;
-        }
-    }
-    
-    .sm-breakpoint {
-        .ispis-tacna {
-            @include tacna-ispis;
-            font-size: 35px;
-        }
+        // min-height: 100%;
+        // position: relative;
     }
