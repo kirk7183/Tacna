@@ -3,10 +3,22 @@ import VueRouter from 'vue-router'
 import Intro from '@/views/Intro.vue'
 import Home from '../views/Home.vue'
 
+//resava problem kada dva puta kliknemo na isti link i ponavlja se komanda PUSH
+//tada izbacuje gresku "NavigationDuplicated"
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+};
 
 Vue.use(VueRouter)
 
 const routes = [{
+        path: '*',
+        name: '404',
+        component: () =>
+            import ('@/views/NotFound.vue')
+    },
+    {
         path: '/',
         name: 'Intro',
         component: Intro
@@ -14,7 +26,21 @@ const routes = [{
     {
         path: '/home',
         name: 'Home',
-        component: Home
+        redirect: 'obavestenja',
+        component: Home,
+        children: [{
+                path: '/obavestenja',
+                name: 'Obavestenja',
+                component: () =>
+                    import ('../components/Obavestenja.vue')
+            },
+            {
+                path: '/aukcija',
+                name: 'Aukcija',
+                component: () =>
+                    import ('../views/Aukcija.vue')
+            }
+        ]
     },
     {
         path: '/about',
@@ -33,5 +59,6 @@ const router = new VueRouter({
     base: process.env.BASE_URL,
     routes
 })
+
 
 export default router

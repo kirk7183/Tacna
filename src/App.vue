@@ -5,18 +5,19 @@
       <transition name="fade" mode="out-in" class="pageTransition">
         <router-view></router-view>
       </transition>
+      <!-- <footerMoj v-if="this.$route.path != '/'"></footerMoj> -->
     </v-main>
   </v-app>
 </template>
 
 <script>
-// import Intro from "./views/Intro";
+// import footerMoj from "./views/Footer.vue";
 
 export default {
   name: "App",
 
   components: {
-    // Intro,
+    // footerMoj,
   },
 
   data: () => ({
