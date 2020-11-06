@@ -2,6 +2,7 @@
 @import "variables";
 @import "./views/intro.scss";
 @import "./views/home.scss";
+@import "./views/navbar.scss";
 @import "./views/footer.scss";
 @import "./views/aukcija.scss";
 @import "./components/obavestenja.scss";
@@ -21,11 +22,6 @@ div.row {
     font-family: sans-serif;
     font-size: 12px;
     color: black;
-}
-
-body,
-html {
-    height: 100%;
 }
 
 .mainPage {
