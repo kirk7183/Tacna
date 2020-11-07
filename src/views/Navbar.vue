@@ -6,9 +6,35 @@
       <p class="ispis-tacna">Tacna</p>
       <v-spacer></v-spacer>
 
-      <v-btn icon class="text-center">
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
+      <!-- <v-btn
+        v-if="Facebook_Data.user_displayName == 'niste logovani'"
+        icon
+        class="text-center"
+        @click="facebook_login"
+      >
+        <v-icon>mdi-login</v-icon>
+      </v-btn> -->
+      <v-chip
+        v-if="Facebook_Data.user_displayName == 'niste logovani'"
+        class="chipic ma-2"
+        @click="facebook_login"
+      >
+        <v-avatar left>
+          <v-icon>mdi-account-circle</v-icon>
+        </v-avatar>
+        Login
+      </v-chip>
+
+      <div
+        v-if="Facebook_Data.user_displayName != 'niste logovani'"
+        class="profile-pic-div"
+      >
+        <img
+          class="profile-pic"
+          :src="Facebook_Data.user_pic"
+          @click="facebook_logout = true"
+        />
+      </div>
     </v-app-bar>
     <!-- NAVIGATION DRAWER-->
     <v-navigation-drawer v-model="drawer" app temporary hide-overlay>
@@ -24,6 +50,7 @@
               <i class="far fa-times-circle fa-2x black--text pa-0"></i>
             </v-btn>
           </div>
+          <br />
           <v-list-item
             v-for="(jednaOpcija, i) in sveOpcije"
             :key="i"
@@ -34,23 +61,38 @@
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
+    <!-- IMPORT COMPONENT -->
+    <DialogDaNe :tip_dialoga="'fb_logout'">
+      <template v-slot:title>Da li želite da se izlogujete ?</template>
+      <template v-slot:text></template>
+    </DialogDaNe>
+    <DialogLoading>
+      <template v-slot:ispis>Logovanje je u toku</template>
+    </DialogLoading>
   </div>
 </template>
 
 <script>
+import DialogDaNe from "../components/Dialog_da_ne.vue";
+import DialogLoading from "../components/Dialog_loading";
 export default {
+  components: {
+    DialogDaNe,
+    DialogLoading,
+  },
   data() {
     return {
+      showDialog_da_ne: false,
       activePage: 1,
       drawer: false,
       groupClose: null,
       sveOpcije: [
         { opcija: "Početna strana - Obavestenja", broj: 1 },
-        { opcija: "Solidarnost Online - u pripremi", broj: 6 },
         { opcija: "Aukcija - jos ne radi", broj: 2 },
         { opcija: "Popusti - jos ne radi", broj: 3 },
         { opcija: "Nudim - jos ne radi", broj: 4 },
         { opcija: "Trazim - jos ne radi", broj: 5 },
+        { opcija: "Solidarnost Online - u pripremi", broj: 6 },
       ],
     };
   },
@@ -59,29 +101,45 @@ export default {
       this.drawer = false;
     },
   },
+  beforeCreate: function () {
+    this.$store.dispatch("check_is_user_logged_in");
+  },
   created() {
+    // if ()
+    //When refresh page to check on what route is page and then setup activePage
     if (this.$route.path == "/obavestenje") {
-      // this.changePage(1);
       this.activePage = 1;
     } else if (this.$route.path == "/aukcija") {
-      console.log(this.$route.path);
-      // this.changePage(2);
       this.activePage = 2;
     } else if (this.$route.path == "/popusti") {
-      // this.changePage(3);
       this.activePage = 3;
     } else if (this.$route.path == "/nudim") {
-      // this.changePage(4);
       this.activePage = 4;
     } else if (this.$route.path == "/trazim") {
-      // this.changePage(5);
       this.activePage = 5;
     } else if (this.$route.path == "/solidarnost_Online") {
-      // this.changePage(6);
-      // this.activePage = 6;
+      this.activePage = 6;
     }
   },
+  computed: {
+    Facebook_Data: {
+      get() {
+        return this.$store.getters.Facebook_user_data;
+      },
+    },
+    facebook_logout: {
+      get() {
+        return this.$store.getters.get_showDialog_da_ne;
+      },
+      set(newValue) {
+        this.$store.dispatch("set_showDialog_da_ne", newValue);
+      },
+    },
+  },
   methods: {
+    facebook_login() {
+      this.$store.dispatch("Facebook_login");
+    },
     changePage(broj) {
       if (broj == this.activePage) {
         this.activePage = 0;

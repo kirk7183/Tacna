@@ -5,6 +5,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import firebase from 'firebase/app';
+import "firebase/auth";
 import "firebase/analytics";
 
 var firebaseConfig = {
@@ -23,9 +24,21 @@ firebase.analytics();
 
 Vue.config.productionTip = false
 
-new Vue({
-    router,
-    store,
-    vuetify,
-    render: h => h(App)
-}).$mount('#app')
+
+// firebase.auth().onAuthStateChanged((user) => {
+// if (user) {
+// user =
+
+let LoggedInCheck; //proveri da li je neko logovan, pa tek onda da pravi istancu Vue. Da ne bi bilo
+//da se pojavi Navbar pa tek onda da se ocita da li je neko logovan pa tek onda da doda profilnu sliku
+firebase.auth().onAuthStateChanged(() => {
+    if (!LoggedInCheck) {
+        LoggedInCheck =
+            new Vue({
+                router,
+                store,
+                vuetify,
+                render: h => h(App)
+            }).$mount('#app')
+    }
+})

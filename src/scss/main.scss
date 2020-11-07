@@ -5,7 +5,8 @@
 @import "./views/navbar.scss";
 @import "./views/footer.scss";
 @import "./views/aukcija.scss";
-@import "./components/obavestenja.scss";
+@import "./views/obavestenja.scss";
+@import "./components/dialog_da_ne.scss";
 @font-face {
     font-family: "HennyPenny";
     src: local("HennyPenny"), url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");
