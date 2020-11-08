@@ -12,17 +12,21 @@ export default new Vuex.Store({
             user_pic: null,
         },
         show_dialog_da_ne: false,
-        dialog_loading: false,
+        show_dialog_loading: false,
+        show_dialog_for_login: false
     },
     getters: {
         Facebook_user_data: (state) => {
             return state.Facebook_user_data;
         },
+        get_dialog_for_login(state) {
+            return state.show_dialog_for_login;
+        },
         get_showDialog_da_ne: (state) => {
             return state.show_dialog_da_ne;
         },
-        dialog_loading_status: (state) => {
-            return state.dialog_loading;
+        get_dialog_loading_status: (state) => {
+            return state.show_dialog_loading;
         },
     },
     mutations: {
@@ -33,13 +37,16 @@ export default new Vuex.Store({
         IS_LOGGED_IN(state, payload) {
             state.IsLoggedIn = payload.IsLoggedIn;
         },
+        SHOW_DIALOG_FOR_LOGIN(state, payload) {
+            state.show_dialog_for_login = payload
+        },
         SHOW_DIALOG_DA_NE(state, payload) {
             state.show_dialog_da_ne = payload;
         }
     },
     actions: {
         Facebook_login({ commit }) {
-            this.state.dialog_loading = true;
+            this.state.show_dialog_loading = true;
 
             //obavezno u main.js mora biti importovan import "firebase/auth" inace login preko fb nece da radi;
             var provider = new firebase.auth.FacebookAuthProvider();
@@ -76,11 +83,14 @@ export default new Vuex.Store({
                         })
                     }
                 }).then(() => {
-                    this.state.dialog_loading = false;
+                    this.state.show_dialog_loading = false;
                 })
                 .catch((error) => {
                     console.log(error.code);
                 });
+        },
+        dialog_for_login({ commit }, newValue) {
+            commit("SHOW_DIALOG_FOR_LOGIN", newValue)
         },
         Facebook_logout_store({ commit }) {
             firebase.auth().signOut().then(function() {

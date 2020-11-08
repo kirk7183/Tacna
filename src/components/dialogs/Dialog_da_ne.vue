@@ -5,7 +5,7 @@
         class="dialog_title justify-center"
         :class="
           $vuetify.breakpoint.xs
-            ? `subtitle-1`
+            ? `body-1`
             : $vuetify.breakpoint.smAndDown
             ? `title`
             : $vuetify.breakpoint.md
