@@ -23,7 +23,7 @@ export default {
   computed: {
     dialog_loading: {
       get() {
-        return this.$store.getters.dialog_loading_status;
+        return this.$store.getters.get_dialog_loading_status;
       },
       // set(newVal){
       //     this.$store.

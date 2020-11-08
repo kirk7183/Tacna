@@ -1,0 +1,37 @@
+.card-dialog-login {
+    padding: 16px !important;
+}
+
+.title-dialog-login {
+    justify-content: center !important;
+    padding: 0 !important;
+    padding-bottom: 5px !important;
+}
+
+.action-dialog-login {
+    flex-direction: column !important;
+    justify-content: center !important;
+    i.fa-facebook-square {
+        color: royalblue;
+    }
+    button.v-btn {
+        min-width: 150px !important;
+        min-height: 50px !important;
+        margin: 8px !important;
+    }
+    button.nazad {
+        min-height: 30px !important;
+        margin: 8px !important;
+        margin-top: 32px !important;
+        background-color: #D3D3D3 !important;
+    }
+}
+
+//da slovo G za google login dobije svoje boje
+.fa-google {
+    background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}

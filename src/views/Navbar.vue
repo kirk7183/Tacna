@@ -17,7 +17,7 @@
       <v-chip
         v-if="Facebook_Data.user_displayName == 'niste logovani'"
         class="chipic ma-2"
-        @click="facebook_login"
+        @click="dialog_for_login = true"
       >
         <v-avatar left>
           <v-icon>mdi-account-circle</v-icon>
@@ -69,16 +69,19 @@
     <DialogLoading>
       <template v-slot:ispis>Logovanje je u toku</template>
     </DialogLoading>
+    <DialogForLogin></DialogForLogin>
   </div>
 </template>
 
 <script>
-import DialogDaNe from "../components/Dialog_da_ne.vue";
-import DialogLoading from "../components/Dialog_loading";
+import DialogDaNe from "../components/dialogs/Dialog_da_ne.vue";
+import DialogLoading from "../components/dialogs/Dialog_loading";
+import DialogForLogin from "../components/dialogs/Dialog_for_login";
 export default {
   components: {
     DialogDaNe,
     DialogLoading,
+    DialogForLogin,
   },
   data() {
     return {
@@ -135,11 +138,16 @@ export default {
         this.$store.dispatch("set_showDialog_da_ne", newValue);
       },
     },
+    dialog_for_login: {
+      get() {
+        return this.$store.getters.get_dialog_for_login;
+      },
+      set(newValue) {
+        this.$store.dispatch("dialog_for_login", newValue);
+      },
+    },
   },
   methods: {
-    facebook_login() {
-      this.$store.dispatch("Facebook_login");
-    },
     changePage(broj) {
       if (broj == this.activePage) {
         this.activePage = 0;
