@@ -13,7 +13,12 @@ export default new Vuex.Store({
         },
         show_dialog_da_ne: false,
         show_dialog_loading: false,
-        show_dialog_for_login: false
+        show_dialog_for_login: false,
+        snackbar: {
+            boolean: false,
+            message: '',
+            color: '',
+        }
     },
     getters: {
         Facebook_user_data: (state) => {
@@ -28,6 +33,9 @@ export default new Vuex.Store({
         get_dialog_loading_status: (state) => {
             return state.show_dialog_loading;
         },
+        get_snackbar_status: (state) => {
+            return state.snackbar;
+        }
     },
     mutations: {
         FB_USER_DATA(state, payload) {
@@ -42,6 +50,11 @@ export default new Vuex.Store({
         },
         SHOW_DIALOG_DA_NE(state, payload) {
             state.show_dialog_da_ne = payload;
+        },
+        TOGGLE_SNACKBAR(state, payload) {
+            state.snackbar.boolean = payload.boolean;
+            state.snackbar.message = payload.message;
+            state.snackbar.color = payload.color;
         }
     },
     actions: {
@@ -84,13 +97,22 @@ export default new Vuex.Store({
                     }
                 }).then(() => {
                     this.state.show_dialog_loading = false;
+                    commit('TOGGLE_SNACKBAR', {
+                        boolean: true,
+                        message: 'Uspešno ste se prijavili',
+                        color: 'success'
+                    })
                 })
                 .catch((error) => {
                     console.log(error.code);
+                    commit('TOGGLE_SNACKBAR', {
+                        boolean: true,
+                        message: 'Došlo je do greške',
+                        color: 'error'
+
+                    })
+
                 });
-        },
-        dialog_for_login({ commit }, newValue) {
-            commit("SHOW_DIALOG_FOR_LOGIN", newValue)
         },
         Facebook_logout_store({ commit }) {
             firebase.auth().signOut().then(function() {
@@ -99,9 +121,14 @@ export default new Vuex.Store({
                     user_displayName: 'niste logovani',
                     fb_profile_pic: null
                 })
-
                 commit('IS_LOGGED_IN', {
-                        IsLoggedIn: false
+                    IsLoggedIn: false
+                })
+                commit('TOGGLE_SNACKBAR', {
+                        boolean: true,
+                        message: 'Uspešno ste se odjavili',
+                        color: 'success'
+
                     })
                     //brisanje access_token iz local storage
                 window.localStorage.removeItem('access_token');
@@ -110,9 +137,6 @@ export default new Vuex.Store({
             });
         },
 
-        set_showDialog_da_ne({ commit }, newValue) {
-            commit('SHOW_DIALOG_DA_NE', newValue)
-        },
         check_is_user_logged_in({ commit }) {
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
@@ -137,6 +161,19 @@ export default new Vuex.Store({
                 }
             });
         },
+        set_dialog_for_login({ commit }, newValue) {
+            commit("SHOW_DIALOG_FOR_LOGIN", newValue)
+        },
+        set_showDialog_da_ne({ commit }, newValue) {
+            commit('SHOW_DIALOG_DA_NE', newValue)
+        },
+        set_snackbar({ commit }, newValue) {
+            commit('TOGGLE_SNACKBAR', {
+                boolean: newValue, //ovo je false kada se klikne na dugme zatvori
+                message: '',
+                color: ''
+            })
+        }
     },
     modules: {}
 })
