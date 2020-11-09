@@ -34,7 +34,7 @@ export default {
         return this.$store.getters.get_dialog_for_login;
       },
       set(newValue) {
-        this.$store.dispatch("dialog_for_login", newValue);
+        this.$store.dispatch("set_dialog_for_login", newValue);
       },
     },
   },

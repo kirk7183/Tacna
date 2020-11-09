@@ -3,11 +3,15 @@
     <transition name="fade" mode="out-in">
       <router-view> </router-view
     ></transition>
+    <!-- IMPORT COMPONENT-->
+    <Snackbar></Snackbar>
   </v-container>
 </template>
 
 <script>
+import Snackbar from "../components/add-ons/Snackbar.vue";
 export default {
+  components: { Snackbar },
   computed: {
     breakpoints() {
       switch (this.$vuetify.breakpoint.name) {
