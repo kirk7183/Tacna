@@ -28,7 +28,7 @@
 export default {
   data() {
     return {
-      timeout: 5000000,
+      timeout: 4000,
       snackbar: false,
     };
   },

@@ -1,6 +1,7 @@
 # Tacna
 
-Online market
+Online market - “mobile-first” approach
+Users can: offer their products that they want to sell, to offer and explain what services they perform, to put products up for auction or to bid for a particular product, to use a special system for discounts. Lots of add-ons that will be interesting and useful for users.
 
 Build Setup
 
