@@ -9,7 +9,8 @@
 @import "./components/dialogs/dialog_da_ne.scss";
 @import "./components/dialogs/dialog_for_login.scss";
 @import "./add-ons/snackbar.scss";
-@import "./views/meni/solidarnost_online.scss";
+@import "./views/meni/solidarnost_online/solidarnost_online.scss";
+@import "./views/meni/solidarnost_online/info_so.scss";
 @font-face {
     font-family: "HennyPenny";
     src: local("HennyPenny"), url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");
@@ -22,7 +23,7 @@ body,
 div.row {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
     font-family: sans-serif;
     font-size: 12px;
     color: black;
@@ -60,5 +61,9 @@ div.col-right {
 }
 
 .v-card {
-    padding: 4px
+    padding: 4px !important;
+}
+
+.v-btn {
+    color: black !important;
 }

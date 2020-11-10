@@ -25,7 +25,8 @@ export default {
         {
           naslov: "<p class='naslov'>Obaveštenje</p>",
           text: [
-            "<p class='ceo-text'>Poštovani, obaveštavamo Vas da je aplikacija u fazi razvoja i shodno tome želimo da znate da neke od opcija neće raditi kako je        predvidjeno. Ukoliko imate bilo kakvu preporuku za unapredjenje       aplikacije obratite nam se putem mail-a vasicigorjsp@gmail.com</p>",
+            "<p class='ceo-text'>Poštovani, obaveštavamo Vas da je aplikacija u fazi razvoja i shodno tome želimo da znate da neke od opcija neće raditi kako je predvidjeno. Ukoliko imate bilo kakvu preporuku za unapredjenje aplikacije obratite nam se putem mail-a vasicigorjsp@gmail.com</p>",
+            "<p class='ceo-text'>Postoji mogućnost da prilikom logovanja ne vidite svoju FB profilnu sliku u 'krugu', problem uglavnom stvara 'Avast Online Security'. Radimo na uklanjanju problema. </p>",
           ],
         },
         {

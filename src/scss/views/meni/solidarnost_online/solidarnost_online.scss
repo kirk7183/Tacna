@@ -7,9 +7,12 @@
     button.v-btn {
         width: 35px !important;
         height: 35px !important;
-    }
-    button.solidarnost_icon {
-        padding-right: 0 !important;
         color: $main-icon-color !important;
+    }
+    i.solidarnost_icon {
+        padding-right: 0 !important;
+    }
+    .selected {
+        border: thin solid royalblue !important;
     }
 }
