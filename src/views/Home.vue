@@ -16,6 +16,7 @@ export default {
     breakpoints() {
       switch (this.$vuetify.breakpoint.name) {
         case "lg":
+        case "xl":
           return {
             "sm-breakpoint md-breakpoint lg-breakpoint": this.$vuetify
               .breakpoint.lgAndUp,

@@ -25,10 +25,7 @@
         Login
       </v-chip>
 
-      <div
-        v-if="Facebook_Data.user_displayName != 'niste logovani'"
-        class="profile-pic-div"
-      >
+      <div v-else class="profile-pic-div">
         <img
           class="profile-pic"
           :src="Facebook_Data.user_pic"
@@ -51,6 +48,30 @@
             </v-btn>
           </div>
           <br />
+
+          <!-- Promena ispisa ako je logovan ili ako nije-->
+          <v-btn
+            text
+            :class="
+              this.Facebook_Data.user_displayName != 'niste logovani'
+                ? `logout_btn`
+                : `login_btn`
+            "
+            @click="login_logout"
+            >{{
+              this.Facebook_Data.user_displayName != "niste logovani"
+                ? "Logout"
+                : "Login"
+            }}</v-btn
+          >
+          <!-- <v-list-item class="login_logout_item text-center outlined"
+            ><v-list-item-title @click="login_logout">{{
+              this.Facebook_Data.user_displayName != "niste logovani"
+                ? "Logout"
+                : "Login"
+            }}</v-list-item-title></v-list-item
+          > -->
+          <!--PETLJA -->
           <v-list-item
             v-for="(jednaOpcija, i) in sveOpcije"
             :key="i"
@@ -63,7 +84,7 @@
     </v-navigation-drawer>
     <!-- IMPORT COMPONENT -->
     <DialogDaNe :tip_dialoga="'fb_logout'">
-      <template v-slot:title>Da li želite da se izlogujete ?</template>
+      <template v-slot:title>Da li želite da se odjavite ?</template>
       <template v-slot:text></template>
     </DialogDaNe>
     <DialogLoading>
@@ -91,11 +112,11 @@ export default {
       groupClose: null,
       sveOpcije: [
         { opcija: "Početna strana - Obavestenja", broj: 1 },
+        { opcija: "Solidarnost Online - u pripremi", broj: 6 },
         { opcija: "Aukcija - jos ne radi", broj: 2 },
         { opcija: "Popusti - jos ne radi", broj: 3 },
         { opcija: "Nudim - jos ne radi", broj: 4 },
         { opcija: "Trazim - jos ne radi", broj: 5 },
-        { opcija: "Solidarnost Online - u pripremi", broj: 6 },
       ],
     };
   },
@@ -103,12 +124,21 @@ export default {
     groupClose() {
       this.drawer = false;
     },
+    Facebook_Data() {
+      if (this.Facebook_Data.user_displayName != "niste logovani") {
+        console.log("logout");
+        this.sveOpcije.unshift({ opcija: "Logout", broj: 0 });
+      } else {
+        this.sveOpcije.unshift({ opcija: "Login", broj: 0 });
+      }
+    },
   },
-  beforeCreate: function () {
+  beforeCreate() {
+    //ako se ugasi browser ili se refresh stranica i ako u firebase je jos uvek logovan
+    //korisnik, onda da ubaci njegove podatke u Vuex
     this.$store.dispatch("check_is_user_logged_in");
   },
   created() {
-    // if ()
     //When refresh page to check on what route is page and then setup activePage
     if (this.$route.path == "/obavestenje") {
       this.activePage = 1;
@@ -124,7 +154,9 @@ export default {
       this.activePage = 6;
     }
   },
+
   computed: {
+    //ocitava podatke iz Vuexa
     Facebook_Data: {
       get() {
         return this.$store.getters.Facebook_user_data;
@@ -148,6 +180,13 @@ export default {
     },
   },
   methods: {
+    login_logout() {
+      if (this.Facebook_Data.user_displayName == "niste logovani") {
+        this.dialog_for_login = true;
+      } else {
+        this.facebook_logout = true;
+      }
+    },
     changePage(broj) {
       if (broj == this.activePage) {
         this.activePage = 0;

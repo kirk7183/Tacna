@@ -18,10 +18,29 @@
 
 .v-subheader {
     @include tacna-ispis;
-    font-size: 25px !important; // font-family: HennyPenny;
-    // font-size: 20px !important;
-    // // text-decoration: underline;
-    // color: $main-color !important;
+    font-size: 25px !important;
+}
+
+button.login_btn {
+    border: thin solid green !important;
+    width: 100% !important;
+    &:before {
+        background-color: rgba(2, 95, 2, 1) !important;
+    }
+    &:hover {
+        border: 2px solid green !important;
+    }
+}
+
+button.logout_btn {
+    border: thin solid red !important;
+    width: 100% !important;
+    &:before {
+        background-color: red !important;
+    }
+    &:hover {
+        border: 2px solid red !important;
+    }
 }
 
 .v-list-item__title {
