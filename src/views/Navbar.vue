@@ -6,14 +6,6 @@
       <p class="ispis-tacna">Tacna</p>
       <v-spacer></v-spacer>
 
-      <!-- <v-btn
-        v-if="Facebook_Data.user_displayName == 'niste logovani'"
-        icon
-        class="text-center"
-        @click="facebook_login"
-      >
-        <v-icon>mdi-login</v-icon>
-      </v-btn> -->
       <v-chip
         v-if="Facebook_Data.user_displayName == 'niste logovani'"
         class="chipic ma-2"
@@ -34,7 +26,13 @@
       </div>
     </v-app-bar>
     <!-- NAVIGATION DRAWER-->
-    <v-navigation-drawer v-model="drawer" app temporary hide-overlay>
+    <v-navigation-drawer
+      v-model="drawer"
+      mobile-breakpoint="1200"
+      app
+      temporary
+      hide-overlay
+    >
       <v-list nav dense>
         <v-list-item-group
           v-model="groupClose"
@@ -52,6 +50,7 @@
           <!-- Promena ispisa ako je logovan ili ako nije-->
           <v-btn
             text
+            class="login_logout_btn"
             :class="
               this.Facebook_Data.user_displayName != 'niste logovani'
                 ? `logout_btn`
@@ -64,17 +63,12 @@
                 : "Login"
             }}</v-btn
           >
-          <!-- <v-list-item class="login_logout_item text-center outlined"
-            ><v-list-item-title @click="login_logout">{{
-              this.Facebook_Data.user_displayName != "niste logovani"
-                ? "Logout"
-                : "Login"
-            }}</v-list-item-title></v-list-item
-          > -->
+
           <!--PETLJA -->
           <v-list-item
             v-for="(jednaOpcija, i) in sveOpcije"
             :key="i"
+            :class="buttonColor_selected[i]"
             @click="changePage(jednaOpcija.broj)"
           >
             <v-list-item-title>{{ jednaOpcija.opcija }}</v-list-item-title>
@@ -112,25 +106,17 @@ export default {
       groupClose: null,
       sveOpcije: [
         { opcija: "Početna strana - Obavestenja", broj: 1 },
-        { opcija: "Solidarnost Online - u pripremi", broj: 6 },
-        { opcija: "Aukcija - jos ne radi", broj: 2 },
-        { opcija: "Popusti - jos ne radi", broj: 3 },
-        { opcija: "Nudim - jos ne radi", broj: 4 },
-        { opcija: "Trazim - jos ne radi", broj: 5 },
+        { opcija: "Solidarnost Online - u pripremi", broj: 2 },
+        { opcija: "Aukcija - jos ne radi", broj: 3 },
+        { opcija: "Popusti - jos ne radi", broj: 4 },
+        { opcija: "Nudim - jos ne radi", broj: 5 },
+        { opcija: "Trazim - jos ne radi", broj: 6 },
       ],
     };
   },
   watch: {
     groupClose() {
       this.drawer = false;
-    },
-    Facebook_Data() {
-      if (this.Facebook_Data.user_displayName != "niste logovani") {
-        console.log("logout");
-        this.sveOpcije.unshift({ opcija: "Logout", broj: 0 });
-      } else {
-        this.sveOpcije.unshift({ opcija: "Login", broj: 0 });
-      }
     },
   },
   beforeCreate() {
@@ -139,18 +125,22 @@ export default {
     this.$store.dispatch("check_is_user_logged_in");
   },
   created() {
+    // let l = this.$router.resolve({ name: "Solidarnost_online" });
+
     //When refresh page to check on what route is page and then setup activePage
     if (this.$route.path == "/obavestenje") {
       this.activePage = 1;
-    } else if (this.$route.path == "/aukcija") {
+      //provera ukoliko URL sadrzi deo reci solidarnost ("darnost") nebitno da li je parent ili child u URL-u
+      //ako postoji "darnost u URL onda pri Created() stranice stavi da je activePage=2"
+    } else if (window.location.href.indexOf("darnost") > -1) {
       this.activePage = 2;
-    } else if (this.$route.path == "/popusti") {
+    } else if (this.$route.path == "/aukcija") {
       this.activePage = 3;
-    } else if (this.$route.path == "/nudim") {
+    } else if (this.$route.path == "/popusti") {
       this.activePage = 4;
-    } else if (this.$route.path == "/trazim") {
+    } else if (this.$route.path == "/nudim") {
       this.activePage = 5;
-    } else if (this.$route.path == "/solidarnost_Online") {
+    } else if (this.$route.path == "/trazim") {
       this.activePage = 6;
     }
   },
@@ -178,6 +168,17 @@ export default {
         this.$store.dispatch("set_dialog_for_login", newValue);
       },
     },
+    buttonColor_selected() {
+      let result = [];
+      for (var i = 1; i <= 6; i++) {
+        if (this.activePage == i) {
+          result.push("deep-purple--text text--accent-4 v-list-item--active");
+        } else {
+          result.push("");
+        }
+      }
+      return result;
+    },
   },
   methods: {
     login_logout() {
@@ -192,22 +193,22 @@ export default {
         this.activePage = 0;
       }
       if (broj == 1) {
-        this.$router.push("obavestenja");
+        this.$router.push({ path: "/obavestenja" });
         this.activePage = 1;
       } else if (broj == 2) {
-        this.$router.push("aukcija");
+        this.$router.push({ path: "/solidarnost_online" });
         this.activePage = 2;
       } else if (broj == 3) {
-        this.$router.push("popusti");
+        this.$router.push({ path: "/aukcija" });
         this.activePage = 3;
       } else if (broj == 4) {
-        this.$router.push("nudim");
+        this.$router.push({ path: "/popusti" });
         this.activePage = 4;
       } else if (broj == 5) {
-        this.$router.push("trazim");
+        this.$router.push({ path: "/nudim" });
         this.activePage = 5;
       } else if (broj == 6) {
-        this.$router.push("solidarnost_Online");
+        this.$router.push({ path: "/trazim" });
         this.activePage = 6;
       }
     },

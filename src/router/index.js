@@ -62,7 +62,32 @@ const routes = [{
                 path: '/solidarnost_online',
                 name: 'Solidarnost_online',
                 component: () =>
-                    import ('../views/Meni/Solidarnost_online.vue')
+                    import ('../views/Meni/Solidarnost_online/Solidarnost_online.vue'),
+                children: [{
+                        path: '/solidarnost_online/info',
+                        name: 'Info',
+                        component: () =>
+                            import ('../views/Meni/Solidarnost_online/Info.vue')
+                    },
+                    {
+                        path: '/solidarnost_online/obavestenje_so',
+                        name: '/Obavestenje_so',
+                        component: () =>
+                            import ('../views/Meni/Solidarnost_online/Obavestenje_so.vue')
+                    },
+                    {
+                        path: '/solidarnost_online/licitacija_so',
+                        name: 'Licitacija_so',
+                        component: () =>
+                            import ('../views/Meni/Solidarnost_online/Licitacija_so.vue')
+                    },
+                    {
+                        path: '/solidarnost_online/banka_so',
+                        name: 'Banka_so',
+                        component: () =>
+                            import ('../views/Meni/Solidarnost_online/Banka_so.vue')
+                    }
+                ]
             },
         ]
     },
