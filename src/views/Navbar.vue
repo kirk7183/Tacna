@@ -26,13 +26,7 @@
       </div>
     </v-app-bar>
     <!-- NAVIGATION DRAWER-->
-    <v-navigation-drawer
-      v-model="drawer"
-      mobile-breakpoint="1200"
-      app
-      temporary
-      hide-overlay
-    >
+    <v-navigation-drawer v-model="drawer" app temporary hide-overlay>
       <v-list nav dense>
         <v-list-item-group
           v-model="groupClose"
@@ -132,7 +126,7 @@ export default {
       this.activePage = 1;
       //provera ukoliko URL sadrzi deo reci solidarnost ("darnost") nebitno da li je parent ili child u URL-u
       //ako postoji "darnost u URL onda pri Created() stranice stavi da je activePage=2"
-    } else if (window.location.href.indexOf("darnost") > -1) {
+    } else if (window.location.href.indexOf("olidarnost") > -1) {
       this.activePage = 2;
     } else if (this.$route.path == "/aukcija") {
       this.activePage = 3;
@@ -170,7 +164,7 @@ export default {
     },
     buttonColor_selected() {
       let result = [];
-      for (var i = 1; i <= 6; i++) {
+      for (let i = 1; i <= 6; i++) {
         if (this.activePage == i) {
           result.push("deep-purple--text text--accent-4 v-list-item--active");
         } else {

@@ -28,64 +28,67 @@ const routes = [{
         name: 'Home',
         redirect: 'obavestenja',
         component: Home,
+        //CHILDRED !!!!
         children: [{
                 path: '/obavestenja',
                 name: 'Obavestenja',
                 component: () =>
-                    import ('../views/Meni/Obavestenja.vue')
+                    import ('../views/meni/Obavestenja.vue')
             },
             {
                 path: '/aukcija',
                 name: 'Aukcija',
                 component: () =>
-                    import ('../views/Meni/Aukcija.vue')
+                    import ('../views/meni/Aukcija.vue')
             },
             {
                 path: '/popusti',
                 name: 'Popusti',
                 component: () =>
-                    import ('../views/Meni/Popusti.vue')
+                    import ('../views/meni/Popusti.vue')
             },
             {
                 path: '/nudim',
                 name: 'Nudim',
                 component: () =>
-                    import ('../views/Meni/Nudim.vue')
+                    import ('../views/meni/Nudim.vue')
             },
             {
                 path: '/trazim',
                 name: 'Trazim',
                 component: () =>
-                    import ('../views/Meni/Trazim.vue')
+                    import ('../views/meni/Trazim.vue')
             },
             {
                 path: '/solidarnost_online',
                 name: 'Solidarnost_online',
+                redirect: '/solidarnost_online/info_so',
                 component: () =>
-                    import ('../views/Meni/Solidarnost_online/Solidarnost_online.vue'),
+                    import ('../views/meni/Solidarnost_online.vue'),
+                //CHILDRED !!!!
                 children: [{
-                        path: '/solidarnost_online/info',
-                        name: 'Info',
+                        path: '/solidarnost_online/info_so',
+                        name: 'Info_so',
                         component: () =>
-                            import ('../views/Meni/Solidarnost_online/Info.vue')
+                            import ('@/components/solidarnost_online/Info_so.vue')
                     },
                     {
                         path: '/solidarnost_online/obavestenje_so',
                         name: '/Obavestenje_so',
                         component: () =>
-                            import ('../views/Meni/Solidarnost_online/Obavestenje_so.vue')
+                            import ('@/components/solidarnost_online/Obavestenje_so.vue')
                     },
                     {
                         path: '/solidarnost_online/licitacija_so',
                         name: 'Licitacija_so',
                         component: () =>
-                            import ('../views/Meni/Solidarnost_online/Licitacija_so.vue')
+                            import ('@/components/solidarnost_online/Licitacija_so.vue')
                     },
                     {
                         path: '/solidarnost_online/banka_so',
                         name: 'Banka_so',
                         component: () =>
-                            import ('../views/Meni/Solidarnost_online/Banka_so.vue')
+                            import ('@/components/solidarnost_online/Banka_so.vue')
                     }
                 ]
             },
