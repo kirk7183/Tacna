@@ -1,8 +1,8 @@
 <template>
   <v-container class="mainPage" fluid :class="breakpoints">
     <transition name="fade" mode="out-in">
-      <router-view> </router-view
-    ></transition>
+      <router-view> </router-view>
+    </transition>
     <!-- IMPORT COMPONENT-->
     <Snackbar></Snackbar>
   </v-container>

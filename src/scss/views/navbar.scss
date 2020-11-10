@@ -21,25 +21,28 @@
     font-size: 25px !important;
 }
 
-button.login_btn {
-    border: thin solid green !important;
+button.login_logout_btn {
     width: 100% !important;
-    &:before {
-        background-color: rgba(2, 95, 2, 1) !important;
-    }
-    &:hover {
-        border: 2px solid green !important;
-    }
+    margin-bottom: 15px;
 }
 
-button.logout_btn {
+button.login_btn {
     border: thin solid red !important;
-    width: 100% !important;
     &:before {
         background-color: red !important;
     }
     &:hover {
         border: 2px solid red !important;
+    }
+}
+
+button.logout_btn {
+    border: thin solid green !important;
+    &:before {
+        background-color: green !important;
+    }
+    &:hover {
+        border: 2px solid green !important;
     }
 }
 

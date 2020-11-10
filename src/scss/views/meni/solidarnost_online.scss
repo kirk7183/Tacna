@@ -1,0 +1,15 @@
+.solidatnost_online {
+    .v-toolbar__content {
+        // display: flex !important;
+        // flex-direction: row !important;
+        justify-content: space-around !important;
+    }
+    button.v-btn {
+        width: 35px !important;
+        height: 35px !important;
+    }
+    button.solidarnost_icon {
+        padding-right: 0 !important;
+        color: $main-icon-color !important;
+    }
+}
