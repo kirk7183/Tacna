@@ -1,8 +1,10 @@
 <template>
-  <p>
-    Obavestenja - jos uvek je mobilna verzija sa 4 ikone, za desktop ce
-    drugacije izgledati
-  </p>
+  <div class="obavestenje_so mx-2 my-4 mx-sm-4 my-sm-6 mx-md-8 my-md-12">
+    <v-card>
+      <v-card-title>asdas</v-card-title>
+      <v-card-text>dfsf</v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>

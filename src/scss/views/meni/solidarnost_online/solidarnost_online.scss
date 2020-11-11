@@ -13,6 +13,26 @@
         padding-right: 0 !important;
     }
     .selected {
-        border: thin solid royalblue !important;
+        border: thin solid $main-icon-color !important;
     }
+    .v-chip {
+        width: 200px !important;
+        justify-content: center;
+        background-color: white !important;
+        cursor: pointer;
+    }
+    .v-chip__content,
+    i.v-icon {
+        color: $main-icon-color !important;
+    }
+    .v-avatar {
+        margin-right: 10px !important
+    }
+    // .v-chip__content,
+    // .v-avatar,
+    // .v-chip {
+    //     &:not(:first-child) {
+    //         margin-right: 15px !important;
+    //     }
+    // }
 }
