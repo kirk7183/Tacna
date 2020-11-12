@@ -1,0 +1,74 @@
+.banka_so {
+    .novac {
+        margin: auto;
+        margin-top: 25px;
+        margin-bottom: 25px;
+        width: 90%;
+        border-bottom: 5px double gray;
+    }
+    .stanje_text {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 18px;
+    }
+    .stanje_novac {
+        font-weight: 600;
+        text-align: center;
+        font-size: 24px;
+    }
+    .bank_card {
+        height: 100%;
+        .datum {
+            font-size: 12px;
+            font-weight: 600;
+        }
+    }
+    .row_uplata_isplata {
+        // display: flex;
+        justify-content: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        .plus_minus {
+            // text-align: right !important;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center !important;
+        }
+        p {
+            margin: 0 !important;
+            line-height: 1.7rem !important;
+        }
+    }
+    .row_uplata_isplata_xs {
+        .column {
+            display: flex;
+            align-items: center !important;
+        }
+    }
+    .row_uplata_isplata_smAndUp {
+        .uplata,
+        .isplata {
+            font-size: 20px;
+            justify-content: center !important;
+        }
+        .ime_prezime,
+        .cifra {
+            font-size: 16px !important;
+        }
+    }
+    .col_cifra {
+        display: flex;
+        align-items: center !important;
+        justify-content: flex-end;
+    }
+    .column {
+        text-align: start !important;
+        padding: 0;
+        .uplata {
+            color: green;
+        }
+        .isplata {
+            color: red;
+        }
+    }
+}

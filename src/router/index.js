@@ -62,21 +62,27 @@ const routes = [{
             {
                 path: '/solidarnost_online',
                 name: 'Solidarnost_online',
-                redirect: '/solidarnost_online/info_so',
+                redirect: '/solidarnost_online/o_nama_so',
                 component: () =>
                     import ('../views/meni/Solidarnost_online.vue'),
                 //CHILDRED !!!!
                 children: [{
-                        path: '/solidarnost_online/info_so',
-                        name: 'Info_so',
+                        path: '/solidarnost_online/o_nama_so',
+                        name: 'O_nama_so',
                         component: () =>
-                            import ('@/components/solidarnost_online/Info_so.vue')
+                            import ('@/components/solidarnost_online/O_nama_so.vue')
                     },
                     {
                         path: '/solidarnost_online/obavestenje_so',
                         name: '/Obavestenje_so',
                         component: () =>
                             import ('@/components/solidarnost_online/Obavestenje_so.vue')
+                    },
+                    {
+                        path: '/solidarnost_online/donacije_so',
+                        name: 'Donacije_so',
+                        component: () =>
+                            import ('@/components/solidarnost_online/Donacije_so.vue')
                     },
                     {
                         path: '/solidarnost_online/licitacija_so',

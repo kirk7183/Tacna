@@ -43,13 +43,18 @@ export default {
       icons: [
         {
           icon: "fas fa-info",
-          route: "/solidarnost_online/info_so",
-          text: "Informacije",
+          route: "/solidarnost_online/o_nama_so",
+          text: "O nama",
         },
         {
           icon: "fas fa-star",
           route: "/solidarnost_online/obavestenje_so",
           text: "Obaveštenja",
+        },
+        {
+          icon: "fas fa-heartbeat",
+          route: "/solidarnost_online/donacije_so",
+          text: "Donacije",
         },
         {
           icon: "fas fa-gavel",
@@ -64,22 +69,41 @@ export default {
       ],
     };
   },
+  watch: {
+    //watch route ako je vec u nav_baru selektovana "solidarnost online" i recimo oznacena "banka", kada bi opet
+    //kliknuli u navbaru na "solidarnost online promenila bi se ruta ali krug (chip) ne bi bio oznacen "i", ovo resava taj problem
+    $route(to) {
+      if (to.path === "/solidarnost_online/o_nama_so") {
+        this.activePage = 1;
+      }
+    },
+    activePage(value) {
+      console.log(value);
+      return (this.activePage = value);
+    },
+  },
+
   created() {
     //da prepozna po URL-u i da postavi broj activePage-a
-    if (this.$route.path == "/solidarnost_online/info_so") {
+    if (
+      this.$route.path == "/solidarnost_online" ||
+      this.$route.path == "/solidarnost_online/o_nama_so"
+    ) {
       this.activePage = 1;
     } else if (this.$route.path == "/solidarnost_online/obavestenje_so") {
       this.activePage = 2;
-    } else if (this.$route.path == "/solidarnost_online/licitacija_so") {
+    } else if (this.$route.path == "/solidarnost_online/donacije_so") {
       this.activePage = 3;
-    } else if (this.$route.path == "/solidarnost_online/banka_so") {
+    } else if (this.$route.path == "/solidarnost_online/licitacija_so") {
       this.activePage = 4;
+    } else if (this.$route.path == "/solidarnost_online/banka_so") {
+      this.activePage = 5;
     }
   },
   computed: {
     iconColor_selected() {
       let result = [];
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 5; i++) {
         if (this.activePage == i) {
           result.push("selected");
         } else {
