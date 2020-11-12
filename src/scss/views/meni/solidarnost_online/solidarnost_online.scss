@@ -1,7 +1,5 @@
 .solidatnost_online {
     .v-toolbar__content {
-        // display: flex !important;
-        // flex-direction: row !important;
         justify-content: space-around !important;
     }
     button.v-btn {
@@ -26,13 +24,11 @@
         color: $main-icon-color !important;
     }
     .v-avatar {
-        margin-right: 10px !important
+        margin-right: 10px !important;
+        min-width: 38px !important;
+        height: 48px !important;
     }
-    // .v-chip__content,
-    // .v-avatar,
-    // .v-chip {
-    //     &:not(:first-child) {
-    //         margin-right: 15px !important;
-    //     }
-    // }
+    i.v-icon.star_icon {
+        color: yellow !important;
+    }
 }

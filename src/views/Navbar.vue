@@ -119,14 +119,12 @@ export default {
     this.$store.dispatch("check_is_user_logged_in");
   },
   created() {
-    // let l = this.$router.resolve({ name: "Solidarnost_online" });
-
     //When refresh page to check on what route is page and then setup activePage
     if (this.$route.path == "/obavestenje") {
       this.activePage = 1;
       //provera ukoliko URL sadrzi deo reci solidarnost ("darnost") nebitno da li je parent ili child u URL-u
       //ako postoji "darnost u URL onda pri Created() stranice stavi da je activePage=2"
-    } else if (window.location.href.indexOf("olidarnost") > -1) {
+    } else if (window.location.href.indexOf("solidarnost") > -1) {
       this.activePage = 2;
     } else if (this.$route.path == "/aukcija") {
       this.activePage = 3;
