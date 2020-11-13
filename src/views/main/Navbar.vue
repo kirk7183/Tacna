@@ -83,9 +83,9 @@
 </template>
 
 <script>
-import DialogDaNe from "../components/dialogs/Dialog_da_ne.vue";
-import DialogLoading from "../components/dialogs/Dialog_loading";
-import DialogForLogin from "../components/dialogs/Dialog_for_login";
+import DialogDaNe from "@/components/dialogs/Dialog_da_ne.vue";
+import DialogLoading from "@/components/dialogs/Dialog_loading";
+import DialogForLogin from "@/components/dialogs/Dialog_for_login";
 export default {
   components: {
     DialogDaNe,

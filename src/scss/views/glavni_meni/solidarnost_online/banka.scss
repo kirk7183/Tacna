@@ -24,12 +24,10 @@
         }
     }
     .row_uplata_isplata {
-        // display: flex;
         justify-content: center;
         margin-top: 10px;
         margin-bottom: 10px;
         .plus_minus {
-            // text-align: right !important;
             display: flex;
             justify-content: flex-end;
             align-items: center !important;
@@ -38,24 +36,41 @@
             margin: 0 !important;
             line-height: 1.7rem !important;
         }
-    }
-    .row_uplata_isplata_xs {
-        .column {
-            display: flex;
-            align-items: center !important;
+        &_smAndUp {
+            .uplata,
+            .isplata {
+                font-size: 20px;
+                justify-content: center !important;
+            }
+            .ime_prezime,
+            .cifra {
+                font-size: 16px !important;
+            }
         }
+        // &_xs {
+        //     .column {
+        //         display: flex;
+        //         align-items: center !important;
+        //     }
+        // }
     }
-    .row_uplata_isplata_smAndUp {
-        .uplata,
-        .isplata {
-            font-size: 20px;
-            justify-content: center !important;
-        }
-        .ime_prezime,
-        .cifra {
-            font-size: 16px !important;
-        }
-    }
+    // .row_uplata_isplata_xs {
+    //     .column {
+    //         display: flex;
+    //         align-items: center !important;
+    //     }
+    // }
+    // .row_uplata_isplata_smAndUp {
+    //     .uplata,
+    //     .isplata {
+    //         font-size: 20px;
+    //         justify-content: center !important;
+    //     }
+    //     .ime_prezime,
+    //     .cifra {
+    //         font-size: 16px !important;
+    //     }
+    // }
     .col_cifra {
         display: flex;
         align-items: center !important;
@@ -70,5 +85,8 @@
         .isplata {
             color: red;
         }
+    }
+    b {
+        font-size: 14px !important;
     }
 }

@@ -25,7 +25,7 @@
 
           <div class="top-left">
             <div class="group-left">
-              <img class="logo" src="../assets/logo/tacna.png" alt="logo-img" />
+              <img class="logo" src="@/assets/logo/tacna.png" alt="logo-img" />
               <ul>
                 <li>S</li>
                 <li>v</li>
@@ -133,12 +133,12 @@ export default {
   components: {},
   data() {
     return {
-      prva_saradnja: require("../assets/pics/saradnja/slika-1.png"),
-      druga_saradnja: require("../assets/pics/saradnja/slika-2.png"),
-      treca_saradnja: require("../assets/pics/saradnja/slika-3.png"),
-      prvi_mediji: require("../assets/pics/mediji/slika-1.png"),
-      drugi_mediji: require("../assets/pics/mediji/slika-2.png"),
-      treci_mediji: require("../assets/pics/mediji/slika-3.png"),
+      prva_saradnja: require("@/assets/pics/saradnja/slika-1.png"),
+      druga_saradnja: require("@/assets/pics/saradnja/slika-2.png"),
+      treca_saradnja: require("@/assets/pics/saradnja/slika-3.png"),
+      prvi_mediji: require("@/assets/pics/mediji/slika-1.png"),
+      drugi_mediji: require("@/assets/pics/mediji/slika-2.png"),
+      treci_mediji: require("@/assets/pics/mediji/slika-3.png"),
     };
   },
   computed: {

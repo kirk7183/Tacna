@@ -1,0 +1,66 @@
+.donacije_so {
+    .v-card__title {
+        margin-right: 5px !important;
+        margin-left: 5px !important;
+    }
+    .switch {
+        margin-top: 0 !important;
+        padding-top: 4px !important;
+        height: 32px !important;
+        //DA SWITCH FALSE PROMENI FIXNU BELU BOJU U CRVENU TJ. NA LEVO
+        .v-input--selection-controls__input div {
+            color: white;
+        }
+    }
+    .put_border {
+        border: thin solid wheat;
+        padding: 10px;
+        border-radius: 25px;
+        -webkit-border-radius: 25px;
+        -moz-border-radius: 25px;
+        -ms-border-radius: 25px;
+        -o-border-radius: 25px;
+    }
+    .donacije_text {
+        p {
+            text-indent: 0 !important;
+        }
+        p.no-text-align {
+            text-align: start !important;
+        }
+        .razlog_donacije {
+            line-height: 2rem;
+        }
+    }
+    b {
+        font-size: 14px !important;
+    }
+    //da ne moze text da se selektuje
+    .pointer {
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        /* iOS Safari */
+        -webkit-user-select: none;
+        /* Safari */
+        -khtml-user-select: none;
+        /* Konqueror HTML */
+        -moz-user-select: none;
+        /* Old versions of Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently
+       supported by Chrome, Edge, Opera and Firefox */
+    }
+    .circular {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        .v-progress-circular {
+            margin: 1rem;
+        }
+        .v-progress-circular__overlay {
+            color: $main-icon-color;
+        }
+    }
+}
