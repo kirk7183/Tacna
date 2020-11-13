@@ -1,0 +1,87 @@
+        .obavestenja,
+        .o_nama_so,
+        .obavestenje_so,
+        .donacije_so,
+        .banka_so {
+            .v-card {
+                padding: 4px !important;
+            }
+            .v-card__title {
+                justify-content: center !important;
+                background-color: $main-solidarnost;
+                font-size: 18px !important;
+                word-break: keep-all;
+                // justify-self: space-around !important;
+                text-align: center;
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+            .v-card__text {
+                padding-top: 10px !important;
+                padding-bottom: 8px !important;
+            }
+            .first-child {
+                margin-top: 24px;
+            }
+            .ceo-text {
+                text-align: justify !important;
+                font-size: 14px !important;
+                text-indent: 2em !important;
+                margin-bottom: 10px !important;
+                &-naslov {
+                    text-align: center;
+                    margin-top: 25px;
+                    margin-bottom: 20px;
+                    line-height: 2.5rem !important;
+                    font-weight: 600 !important;
+                    &-xs {
+                        font-size: 16px;
+                    }
+                    &-smAndUp {
+                        font-size: 20px;
+                    }
+                }
+                &-podnaslov {
+                    font-size: 17px !important;
+                    margin-top: 24px;
+                    text-align: center;
+                }
+            }
+            .no-indent {
+                text-indent: 0 !important;
+            }
+            .no-align {
+                text-align: start !important;
+            }
+            // .ceo-text-naslov {
+            //     text-align: center;
+            //     margin-top: 25px;
+            //     margin-bottom: 20px;
+            //     line-height: 2.5rem !important;
+            //     font-weight: 600 !important;
+            //     &-xs {
+            //         font-size: 16px;
+            //     }
+            //     &-smAndUp {
+            //         font-size: 20px;
+            //     }
+            // }
+            // .ceo-text-naslov-xs {
+            //     font-size: 16px;
+            // }
+            // .ceo-text-naslov-smAndUp {
+            //     font-size: 20px;
+            // }
+            // .ceo-text-podnaslov {
+            //     font-size: 17px !important;
+            //     margin-top: 24px;
+            //     text-align: center;
+            // }
+            .column {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+            .bank_card {
+                background-color: $main-v-card-background;
+            }
+        }

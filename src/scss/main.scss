@@ -1,17 +1,16 @@
 @import "mixin";
 @import "variables";
-@import "./views/intro.scss";
-@import "./views/home.scss";
-@import "./views/navbar.scss";
-@import "./views/footer.scss";
-@import "./views/aukcija.scss";
-@import "./views/obavestenja.scss";
+@import "./views/main/intro.scss";
+@import "./views/main/home.scss";
+@import "./views/main/navbar.scss";
+@import "./views/glavni_meni/obavestenja/obavestenja.scss";
 @import "./components/dialogs/dialog_da_ne.scss";
 @import "./components/dialogs/dialog_for_login.scss";
 @import "./add-ons/snackbar.scss";
-@import "./views/meni/solidarnost_online/solidarnost_online.scss";
-@import "./views/meni/solidarnost_online/v-cards.scss";
-@import "./views/meni/solidarnost_online/banka.scss";
+@import "./views/glavni_meni/solidarnost_online/solidarnost_online.scss";
+@import "./views/glavni_meni/solidarnost_online/v-cards.scss";
+@import "./views/glavni_meni/solidarnost_online/banka.scss";
+@import "./views/glavni_meni/solidarnost_online/donacije_so.scss";
 @font-face {
     font-family: "HennyPenny";
     src: local("HennyPenny"), url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");

@@ -78,7 +78,6 @@ export default {
       }
     },
     activePage(value) {
-      console.log(value);
       return (this.activePage = value);
     },
   },

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Intro from '@/views/Intro.vue'
-import Home from '../views/Home.vue'
+import Intro from '@/views/main/Intro.vue'
+import Home from '@/views/main/Home.vue'
 
 //resava problem kada dva puta kliknemo na isti link i ponavlja se komanda PUSH
 //tada izbacuje gresku "NavigationDuplicated"
@@ -16,7 +16,7 @@ const routes = [{
         path: '*',
         name: '404',
         component: () =>
-            import ('@/views/NotFound.vue')
+            import ('@/views/main/NotFound.vue')
     },
     {
         path: '/',
@@ -33,38 +33,38 @@ const routes = [{
                 path: '/obavestenja',
                 name: 'Obavestenja',
                 component: () =>
-                    import ('../views/meni/Obavestenja.vue')
+                    import ('../views/glavni_meni/Obavestenja.vue')
             },
             {
                 path: '/aukcija',
                 name: 'Aukcija',
                 component: () =>
-                    import ('../views/meni/Aukcija.vue')
+                    import ('../views/glavni_meni/Aukcija.vue')
             },
             {
                 path: '/popusti',
                 name: 'Popusti',
                 component: () =>
-                    import ('../views/meni/Popusti.vue')
+                    import ('../views/glavni_meni/Popusti.vue')
             },
             {
                 path: '/nudim',
                 name: 'Nudim',
                 component: () =>
-                    import ('../views/meni/Nudim.vue')
+                    import ('../views/glavni_meni/Nudim.vue')
             },
             {
                 path: '/trazim',
                 name: 'Trazim',
                 component: () =>
-                    import ('../views/meni/Trazim.vue')
+                    import ('../views/glavni_meni/Trazim.vue')
             },
             {
                 path: '/solidarnost_online',
                 name: 'Solidarnost_online',
                 redirect: '/solidarnost_online/o_nama_so',
                 component: () =>
-                    import ('../views/meni/Solidarnost_online.vue'),
+                    import ('../views/glavni_meni/Solidarnost_online.vue'),
                 //CHILDRED !!!!
                 children: [{
                         path: '/solidarnost_online/o_nama_so',
@@ -107,7 +107,7 @@ const routes = [{
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () =>
-            import ( /* webpackChunkName: "about" */ '../views/About.vue')
+            import ( /* webpackChunkName: "about" */ '../views/main/About.vue')
     }
 
 ]

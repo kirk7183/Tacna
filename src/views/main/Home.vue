@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Snackbar from "../components/add-ons/Snackbar.vue";
+import Snackbar from "@/components/add-ons/Snackbar.vue";
 export default {
   components: { Snackbar },
   computed: {
