@@ -31,7 +31,8 @@ export default {
           naslov: "Obaveštenje",
           // "Postoji mogućnost da prilikom logovanja ne vidite svoju FB profilnu sliku u 'krugu', problem uglavnom stvara 'Avast Online Security'. Radimo na uklanjanju problema.",
           text: [
-            "Poštovani, obaveštavamo Vas da je aplikacija u fazi razvoja i shodno tome želimo da znate da neke od opcija neće raditi kako je predvidjeno. Ukoliko imate bilo kakvu preporuku za unapredjenje aplikacije obratite nam se putem mail-a vasicigorjsp@gmail.com",
+            "Poštovani, obaveštavamo Vas da je aplikacija u fazi razvoja i shodno tome želimo da znate da neke od opcija neće raditi kako je predvidjeno.",
+            "Ukoliko želite da saradjujemo kako bi se ovaj projekat ostvario ili imate bilo kakvu preporuku za unapredjenje aplikacije, slobodno nam se obratite putem mail-a vasicigorjsp@gmail.com. Otvoreni smo za svaku vrstu saradnje.",
             "Logovanje još uvek nije omogućeno zato što je program još u razvoju.",
           ],
         },

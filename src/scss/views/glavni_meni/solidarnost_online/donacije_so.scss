@@ -21,6 +21,16 @@
         -ms-border-radius: 25px;
         -o-border-radius: 25px;
     }
+    p.align-center {
+        margin: 0 !important;
+        margin-top: 20px !important;
+        text-align: center !important;
+        text-indent: 0 !important;
+    }
+    p.no-pa-ma {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
     .donacije_text {
         p {
             text-indent: 0 !important;
@@ -55,12 +65,15 @@
     .circular {
         display: flex;
         justify-content: center;
-        margin-top: 30px;
         .v-progress-circular {
             margin: 1rem;
         }
         .v-progress-circular__overlay {
             color: $main-icon-color;
         }
+    }
+    .v-card__title-xs {
+        display: flex;
+        flex-direction: column;
     }
 }
