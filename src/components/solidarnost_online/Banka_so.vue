@@ -19,7 +19,7 @@
               </p>
               <div class="novac">
                 <p class="stanje_text">Doniran novac :</p>
-                <p class="stanje_novac">5000,00 din</p>
+                <p class="stanje_novac">14.350,00 din</p>
               </div>
             </v-card-text>
             <v-card-text class="px-1 px-md-7">
