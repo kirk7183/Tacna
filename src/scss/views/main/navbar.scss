@@ -59,9 +59,49 @@ i {
     font-size: 12px !important;
 }
 
-.sm-breakpoint {
-    .ispis-tacna {
-        @include tacna-ispis;
-        font-size: 35px;
+.fb-name {
+    text-align: center;
+    // font-weight: bold;
+    font-size: 16px !important;
+}
+
+.happy_coin {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 13px;
+    p {
+        margin: 0;
+        max-width: 50% !important;
     }
 }
+
+.div_checkbox {
+    margin-top: 0;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.checkbox {
+    margin-top: 0;
+}
+
+.checkbox {
+    //checkbox i text
+    .theme--light.v-icon,
+    .theme--light.v-label {
+        // color: black !important;
+        font-weight: lighter !important;
+        // font-size: 16px !important;
+    }
+    //checkbox da nema krug oko kockice
+    .v-input--selection-controls__ripple {
+        height: 0 !important;
+    }
+}
+
+.mdi-chevron-up {
+    padding-right: 0 !important;
+}
+
+// google-site-verification=nG90_cX3zpARX9DxSQz8lmkk5OGerJtCsiA3F9xU_QQ

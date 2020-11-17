@@ -43,8 +43,8 @@ cli, babel, eslint, router, vuex, sass, vuetify
 
 ## Short info:
 
-SPA (Single-page application) shop application. Sellers can CRUD their products and services. Buyers can buy for a fixed price or bid if the seller allows it
+SPA (Single-page application) shop application. Sellers can CRUD their products and services. Buyers can buy for a fixed price or bid if the seller allows it.
 
 ## Live demo
 
-    https://farmakon-ff747.web.app/
+    https://tacna-c1c54.web.app/

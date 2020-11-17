@@ -29,6 +29,8 @@
         </v-chip>
       </div>
     </v-app-bar>
+
+    <!-- INTERN ROUTER-->
     <transition name="fade" mode="out-in">
       <router-view> </router-view>
     </transition>

@@ -5,16 +5,16 @@
       <v-spacer></v-spacer>
       <p class="ispis-tacna">Tacna</p>
       <v-spacer></v-spacer>
-
+      <!--prijava ako nisi logovan ili krug sa slikom ako si logovan-->
       <v-chip
-        v-if="Facebook_Data.user_displayName == 'niste logovani'"
+        v-if="Facebook_Data.user_displayName == 'Niste logovani'"
         class="chipic ma-2"
         @click="dialog_for_login = true"
       >
         <v-avatar left>
           <v-icon>mdi-account-circle</v-icon>
         </v-avatar>
-        Login
+        Prijava
       </v-chip>
 
       <div v-else class="profile-pic-div">
@@ -25,6 +25,7 @@
         />
       </div>
     </v-app-bar>
+
     <!-- NAVIGATION DRAWER-->
     <v-navigation-drawer v-model="drawer" app temporary hide-overlay>
       <v-list nav dense>
@@ -41,24 +42,45 @@
           </div>
           <br />
 
-          <!-- Promena ispisa ako je logovan ili ako nije-->
+          <!-- Promena ispisa ako je logovan ili ako nije u navigation drawer-->
+          <p class="v-list-item__title fb-name">
+            {{ Facebook_Data.user_displayName }}
+          </p>
+          <!--Sekcija za ispis podataka korisnika (displayName sa FB, 
+          happy coin iz baze tj sa Marsa i prepoznavanje da li ima extra opcije i koje)-->
+          <div class="logovan_korisnik_info">
+            <div class="happy_coin" v-if="check_is_loggedIn">
+              <v-img src="@/assets/happy-coin.png" max-width="30px"></v-img>
+              <p class="v-list-item__title fb-name">
+                Happy coin: {{ reg_korisnik.podaci.happy_coin }}
+              </p>
+            </div>
+            <div class="div_checkbox v-list-item__title fb-name">
+              <v-checkbox
+                v-if="reg_korisnik.podaci.dozvola > 3"
+                v-model="privilegije"
+                :label="naziv_privilegija"
+                class="checkbox"
+              ></v-checkbox>
+            </div>
+          </div>
           <v-btn
             text
             class="login_logout_btn"
             :class="
-              this.Facebook_Data.user_displayName != 'niste logovani'
+              this.Facebook_Data.user_displayName != 'Niste logovani'
                 ? `logout_btn`
                 : `login_btn`
             "
             @click="login_logout"
             >{{
-              this.Facebook_Data.user_displayName != "niste logovani"
-                ? "Logout"
-                : "Login"
+              this.Facebook_Data.user_displayName != "Niste logovani"
+                ? "Odjava"
+                : "Prijava"
             }}</v-btn
           >
 
-          <!--PETLJA -->
+          <!--PETLJA ZA ISPIS OPCIJA-->
           <v-list-item
             v-for="(jednaOpcija, i) in sveOpcije"
             :key="i"
@@ -70,6 +92,7 @@
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
+
     <!-- IMPORT COMPONENT -->
     <DialogDaNe :tip_dialoga="'fb_logout'">
       <template v-slot:title>Da li želite da se odjavite ?</template>
@@ -108,11 +131,7 @@ export default {
       ],
     };
   },
-  watch: {
-    groupClose() {
-      this.drawer = false;
-    },
-  },
+
   beforeCreate() {
     //ako se ugasi browser ili se refresh stranica i ako u firebase je jos uvek logovan
     //korisnik, onda da ubaci njegove podatke u Vuex
@@ -122,7 +141,7 @@ export default {
     //When refresh page to check on what route is page and then setup activePage
     if (this.$route.path == "/obavestenje") {
       this.activePage = 1;
-      //provera ukoliko URL sadrzi deo reci solidarnost ("darnost") nebitno da li je parent ili child u URL-u
+      //provera ukoliko URL sadrzi deo reci solidarnost ("solidarnost") nebitno da li je parent ili child u URL-u
       //ako postoji "darnost u URL onda pri Created() stranice stavi da je activePage=2"
     } else if (window.location.href.indexOf("solidarnost") > -1) {
       this.activePage = 2;
@@ -136,9 +155,41 @@ export default {
       this.activePage = 6;
     }
   },
+  beforeMount() {},
 
   computed: {
+    naziv_privilegija() {
+      let label;
+      if (this.reg_korisnik.podaci.dozvola === 3) {
+        label = "Moderador opcije";
+      } else if (this.reg_korisnik.podaci.dozvola === 5) {
+        label = "Admin opcije";
+      }
+      return label;
+    },
+    //da li je logovan korisnik
+    check_is_loggedIn: {
+      get() {
+        return this.$store.getters.get_IsLoggedIn;
+      },
+    },
+    //za checkbox ako je admin ili moderator da pokaze checkbox za dodatne opcije
+    privilegije: {
+      get() {
+        return this.$store.getters.privilegije_boolean;
+      },
+      set(newValue) {
+        this.$store.dispatch("show_privilegije", newValue);
+      },
+    },
+    //podaci iz baze sa Marsa
+    reg_korisnik: {
+      get() {
+        return this.$store.getters.get_reg_korisnik;
+      },
+    },
     //ocitava podatke iz Vuexa
+    //fb podaci
     Facebook_Data: {
       get() {
         return this.$store.getters.Facebook_user_data;
@@ -160,6 +211,7 @@ export default {
         this.$store.dispatch("set_dialog_for_login", newValue);
       },
     },
+    //odredjivanje i postavljanje koje je dugme aktivno tj mali kruzic na icon
     buttonColor_selected() {
       let result = [];
       for (let i = 1; i <= 6; i++) {
@@ -174,7 +226,7 @@ export default {
   },
   methods: {
     login_logout() {
-      if (this.Facebook_Data.user_displayName == "niste logovani") {
+      if (this.Facebook_Data.user_displayName == "Niste logovani") {
         this.dialog_for_login = true;
       } else {
         this.facebook_logout = true;
