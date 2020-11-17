@@ -5,8 +5,7 @@
         Odaberite način logovanja:
       </v-card-title>
       <v-card-text class="text-center">
-        Trenutno radi logovanje samo preko FB naloga. U pripremi su i drugi
-        načini logovanja.
+        Logovanje preko Google account-a je u pripremi.
       </v-card-text>
       <v-card-actions class="action-dialog-login">
         <!--Facebook login -->
@@ -43,6 +42,7 @@ export default {
       this.$store.dispatch("Facebook_login");
       this.dialog_for_login = false;
     },
+    login_registracija() {},
   },
 };
 </script>

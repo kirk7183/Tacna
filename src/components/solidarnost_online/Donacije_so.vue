@@ -179,6 +179,7 @@ export default {
       ],
     };
   },
+
   computed: {
     donacije() {
       var result;
