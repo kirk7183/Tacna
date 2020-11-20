@@ -1,0 +1,30 @@
+.dialog_add_obavestenja {
+    .v-card__title {
+        margin-bottom: 20px !important;
+    }
+    .col {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .v-textarea {
+        padding: 12px !important;
+        margin: 0 !important;
+    }
+    .v-text-field {
+        padding: 12px !important;
+        margin: 0 !important;
+    }
+    .v-card__text {
+        padding: 0 !important;
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+        ;
+    }
+    .v-btn {
+        width: 75px !important;
+    }
+    .v-messages__message {
+        color: #ff5252 !important
+    }
+}

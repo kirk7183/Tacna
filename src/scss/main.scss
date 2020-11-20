@@ -8,10 +8,11 @@
 @import "./components/dialogs/dialog_for_login.scss";
 @import "./add-ons/snackbar.scss";
 @import "./views/glavni_meni/solidarnost_online/solidarnost_online.scss";
-@import "./views/glavni_meni/solidarnost_online/v-cards.scss";
+@import "./views/main/v-cards.scss";
 @import "./views/glavni_meni/solidarnost_online/banka.scss";
 @import "./views/glavni_meni/solidarnost_online/donacije_so.scss";
 @import "./views/main/ScrollUp_Fab.scss";
+@import "./components/dialogs/dialog_add_obavestenja.scss";
 @font-face {
     font-family: "HennyPenny";
     src: local("HennyPenny"), url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");
@@ -25,7 +26,7 @@ div.row {
     margin: 0;
     padding: 0;
     box-sizing: border-box !important;
-    font-family: sans-serif;
+    font-family: 'Segoe UI historic';
     font-size: 12px;
     color: black;
 }

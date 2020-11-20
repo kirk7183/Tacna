@@ -1,49 +1,65 @@
 <template>
-  <div class="info_so">
-    <v-card class="information_so" elevation="5">
-      <v-card-title style="naslov"> "Solidarnost online" </v-card-title>
+  <div class="obavestenja">
+    <!-- OBAVESTENJA-->
+    <!-- v-for="(text1, ii) in jedno_obavestenje.text"
+        :key="ii" -->
+    <v-card
+      v-for="(jedno_obavestenje, i) in glavna_obavestenja"
+      :key="i"
+      class="ma-4 mx-2 my-4 mx-sm-4 my-sm-6 mx-md-8 my-md-12"
+      elevation="5"
+    >
+      <!-- <v-row justify="center" align="center">
+        <v-btn small><i class="fas fa-pencil-alt"></i></v-btn>
+        <v-btn text class="edit_delete">
+          <i class="fas fa-pencil-alt fa-1x"></i
+        ></v-btn>
+      </v-row> -->
+      <!--kraj-->
+      <v-card-title>
+        <!-- <div> -->
+        <v-flex class="asd" xs11> {{ jedno_obavestenje.naslov }} </v-flex>
 
-      <v-card-text>
-        <p class="ceo-text-podnaslov">Informacije o organizaciji</p>
-        <p class="ceo-text">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
-          aenean sed adipiscing diam donec adipiscing. Iaculis urna id volutpat
-          lacus laoreet. Vel turpis nunc eget lorem dolor sed. Ut pharetra sit
-          amet aliquam id diam maecenas. Metus vulputate eu scelerisque felis.
-          Odio ut enim blandit volutpat. Phasellus egestas tellus rutrum tellus.
-          In egestas erat imperdiet sed euismod. Vitae tempus quam pellentesque
-          nec nam. Amet tellus cras adipiscing enim eu turpis egestas pretium.
-          Neque viverra justo nec ultrices dui sapien. At elementum eu facilisis
-          sed odio morbi quis commodo odio. Ipsum dolor sit amet consectetur
-          amet cursus. Leo vel orci porta non pulvinar neque laoreet
-          suspendisse. At ultrices mi haretra et ultrices neque ornare aenean
+        <!-- </div> -->
+        <!--////////////////////////////////////////////-->
+        <!--- fdssssssssf-->
+        <v-flex xs1 class="asd">
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn text x-small v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title>Prepravka</v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>Brisanje</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-flex>
+        <!------------------->
+        <v-col class="text-right" v-if="get_privilegije">
+          <v-btn icon class="edit_delete">
+            <v-icon small size="2">mdi-file-edit</v-icon>
+          </v-btn>
+          <v-btn> <i class="fas fa-pencil-alt"></i></v-btn>
+          <v-btn text class="edit_delete">
+            <i class="fas fa-pencil-alt fa-1x"></i
+          ></v-btn>
+        </v-col>
+        <!--kraj-->
+      </v-card-title>
+      <v-card-text
+        class="px-md-7"
+        :class="first_last_child(i, jedno_obavestenje.text.length)"
+      >
+        <p class="ceo-text" style="white-space: pre-wrap">
+          {{ jedno_obavestenje.text }}
         </p>
       </v-card-text>
-    </v-card>
-    <v-card class="information_so" elevation="5">
-      <v-card-title> Članovi odbora </v-card-title>
-
-      <v-layout
-        row
-        class="mx-auto"
-        v-for="(podatak, i) in podaci_organizatori"
-        :key="i"
-      >
-        <v-flex xs12 sm12 md12 lg6 class="d-flex justify-center">
-          <v-card class="card-in-card" width="750">
-            <v-row>
-              <v-col cols="6" sm="4" class="mx-auto">
-                <v-img src="`${podatak.pic}`" max-width="100px" class="mx-auto">
-                </v-img>
-              </v-col>
-              <v-col cols="12" sm="8">
-                <p>{{ podatak.text }}</p>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-flex>
-      </v-layout>
     </v-card>
   </div>
 </template>
@@ -52,29 +68,59 @@
 export default {
   data() {
     return {
-      podaci_organizatori: [
-        {
-          pic: "@/assets/solidarnost_online/organizatori/avatar.png",
-          text:
-            "Rodjen 1969. u Novom Sadu. Bavio se...Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut.",
-        },
-        {
-          pic: "@/assets/solidarnost_online/organizatori/avatar.png",
-          text:
-            "Rodjen 1969. u Novom Sadu. Bavio se...Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut.",
-        },
-        {
-          pic: "@/assets/solidarnost_online/organizatori/avatar.png",
-          text:
-            "Rodjen 1969. u Novom Sadu. Bavio se...Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut.",
-        },
-        {
-          pic: "@/assets/solidarnost_online/organizatori/avatar.png",
-          text:
-            "Rodjen 1969. u Novom Sadu. Bavio se...Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut.",
-        },
-      ],
+      obavestenja: "",
+      // obavestenja: [
+      //   {
+      //     naslov: "Obaveštenje",
+      //     // "Postoji mogućnost da prilikom logovanja ne vidite svoju FB profilnu sliku u 'krugu', problem uglavnom stvara 'Avast Online Security'. Radimo na uklanjanju problema.",
+      //     text: [
+      //       "Poštovani, obaveštavamo Vas da je aplikacija u fazi razvoja i shodno tome želimo da znate da neke od opcija neće raditi kako je predvidjeno.",
+      //       "Ukoliko želite da saradjujemo kako bi se ovaj projekat ostvario ili imate bilo kakvu preporuku za unapredjenje aplikacije, slobodno nam se obratite putem mail-a vasicigorjsp@gmail.com. Otvoreni smo za svaku vrstu saradnje.",
+      //       "Logovanje još uvek nije omogućeno zato što je program još u razvoju.",
+      //     ],
+      //   },
+      //   {
+      //     naslov: "Upoznajte se sa idejom i načinom rada aplikacije",
+      //     text: [
+      //       "Cilj aplikacije je da se skupe svi proizvodi i sve usluge iz našeg komšiluka na jedno mesto. Postoji par razloga za to: ",
+      //       "1. Stalno zapitkujemo po FB grupama da li neko zna gde ima da se kupi neki proizvod ili da li znamo nekoga ko obavlja odredjenu uslugu.",
+      //       "2. Reklamirajući svoje usluge i proizvode konstantno se bombarduju grupe koje nisu namenjene za to.",
+      //       "3. Potreba da možemo da vidimo odredjene proizvode/usluge na jednom mestu, da ih sortiramo i da vidimo dodatne informacije kao sto su: slika odredjenog proizvod, adresa gde se može kupiti proizvod ili dobiti odredjena usluga, broj telefona radi dodatnih informacija ili zakazivanja usluga, informacija da li se odredjeni proizvod dostavlja na kućnu adresu i kojim danima, da li drugi korisnici preporučuju odredjeni proizvod ili uslugu itd.",
+      //       "Postoje i dve stvari koje će mnogima biti zanimljive a to su popusti i licitacija proizvoda.",
+      //       "Popusti su nešto na šta ćemo posebno obratiti pažnju pre svega zbog lažnih popusta. Ideja je da ukoliko neko želi da se njegov proizvod ili usluga nadju u posebno namenjenoj grupi za popuste, moraće da budu objavljeni na sajtu barem 2 nedelje pre toga, kako ne bi došlo do toga da neko postavi odredjeni proizvod/uslugu i odmah napiše 'popust, sniženje ili akcija'. Takodje proizvod ili usluga će morati biti sniženi minimum 20% kako bi cela priča imala smisao. Razlog tome jeste 'DA POPUST BUDE POPUST' a ne marketinški trik gde će samo pisati da je proizvod/usluga sa sniženom cenom.",
+      //       "Što se tiče licitacije, ukoliko imate neki proizvod za koji ne znate za koju bi ste ga cenu prodali, želite da dobijete što bolju cenu ili Vam jednostavno proizvod ne treba, možete ga dati na licitaciju gde će osoba sa najvećom ponudom moći da kupi odredjeni proizvod nakon isteka 24 ili 48h u zavisnosti od vaših podešavanja. Ove licitacije će posebno biti zanimljive za humanitarne organizacije koje sredstva za pomoć skupljaju na ovaj način.",
+      //       "Veoma je bitno da naglasimo da je ova aplikacija eksperimentalna i kao takva ne služi za reklamiranje već kao sredstvo informisanja kako bi se utvrdilo koliko je gradjanima ovako nešto potrebno i kako bi se usput pomoglo humanitarnim organizacijama. Sve uplate koje se budu vršile a tiču se direktno same aplikacije, biće direktno uplaćivanje od strane DONATORA na račun neke od humanitarnih organizacija. To znači ukoliko neko želi da se njegov proizvod nadje na vrhu odredjene liste kako bi bio najzapaženiji kod kupaca, moraće da uplati odredjenu svotu novca nekoj humanitarnoj organizaciji po njegovom izboru.",
+      //       "Takodje ne odgovaramo za tačnost oglasa niti garantujemo da ćе se kupovina ili usluga obaviti, zato što ovo nije sajt za reklamiranje.",
+      //     ],
+      //   },
+      // ],
     };
+  },
+  mounted() {
+    //kada se refreshuje stranica ako je array sa glavnim obavestenjima prazan onda pozovi api da ocita ponovo
+    if (this.$store.state._API.glavna_obavestenja == "") {
+      this.$store.dispatch("_API/api_get_glavna_obavestenja");
+    }
+  },
+  computed: {
+    glavna_obavestenja: {
+      get() {
+        return this.$store.getters["_API/get_glavna_obavestenja"];
+      },
+    },
+    //ako je "dozvola" 3 ili veca onda je true
+    get_privilegije() {
+      return this.$store.getters.get_privilegije_boolean;
+    },
+  },
+  methods: {
+    first_last_child(ii, duzina) {
+      return ii === duzina - 1
+        ? "last-child"
+        : ii === 0
+        ? `first-child`
+        : `animals-${ii}`;
+    },
   },
 };
 </script>

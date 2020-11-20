@@ -47,4 +47,4 @@ SPA (Single-page application) shop application. Sellers can CRUD their products 
 
 ## Live demo
 
-    https://tacna-c1c54.web.app/
+    http://031n122.mars1.mars-hosting.com/

@@ -60,6 +60,12 @@ const routes = [{
                     import ('../views/glavni_meni/Trazim.vue')
             },
             {
+                path: '/izgubljeno_nadjeno',
+                name: 'Izgubljeno_nadjeno',
+                component: () =>
+                    import ('../views/glavni_meni/Izgubljeno_nadjeno.vue')
+            },
+            {
                 path: '/solidarnost_online',
                 name: 'Solidarnost_online',
                 redirect: '/solidarnost_online/o_nama_so',

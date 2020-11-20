@@ -14,10 +14,14 @@
         border: thin solid $main-icon-color !important;
     }
     .v-chip {
-        width: 200px !important;
+        min-width: 100px !important;
+        // width: 200px !important;
         justify-content: center;
         background-color: white !important;
         cursor: pointer;
+    }
+    .v-chip-lgAndUp {
+        width: 220px !important;
     }
     .v-chip__content,
     i.v-icon {

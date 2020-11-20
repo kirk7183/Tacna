@@ -9,7 +9,35 @@
       class="ma-4 mx-2 my-4 mx-sm-4 my-sm-6 mx-md-8 my-md-12"
       elevation="5"
     >
-      <v-card-title>{{ jedno_obavestenje.naslov }}</v-card-title>
+      <v-card-title>
+        <v-spacer></v-spacer>
+        {{ jedno_obavestenje.naslov }}
+        <v-spacer></v-spacer>
+        <!--ako ima dozvolu 3 i vise -->
+        <v-menu offset-y v-if="get_privilegije">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn text x-small v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-list-item-title class="item">Prepravka</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title
+                class="item"
+                @click="
+                  (dialog_da_ne = true),
+                    (obav_id = jedno_obavestenje.obav_id),
+                    (naslov = jedno_obavestenje.naslov)
+                "
+                >Brisanje</v-list-item-title
+              >
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-card-title>
       <v-card-text
         class="px-md-7"
         :class="first_last_child(i, jedno_obavestenje.text.length)"
@@ -19,14 +47,27 @@
         </p>
       </v-card-text>
     </v-card>
+    <DialogDaNe
+      :tip_dialoga="'brisanje_glavna_obavestenja'"
+      :obavestenje_id="obav_id"
+    >
+      <template v-slot:title>Brisanje !!!</template>
+      <template v-slot:text>Obaveštenje "{{ naslov }}"?</template>
+    </DialogDaNe>
   </div>
 </template>
 
 <script>
 export default {
+  components: {
+    DialogDaNe: () => import("@/components/dialogs/Dialog_da_ne.vue"),
+  },
   data() {
     return {
-      obavestenja: "",
+      obav_id: "",
+      naslov: "",
+
+      // obavestenja: "",
       // obavestenja: [
       //   {
       //     naslov: "Obaveštenje",
@@ -55,14 +96,28 @@ export default {
     };
   },
   mounted() {
+    //kada se refreshuje stranica ako je array sa glavnim obavestenjima prazan onda pozovi api da ocita ponovo
     if (this.$store.state._API.glavna_obavestenja == "") {
-      this.$store.dispatch("_API/api_glavna_obavestenja");
+      this.$store.dispatch("_API/api_get_glavna_obavestenja");
     }
   },
   computed: {
     glavna_obavestenja: {
       get() {
         return this.$store.getters["_API/get_glavna_obavestenja"];
+      },
+    },
+    //ako je "dozvola" 3 ili veca onda je true
+    get_privilegije() {
+      return this.$store.getters.get_privilegije_boolean;
+    },
+    //REUSABLE DIALOG ZA DA NE PITANJE
+    dialog_da_ne: {
+      get() {
+        return this.$store.getters.get_showDialog_da_ne;
+      },
+      set(newValue) {
+        this.$store.dispatch("set_showDialog_da_ne", newValue);
       },
     },
   },
