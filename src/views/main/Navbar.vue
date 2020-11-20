@@ -21,7 +21,7 @@
         <img
           class="profile-pic"
           :src="Facebook_Data.user_pic"
-          @click="facebook_logout = true"
+          @click="dialog_da_ne = true"
         />
       </div>
     </v-app-bar>
@@ -106,12 +106,11 @@
 </template>
 
 <script>
-import DialogDaNe from "@/components/dialogs/Dialog_da_ne.vue";
 import DialogLoading from "@/components/dialogs/Dialog_loading";
 import DialogForLogin from "@/components/dialogs/Dialog_for_login";
 export default {
   components: {
-    DialogDaNe,
+    DialogDaNe: () => import("@/components/dialogs/Dialog_da_ne.vue"),
     DialogLoading,
     DialogForLogin,
   },
@@ -128,6 +127,7 @@ export default {
         { opcija: "Popusti - jos ne radi", broj: 4 },
         { opcija: "Nudim - jos ne radi", broj: 5 },
         { opcija: "Trazim - jos ne radi", broj: 6 },
+        { opcija: "Izgubljeno - nadjeno - jos ne radi", broj: 7 },
       ],
     };
   },
@@ -153,11 +153,14 @@ export default {
       this.activePage = 5;
     } else if (this.$route.path == "/trazim") {
       this.activePage = 6;
+    } else if (this.$route.path == "/izgubljeno_nadjeno") {
+      this.activePage = 7;
     }
   },
   beforeMount() {},
 
   computed: {
+    //ako ima korisnik "dozvolu" vecu od 3 onda dobija checkbox sa odredjenim nazivom u zavisnosti od visine dozvole
     naziv_privilegija() {
       let label;
       if (this.reg_korisnik.podaci.dozvola === 3) {
@@ -195,7 +198,8 @@ export default {
         return this.$store.getters.Facebook_user_data;
       },
     },
-    facebook_logout: {
+    //REUSABLE DIALOG ZA DA NE PITANJE
+    dialog_da_ne: {
       get() {
         return this.$store.getters.get_showDialog_da_ne;
       },
@@ -229,7 +233,7 @@ export default {
       if (this.Facebook_Data.user_displayName == "Niste logovani") {
         this.dialog_for_login = true;
       } else {
-        this.facebook_logout = true;
+        this.dialog_da_ne = true;
       }
     },
     changePage(broj) {
@@ -254,6 +258,9 @@ export default {
       } else if (broj == 6) {
         this.$router.push({ path: "/trazim" });
         this.activePage = 6;
+      } else if (broj == 7) {
+        this.$router.push({ path: "/izgubljeno_nadjeno" });
+        this.activePage = 7;
       }
     },
     iconClose() {

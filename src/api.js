@@ -4,6 +4,8 @@ const API = axios.create({
 });
 
 export default {
-    glavna_obavestenja: params => API.get('/TacnaApi/glavni_meni/obavestenja', params),
-    provera_privilegija: params => API.post('/TacnaApi/main/provera_privilegija', params)
+    get_glavna_obavestenja: params => API.get('/TacnaApi/glavni_meni/obavestenja', params),
+    provera_privilegija: params => API.post('/TacnaApi/outh/provera_privilegija', params),
+    novo_obavestenje_post: params => API.post('TacnaApi/main/ExtraOption_Fab', params),
+    logout_post: params => API.post('TacnaApi/outh/logout', params)
 }

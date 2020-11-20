@@ -1,37 +1,39 @@
 <template>
   <v-dialog v-model="facebook_logout" max-width="400px">
-    <v-card>
-      <v-card-title
-        class="dialog_title justify-center"
-        :class="
-          $vuetify.breakpoint.xs
-            ? `body-1`
-            : $vuetify.breakpoint.smAndDown
-            ? `title`
-            : $vuetify.breakpoint.md
-            ? `headline`
-            : `headline`
-        "
-      >
-        <slot name="title">Ovde ide title</slot>
-      </v-card-title>
-      <v-card-text xs-12 sm6 offset-sm3>
-        <slot name="text"> </slot>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="success" class="dugme" @click="obradi_dialog">Da</v-btn>
-        <v-btn color="error" class="dugme" @click="facebook_logout = false"
-          >Ne</v-btn
+    <div class="dialog_da_ne">
+      <v-card>
+        <v-card-title
+          class="dialog_title justify-center"
+          :class="
+            $vuetify.breakpoint.xs
+              ? `title`
+              : $vuetify.breakpoint.smAndDown
+              ? `headline`
+              : $vuetify.breakpoint.md
+              ? `headline`
+              : `headline`
+          "
         >
-      </v-card-actions>
-    </v-card>
+          <slot name="title">Ovde ide title</slot>
+        </v-card-title>
+        <v-card-text xs-12 sm6 offset-sm3 class="ceo-text">
+          <slot name="text"> </slot>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="success" class="dugme" @click="obradi_dialog">Da</v-btn>
+          <v-btn color="error" class="dugme" @click="facebook_logout = false"
+            >Ne</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </div>
   </v-dialog>
 </template>
 
 <script>
 export default {
-  props: ["tip_dialoga"],
+  props: ["tip_dialoga", "obavestenje_id"],
   data() {
     return {
       dialog_: null,
@@ -52,9 +54,12 @@ export default {
   },
   methods: {
     obradi_dialog() {
+      console.log(this.dialog_);
       if (this.dialog_ == "fb_logout") {
-        this.$store.dispatch("Facebook_logout_store");
+        this.$store.dispatch("Logout");
         this.facebook_logout = false;
+      } else if (this.dialog_ == "brisanje_glavna_obavestenja") {
+        console.log(this.obavestenje_id);
       } else {
         console.log("nesto drugo");
       }

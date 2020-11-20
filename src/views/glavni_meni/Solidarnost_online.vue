@@ -2,7 +2,7 @@
   <div class="solidatnost_online">
     <v-app-bar class="app-bar" color="gray" elevation="1" height="50">
       <div v-for="(single, i) in icons" :key="i">
-        <!--1st breakpoint buttons -->
+        <!--1st breakpoint buttons smAndDown -->
         <v-btn
           v-if="$vuetify.breakpoint.smAndDown"
           icon
@@ -13,13 +13,18 @@
           <v-icon class="solidarnost_icon">{{ single.icon }}</v-icon>
         </v-btn>
 
-        <!--2nd breakpoint buttons -->
+        <!--2nd breakpoint buttons mdAndUp -->
+        <!-- bind za klasu su uradjena 2 ovde: da doda class name IconColor_selected[i]
+          kao i da kada je LG i veci ekran da poveca chip size posto izgleda da prema vuetify oni nisu responsive -->
         <v-chip
-          class="ma-2 pa-4"
           v-if="$vuetify.breakpoint.mdAndUp"
+          class="ma-2 pa-4"
+          :class="[
+            $vuetify.breakpoint.lgAndUp ? 'v-chip-lgAndUp' : '',
+            iconColor_selected[i],
+          ]"
           icon
           elevation="2"
-          :class="iconColor_selected[i]"
           @click="changePage(single, i)"
         >
           <v-avatar left>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from "firebase/app";
-import api from "@/api.js";
+import $api from "@/api.js";
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -15,27 +15,27 @@ export default new Vuex.Store({
         show_dialog_da_ne: false,
         show_dialog_loading: false,
         show_dialog_for_login: false,
+        show_dialog_add_obavestenja: false,
         snackbar: {
             boolean: false,
             message: '',
             color: '',
         },
         reg_korisnik: {
-            sid: '',
             podaci: {
-                korisnik_id: '',
-                ime: '',
-                prezime: '',
-                email: '',
+                korisnik_id: null,
+                ime: null,
+                prezime: null,
+                email: null,
                 datum_reg: null,
                 dozvola: null,
                 datum_log: null,
-                happy_coin: '0',
+                happy_coin: null,
                 happy_coin_rez: null,
-                status: ""
+                status: null
             }
         },
-        privilegije_boolean: false
+        privilegije_boolean: false,
     },
     getters: {
         get_IsLoggedIn: (state) => {
@@ -52,6 +52,9 @@ export default new Vuex.Store({
         },
         get_dialog_loading_status: (state) => {
             return state.show_dialog_loading;
+        },
+        get_dialog_add_obavestenja: (state) => {
+            return state.show_dialog_add_obavestenja;
         },
         get_snackbar_status: (state) => {
             return state.snackbar;
@@ -81,13 +84,15 @@ export default new Vuex.Store({
         SHOW_DIALOG_DA_NE(state, payload) {
             state.show_dialog_da_ne = payload;
         },
+        SHOW_DIALOG_ADD_OBAVESTENJA(state, payload) {
+            state.show_dialog_add_obavestenja = payload;
+        },
         TOGGLE_SNACKBAR(state, payload) {
             state.snackbar.boolean = payload.boolean;
             state.snackbar.message = payload.message;
             state.snackbar.color = payload.color;
         },
         PODACI_REG_KORISNIKA(state, payload) {
-            state.reg_korisnik.sid = payload.sid;
             state.reg_korisnik.podaci = payload.podaci
         },
         PRIVILEGIJE_PRIKAZI(state, payload) {
@@ -125,7 +130,6 @@ export default new Vuex.Store({
                             user_id +
                             "/picture?access_token=" +
                             access_token_fb;
-
                         commit("FB_USER_DATA", {
                                 user_displayName,
                                 fb_profile_pic,
@@ -134,20 +138,14 @@ export default new Vuex.Store({
                             commit("IS_LOGGED_IN", {
                                 IsLoggedIn: true
                             })
-                    } else {
-                        commit("IS_LOGGED_IN", {
-                            IsLoggedIn: false
-                        })
                     }
                 }).then(() => {
                     this.state.show_dialog_loading = false;
                     commit('TOGGLE_SNACKBAR', {
-                            boolean: true,
-                            message: 'Uspešno ste se prijavili',
-                            color: 'success'
-                        })
-                        //     //poziva api iz "_API" modula i action "api_is_reg_check"
-                        // dispatch('_API/api_is_reg_check', user_email, { root: true })
+                        boolean: true,
+                        message: 'Uspešno ste se prijavili',
+                        color: 'success'
+                    })
                 })
                 .catch((error) => {
                     console.log(error.code);
@@ -159,9 +157,12 @@ export default new Vuex.Store({
                 });
         },
 
-        Facebook_logout_store({ commit }) {
+        Logout({ commit, dispatch }) {
             firebase.auth().signOut().then(function() {
-                // Sign-out successful.
+                // Sign-out successful on firebase, then...
+                //na marsu brisanje session()
+                dispatch('_API/api_post_logout', { root: true })
+
                 commit("FB_USER_DATA", {
                     user_displayName: 'Niste logovani',
                     fb_profile_pic: null
@@ -173,33 +174,34 @@ export default new Vuex.Store({
                         boolean: true,
                         message: 'Uspešno ste se odjavili',
                         color: 'success'
-
                     })
-                    //KADA SE IZLOGUJE BRISANJE SIDA I PODATAKA 
+                    //KADA SE IZLOGUJE BRISANJE PODATAKA 
                 commit('PODACI_REG_KORISNIKA', {
-                        sid: '',
                         podaci: {
-                            korisnik_id: '',
-                            ime: '',
-                            prezime: '',
-                            email: '',
+                            korisnik_id: null,
+                            ime: null,
+                            prezime: null,
+                            email: null,
                             datum_reg: null,
                             dozvola: null,
                             datum_log: null,
                             happy_coin: null,
                             happy_coin_rez: null,
-                            status: ""
+                            status: null,
                         }
                     })
+                    //gasenje checkbox za privilegovane korisnike(admina i moderatora)
+                commit('PRIVILEGIJE_PRIKAZI', false)
                     //brisanje access_token iz local storage
                 window.localStorage.removeItem('access_token_fb');
             }).catch(function(error) {
                 console.log(error)
             });
         },
-        //PROVERA DA LI JE KORISNIK LOGOVAN AKO SE UGASI BROWSER ILI SE REFRESH STRANICA
+        //PROVERA DA LI JE KORISNIK LOGOVAN AKO SE UGASI BROWSER ILI SE REFRESH STRANICA DA OPET POKUPI PODATKE
         check_is_user_logged_in({ commit, dispatch }) {
-            this.state._API.glavna_obavestenja = ""
+            //1 linija koda ispod brise obavestenja kada se refresh stranica da bi opet ocitalo iz baze ukoliko ima updatova
+            // this.state._API.glavna_obavestenja = "" --brisi
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
                     let result = firebase.auth().currentUser;
@@ -221,10 +223,10 @@ export default new Vuex.Store({
                         commit("IS_LOGGED_IN", {
                             IsLoggedIn: true
                         })
-
-                    //PROVERA NA MARSU DA LI JE REGISTROVAN (uporedjivane mail-a) I AKO JESTE 
-                    //VRACAJU SE PODACI IZ BAZE
-                    //poziva api iz "_API" modula i action "api_is_reg_check"
+                        //SALJE EMAIL, PROVERA NA MARSU DA LI JE REGISTROVAN (uporedjivane mail-a) I AKO JESTE 
+                        //VRACAJU SE PODACI IZ BAZE. INACE PRI SVAKOM LOGOVANJU AUTOMATSKI SE REFRESH STRANA I 
+                        //POKRECE OVAJ ACTION KOJI JE STAVLJEN U NAVBAR.VUE U beforeCreate() lifecycle
+                        //poziva api iz "_API" modula i action "api_is_reg_check"
                     dispatch('_API/api_is_reg_check', user_email, { root: true })
                 }
 
@@ -243,15 +245,21 @@ export default new Vuex.Store({
                 color: ''
             })
         },
+        set_Dialog_add_obavestenja({ commit }, newValue) {
+            commit('SHOW_DIALOG_ADD_OBAVESTENJA', newValue)
+        },
+
         show_privilegije({ commit }, newValue) {
             commit('PRIVILEGIJE_PRIKAZI', newValue)
         }
     },
+    ///////////////////////// MODULI /////////////////////////////
     modules: {
         _API: {
             namespaced: true,
             state: () => ({
-                glavna_obavestenja: ""
+                glavna_obavestenja: "",
+                eee: ''
             }),
             getters: {
                 get_glavna_obavestenja(state) {
@@ -261,27 +269,57 @@ export default new Vuex.Store({
             mutations: {
                 GLAVNA_OBAVESTENJA(state, payload) {
                     state.glavna_obavestenja = payload;
-                }
+                },
+                // NOVO_OBAVESTENJE(state, payload) {
+                //     state.eee = payload
+                // }
             },
             actions: {
                 //PROVERA NA MARSU DA LI JE REGISTROVAN (uporedjivane mail-a) I AKO JESTE 
                 //VRACAJU SE PODACI IZ BAZE
                 api_is_reg_check({ commit }, user_email) {
-                    api.provera_privilegija({ user_mail: user_email }).then(response => {
+                    $api.provera_privilegija({ user_email: user_email }).then(response => {
+                        //pravljenje local storage za sid (response podatak sa marsa)
+                        window.localStorage.setItem('sid', response.data.sid);
                         commit('PODACI_REG_KORISNIKA', {
-                            sid: response.data.sid,
-                            podaci: response.data.reg_korisnik
+                            podaci: response.data.reg_korisnik,
                         }, { root: true });
+                    }).catch(function(error) {
+                        alert(error);
+                    });
+                },
+
+                //BRISANJE SESSION() NA MARSU
+                api_post_logout() {
+                    $api.logout_post({
+                        sid: window.localStorage.getItem('sid')
+                    }).then(() => {
+                        window.localStorage.removeItem('sid');
                     })
                 },
-                //GLAVNA OBAVESTENJA IZ BAZE - MARS
-                api_glavna_obavestenja({ commit }) {
-                    api.glavna_obavestenja().then((response) => {
+
+                //PRIKAZ - GLAVNA OBAVESTENJA IZ BAZE - MARS (ne treba logovanje)
+                api_get_glavna_obavestenja({ commit }) {
+                    $api.get_glavna_obavestenja().then((response) => {
                         let lista_obavestenja = response.data.result;
                         commit('GLAVNA_OBAVESTENJA', lista_obavestenja)
                     });
                 },
 
+                //DODAVANJE NOVOG OBAVESTENJA
+                api_post_novo_obavestenje({ commit, rootGetters }, payload) {
+                    let korisnik = rootGetters.get_reg_korisnik //getter, pa tek kada getter dobije objekat mozemo da izvlacimo email
+                    let data = {
+                        komanda: payload.komanda,
+                        email: korisnik.podaci.email, //email osobe koja je objavila
+                        naslov_obavestenja: payload.naslov_obavestenja,
+                        text_obavestenja: payload.text_obavestenja
+                    }
+                    $api.novo_obavestenje_post({ data: data }).then((response) => {
+                        console.log(response.data)
+                    })
+                    commit('NOVO_OBAVESTENJE')
+                },
             }
         }
     }

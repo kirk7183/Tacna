@@ -1,52 +1,66 @@
 <template>
-  <div class="ExtraOption_Fab">
-    <v-fab-transition>
-      <v-speed-dial
-        v-if="privilegije"
-        :style="style"
-        v-model="fab"
-        fixed
-        top
-        right
-        direction="bottom"
-        transition="slide-y-reverse-transition"
-      >
-        <template v-slot:activator>
-          <v-btn v-model="fab" color="green" light fab small>
-            <v-icon v-if="fab"> mdi-close </v-icon>
-            <v-icon v-else> mdi-bookmark-outline </v-icon>
-          </v-btn>
-        </template>
-        <span v-for="(button, i) in filteredButtons" :key="i">
-          <v-btn fab dark small :color="button.color">
-            <v-icon>{{ button.icon }}</v-icon>
-          </v-btn>
-        </span>
-      </v-speed-dial>
-    </v-fab-transition>
+  <div>
+    <div class="ExtraOption_Fab">
+      <v-fab-transition>
+        <v-speed-dial
+          v-if="privilegije"
+          :style="style"
+          v-model="fab"
+          fixed
+          top
+          right
+          direction="bottom"
+          transition="slide-y-reverse-transition"
+        >
+          <template v-slot:activator>
+            <v-btn v-model="fab" color="green" light fab small>
+              <v-icon v-if="fab"> mdi-close </v-icon>
+              <v-icon v-else> mdi-bookmark-outline </v-icon>
+            </v-btn>
+          </template>
+          <span v-for="(button, i) in filteredButtons" :key="i">
+            <v-btn
+              fab
+              dark
+              small
+              :color="button.color"
+              @click="getFunction(button.atClick)"
+            >
+              <v-icon>{{ button.icon }}</v-icon>
+            </v-btn>
+          </span>
+        </v-speed-dial>
+      </v-fab-transition>
+      <!-- IMPORT COMPONENT-->
+      <DialogAddObavestenja
+        :path="`${this.$route.name}`"
+      ></DialogAddObavestenja>
+    </div>
   </div>
 </template>
 
 <script>
-// import { mapGetters } from "vuex";
+import DialogAddObavestenja from "@/components/dialogs/Dialog_add_obavestenja.vue";
 export default {
+  components: { DialogAddObavestenja },
   data: () => ({
     buttons: [
       {
         //stranice moraju da pocinju sa velikim slovom kao path.name
         icon: "mdi-pencil",
         color: "yellow",
-        stranice: ["Obavestenja", "Trazim"],
+        stranice: ["Trazim"],
       },
       {
         icon: "mdi-plus",
         color: "white",
-        stranice: ["Obavestenja"],
+        atClick: "dodaj",
+        stranice: ["Obavestenja", "Aukcija"],
       },
       {
         icon: "mdi-delete",
         color: "red",
-        stranice: ["Obavestenja", "Trazim", "Aukcija"],
+        stranice: ["Trazim", "Aukcija"],
       },
     ],
     fab: false,
@@ -91,14 +105,21 @@ export default {
   },
 
   computed: {
+    //TRUE/FALSE DIALOG_ADD_OBAVESTENJA
+    dialog_add_obavestenja_boolean: {
+      get() {
+        return this.$store.getters.get_dialog_add_obavestenja;
+      },
+      set(newValue) {
+        this.$store.dispatch("set_Dialog_add_obavestenja", newValue);
+      },
+    },
+    //filter prikaza icons u zaisnosti od posecene stranice
     filteredButtons() {
       const path = this.$route;
-      //   console.log(path);
       return this.buttons.filter((button) => {
         return button.stranice.includes(path.name);
       });
-
-      //   button.stranice.includes == this.path
     },
     //ako je "dozvola" 3 ili veca onda je true
     get_privilegije() {
@@ -109,6 +130,13 @@ export default {
     //real-time update windowsTop svaki put kada se koristi scroll ispisuje njegovu vrednost
     onScroll(e) {
       this.windowTop = e.target.documentElement.scrollTop;
+    },
+    //sluzi da se dynamicki pozove funkcija
+    getFunction(atClick) {
+      this[atClick]();
+    },
+    dodaj() {
+      this.dialog_add_obavestenja_boolean = true;
     },
   },
 };
