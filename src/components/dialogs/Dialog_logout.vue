@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="facebook_logout" max-width="400px">
-    <div class="dialog_da_ne">
+  <v-dialog v-model="logout" max-width="400px">
+    <div class="dialog_logout">
       <v-card>
         <v-card-title
           class="dialog_title justify-center"
@@ -22,9 +22,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="success" class="dugme" @click="obradi_dialog">Da</v-btn>
-          <v-btn color="error" class="dugme" @click="facebook_logout = false"
-            >Ne</v-btn
-          >
+          <v-btn color="error" class="dugme" @click="logout = false">Ne</v-btn>
         </v-card-actions>
       </v-card>
     </div>
@@ -33,7 +31,6 @@
 
 <script>
 export default {
-  props: ["tip_dialoga", "obavestenje_id"],
   data() {
     return {
       dialog_: null,
@@ -43,26 +40,20 @@ export default {
     this.dialog_ = this.tip_dialoga;
   },
   computed: {
-    facebook_logout: {
+    logout: {
       get() {
-        return this.$store.getters.get_showDialog_da_ne;
+        return this.$store.getters["_DIALOG/get_showDialog_logout"];
       },
       set(newValue) {
-        this.$store.dispatch("set_showDialog_da_ne", newValue);
+        this.$store.dispatch("_DIALOG/set_showDialog_logout", newValue);
       },
     },
   },
   methods: {
     obradi_dialog() {
-      console.log(this.dialog_);
-      if (this.dialog_ == "fb_logout") {
-        this.$store.dispatch("Logout");
-        this.facebook_logout = false;
-      } else if (this.dialog_ == "brisanje_glavna_obavestenja") {
-        console.log(this.obavestenje_id);
-      } else {
-        console.log("nesto drugo");
-      }
+      this.$store.dispatch("Logout").then(() => {
+        this.logout = false;
+      });
     },
   },
 };

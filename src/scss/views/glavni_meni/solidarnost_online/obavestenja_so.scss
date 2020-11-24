@@ -1,0 +1,14 @@
+//nema nista posto je sve u v-card i smesteno je globalno u
+//main / v-cards.scss
+.obavestenja_so {
+    .v-btn {
+        padding: 0 !important;
+        min-width: 0 !important;
+    }
+}
+
+//za item za brisanje i prepravka
+.item {
+    cursor: pointer !important;
+    text-align: center !important;
+}

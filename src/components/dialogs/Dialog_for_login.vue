@@ -30,10 +30,10 @@ export default {
   computed: {
     dialog_for_login: {
       get() {
-        return this.$store.getters.get_dialog_for_login;
+        return this.$store.getters["_DIALOG/get_dialog_for_login"];
       },
       set(newValue) {
-        this.$store.dispatch("set_dialog_for_login", newValue);
+        this.$store.dispatch("_DIALOG/set_dialog_for_login", newValue);
       },
     },
   },

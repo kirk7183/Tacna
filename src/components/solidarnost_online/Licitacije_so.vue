@@ -1,5 +1,5 @@
 <template>
-  <div class="obavestenje_so">
+  <div class="licitacije_so">
     <v-card class="mx-2 my-4 mx-sm-4 my-sm-6 mx-md-8 my-md-12" elevation="5">
       <v-card-title>
         Biće povezana sa Globalnom aukcijom kada se završi

@@ -33,7 +33,7 @@
       </v-fab-transition>
       <!-- IMPORT COMPONENT-->
       <DialogAddObavestenja
-        v-if="dialog_add_obavestenja_boolean"
+        v-if="dialog_add_obavestenja_boolean && mode == 'add_new_obavestenje'"
         :mode="mode"
         :route="this.$route.path"
       ></DialogAddObavestenja>
@@ -42,13 +42,14 @@
 </template>
 
 <script>
+// import DialogAddObavestenja from "@/components/dialogs/Dialog_add_obavestenja.vue";
 export default {
   components: {
     DialogAddObavestenja: () =>
       import("@/components/dialogs/Dialog_add_obavestenja.vue"),
   },
   data: () => ({
-    mode: "add_obavestenje",
+    mode: "add_new_obavestenje",
     buttons: [
       {
         //stranice moraju da pocinju sa velikim slovom kao path.name

@@ -12,10 +12,6 @@ export default new Vuex.Store({
             user_pic: null,
             user_email: null
         },
-        show_dialog_da_ne: false,
-        show_dialog_loading: false,
-        show_dialog_for_login: false,
-        show_dialog_add_obavestenja: false,
         snackbar: {
             boolean: false,
             message: '',
@@ -44,25 +40,13 @@ export default new Vuex.Store({
         Facebook_user_data: (state) => {
             return state.Facebook_user_data;
         },
-        get_dialog_for_login: (state) => {
-            return state.show_dialog_for_login;
-        },
-        get_showDialog_da_ne: (state) => {
-            return state.show_dialog_da_ne;
-        },
-        get_dialog_loading_status: (state) => {
-            return state.show_dialog_loading;
-        },
-        get_dialog_add_obavestenja: (state) => {
-            return state.show_dialog_add_obavestenja;
-        },
         get_snackbar_status: (state) => {
             return state.snackbar;
         },
         get_reg_korisnik: (state) => {
             return state.reg_korisnik;
         },
-        get_glavna_obavestenja: (state) => {
+        get_obavestenja: (state) => {
             return state.glavna_obavestenja
         },
         get_privilegije_boolean: (state) => {
@@ -78,15 +62,6 @@ export default new Vuex.Store({
         IS_LOGGED_IN(state, payload) {
             state.IsLoggedIn = payload.IsLoggedIn;
         },
-        SHOW_DIALOG_FOR_LOGIN(state, payload) {
-            state.show_dialog_for_login = payload
-        },
-        SHOW_DIALOG_DA_NE(state, payload) {
-            state.show_dialog_da_ne = payload;
-        },
-        SHOW_DIALOG_ADD_OBAVESTENJA(state, payload) {
-            state.show_dialog_add_obavestenja = payload;
-        },
         TOGGLE_SNACKBAR(state, payload) {
             state.snackbar.boolean = payload.boolean;
             state.snackbar.message = payload.message;
@@ -101,13 +76,15 @@ export default new Vuex.Store({
     },
 
     actions: {
-        Facebook_login({ commit }) {
+        Facebook_login({ commit, dispatch }) {
             let user_displayName;
             let user_id;
             let user_email;
             let access_token_fb;
-            this.state.show_dialog_loading = true;
-            //obavezno u main.js mora biti importovan import "firebase/auth" inace login preko fb nece da radi;
+            // this.state.show_dialog_loading = true;
+            // getters['_DIALOG/show_dialog_loading'](true)
+            dispatch('_DIALOG/set_show_dialog_loading', true, { root: true })
+                //obavezno u main.js mora biti importovan import "firebase/auth" inace login preko fb nece da radi;
             var provider = new firebase.auth.FacebookAuthProvider();
             firebase
                 .auth()
@@ -140,7 +117,7 @@ export default new Vuex.Store({
                             })
                     }
                 }).then(() => {
-                    this.state.show_dialog_loading = false;
+                    dispatch('_DIALOG/set_show_dialog_loading', false, { root: true })
                     commit('TOGGLE_SNACKBAR', {
                         boolean: true,
                         message: 'Uspešno ste se prijavili',
@@ -201,7 +178,6 @@ export default new Vuex.Store({
         //PROVERA DA LI JE KORISNIK LOGOVAN AKO SE UGASI BROWSER ILI SE REFRESH STRANICA DA OPET POKUPI PODATKE
         check_is_user_logged_in({ commit, dispatch }) {
             //1 linija koda ispod brise obavestenja kada se refresh stranica da bi opet ocitalo iz baze ukoliko ima updatova
-            // this.state._API.glavna_obavestenja = "" --brisi
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
                     let result = firebase.auth().currentUser;
@@ -229,14 +205,7 @@ export default new Vuex.Store({
                         //poziva api iz "_API" modula i action "api_is_reg_check"
                     dispatch('_API/api_is_reg_check', user_email, { root: true })
                 }
-
             })
-        },
-        set_dialog_for_login({ commit }, newValue) {
-            commit("SHOW_DIALOG_FOR_LOGIN", newValue)
-        },
-        set_showDialog_da_ne({ commit }, newValue) {
-            commit('SHOW_DIALOG_DA_NE', newValue)
         },
         set_snackbar({ commit }, newValue) {
             commit('TOGGLE_SNACKBAR', {
@@ -245,34 +214,29 @@ export default new Vuex.Store({
                 color: ''
             })
         },
-        set_Dialog_add_obavestenja({ commit }, newValue) {
-            commit('SHOW_DIALOG_ADD_OBAVESTENJA', newValue)
-        },
-
         show_privilegije({ commit }, newValue) {
             commit('PRIVILEGIJE_PRIKAZI', newValue)
         }
     },
     ///////////////////////// MODULI /////////////////////////////
     modules: {
+        /////////// _API MODUL ////////////////
         _API: {
             namespaced: true,
             state: () => ({
-                glavna_obavestenja: "",
-                eee: ''
+                obavestenja: "",
+
             }),
             getters: {
-                get_glavna_obavestenja(state) {
-                    return state.glavna_obavestenja;
+                get_obavestenja(state) {
+                    return state.obavestenja;
                 }
             },
             mutations: {
                 GLAVNA_OBAVESTENJA(state, payload) {
-                    state.glavna_obavestenja = payload;
+                    state.obavestenja = payload;
                 },
-                // NOVO_OBAVESTENJE(state, payload) {
-                //     state.eee = payload
-                // }
+
             },
             actions: {
                 //PROVERA NA MARSU DA LI JE REGISTROVAN (uporedjivane mail-a) I AKO JESTE 
@@ -298,27 +262,143 @@ export default new Vuex.Store({
                     })
                 },
 
-                //PRIKAZ - GLAVNA OBAVESTENJA IZ BAZE - MARS (ne treba logovanje)
-                api_get_glavna_obavestenja({ commit }) {
-                    $api.get_glavna_obavestenja().then((response) => {
+                //PRIKAZ - GLAVNA OBAVESTENJA IZ BAZE - MARS (ne treba logovanje) posto svako moze da procita obavestenja
+                api_get_obavestenja({ commit }, route) {
+                    //na backu na osnovu route se odredjuje koja ce informacija biti prosledjena
+                    $api.get_obavestenja({ route: route }).then((response) => {
                         let lista_obavestenja = response.data.result;
                         commit('GLAVNA_OBAVESTENJA', lista_obavestenja)
                     });
                 },
 
-                //DODAVANJE NOVOG OBAVESTENJA
-                api_post_novo_obavestenje({ commit, rootGetters }, payload) {
+                //DODAVANJE NOVOG OBAVESTENJA - isto koristi i route /obavestenja i /obavestenja_so 
+                //pa se na serveru razvrstava gde brise, zato se i salje putanja
+                api_post_novo_edit_obavestenje({ dispatch, rootGetters, commit }, payload) {
                     let korisnik = rootGetters.get_reg_korisnik //getter, pa tek kada getter dobije objekat mozemo da izvlacimo email
                     let data = {
-                        komanda: payload.komanda,
-                        email: korisnik.podaci.email, //email osobe koja je objavila
-                        naslov_obavestenja: payload.naslov_obavestenja,
-                        text_obavestenja: payload.text_obavestenja
+                            id_obavestenja: payload.id_obavestenja,
+                            route: payload.route, //putanja sa koje je pokrenuta komanda
+                            email: korisnik.podaci.email, //email osobe koja je objavila
+                            naslov_obavestenja: payload.naslov_obavestenja,
+                            text_obavestenja: payload.text_obavestenja
+                        }
+                        //ako je mode add_obavestenje
+                    if (payload.mode === 'add_obavestenje') {
+
+                        $api.novo_obavestenje_post({ data: data }).then((response) => {
+                            dispatch("api_get_obavestenja", payload.route); //refresh bazu da bi se prikazalo obavestenje koje smo uneli
+                            commit('TOGGLE_SNACKBAR', {
+                                boolean: true,
+                                message: response.data.message.text,
+                                color: response.data.message.color
+                            }, { root: true })
+                        }).catch((error) => {
+                            console.log(error)
+                        })
                     }
-                    $api.novo_obavestenje_post({ data: data }).then((response) => {
-                        console.log(response.data)
+                    //ako je mode edit_obavestenje
+                    if (payload.mode === 'edit_obavestenje') {
+                        $api.edit_obavestenje_post({ data: data }).then((response) => {
+                            dispatch("api_get_obavestenja", payload.route); //refresh bazu da bi se prikazalo obavestenje koje smo uneli
+                            commit('TOGGLE_SNACKBAR', {
+                                boolean: true,
+                                message: response.data.message.text,
+                                color: response.data.message.color
+                            }, { root: true })
+                        })
+                    }
+                },
+
+                api_post_delete_obavestenja({ commit, dispatch, rootGetters }, payload) {
+                    let korisnik = rootGetters.get_reg_korisnik //getter, pa tek kada getter dobije objekat mozemo da izvlacimo email
+                    let data = {
+                        email: korisnik.podaci.email, //email osobe koja brise
+                        route: payload.route,
+                        id_obavestenja: payload.id_obavestenja
+                    }
+                    $api.post_delete_obavestenja({ data: data }).then((response) => {
+                        dispatch("api_get_obavestenja", payload.route); //refresh bazu da bi se prikazalo obavestenje koje smo uneli
+                        commit('TOGGLE_SNACKBAR', {
+                            boolean: true,
+                            message: response.data.message.text,
+                            color: response.data.message.color
+                        }, { root: true })
+
+                    }).catch((error) => {
+                        console.log(error)
                     })
-                    commit('NOVO_OBAVESTENJE')
+                }
+            }
+        },
+        ///////// _DIALOG MODUL ////////////
+        _DIALOG: {
+            namespaced: true,
+            state: () => ({
+                show_dialog_logout: false,
+                show_dialog_loading: false,
+                show_dialog_for_login: false,
+                show_dialog_add_obavestenja: false,
+                show_dialog_edit_obavestenja: false,
+                show_dialog_delete_obavestenja: false,
+            }),
+            getters: {
+                get_showDialog_logout: (state) => {
+                    return state.show_dialog_logout;
+                },
+                get_dialog_loading_status: (state) => {
+                    return state.show_dialog_loading;
+                },
+                get_dialog_for_login: (state) => {
+                    return state.show_dialog_for_login;
+                },
+                get_dialog_add_obavestenja: (state) => {
+                    return state.show_dialog_add_obavestenja;
+                },
+                get_dialog_edit_obavestenja: (state) => {
+                    return state.show_dialog_edit_obavestenja;
+                },
+                get_dialog_delete_obavestenja: (state) => {
+                    return state.show_dialog_delete_obavestenja;
+                }
+            },
+            mutations: {
+                SHOW_DIALOG_LOGOUT(state, payload) {
+                    state.show_dialog_logout = payload;
+                },
+                SHOW_DIALOG_LOADING(state, payload) {
+                    state.show_dialog_loading = payload;
+                },
+                SHOW_DIALOG_FOR_LOGIN(state, payload) {
+                    state.show_dialog_for_login = payload
+                },
+                SHOW_DIALOG_ADD_OBAVESTENJA(state, payload) {
+                    state.show_dialog_add_obavestenja = payload;
+                },
+                SHOW_DIALOG_EDIT_OBAVESTENJA(state, payload) {
+                    state.show_dialog_edit_obavestenja = payload;
+                },
+                SHOW_DIALOG_DELETE_OBAVESTENJA(state, payload) {
+                    state.show_dialog_delete_obavestenja = payload;
+                },
+            },
+            actions: {
+                set_showDialog_logout({ commit }, newValue) {
+                    commit('SHOW_DIALOG_LOGOUT', newValue)
+                },
+                set_show_dialog_loading({ commit }, newValue) {
+                    commit('SHOW_DIALOG_LOADING', newValue)
+                },
+                set_dialog_for_login({ commit }, newValue) {
+                    commit("SHOW_DIALOG_FOR_LOGIN", newValue)
+                },
+                set_dialog_add_obavestenja({ commit }, newValue) {
+                    commit('SHOW_DIALOG_ADD_OBAVESTENJA', newValue)
+                },
+                set_dialog_edit_obavestenja({ commit }, newValue) {
+                    commit('SHOW_DIALOG_EDIT_OBAVESTENJA', newValue)
+                },
+                set_dialog_delete_obavestenja({ commit }, newValue) {
+                    commit('SHOW_DIALOG_DELETE_OBAVESTENJA', newValue)
                 },
             }
         }

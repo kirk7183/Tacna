@@ -4,6 +4,7 @@
       <div v-for="(single, i) in icons" :key="i">
         <!--1st breakpoint buttons smAndDown -->
         <v-btn
+          class="solidarnost_btn"
           v-if="$vuetify.breakpoint.smAndDown"
           icon
           elevation="2"
@@ -28,7 +29,9 @@
           @click="changePage(single, i)"
         >
           <v-avatar left>
-            <v-icon class="pa-5" size="24">{{ single.icon }}</v-icon>
+            <v-icon class="pa-5 solidarnost_icon_avatar" size="24">{{
+              single.icon
+            }}</v-icon>
           </v-avatar>
           {{ single.text }}
         </v-chip>
@@ -55,7 +58,7 @@ export default {
         },
         {
           icon: "fas fa-star",
-          route: "/solidarnost_online/obavestenje_so",
+          route: "/solidarnost_online/obavestenja_so",
           text: "Obaveštenja",
         },
         {
@@ -65,7 +68,7 @@ export default {
         },
         {
           icon: "fas fa-gavel",
-          route: "/solidarnost_online/licitacija_so",
+          route: "/solidarnost_online/licitacije_so",
           text: "Licitacije",
         },
         {
@@ -96,11 +99,11 @@ export default {
       this.$route.path == "/solidarnost_online/o_nama_so"
     ) {
       this.activePage = 1;
-    } else if (this.$route.path == "/solidarnost_online/obavestenje_so") {
+    } else if (this.$route.path == "/solidarnost_online/obavestenja_so") {
       this.activePage = 2;
     } else if (this.$route.path == "/solidarnost_online/donacije_so") {
       this.activePage = 3;
-    } else if (this.$route.path == "/solidarnost_online/licitacija_so") {
+    } else if (this.$route.path == "/solidarnost_online/licitacije_so") {
       this.activePage = 4;
     } else if (this.$route.path == "/solidarnost_online/banka_so") {
       this.activePage = 5;

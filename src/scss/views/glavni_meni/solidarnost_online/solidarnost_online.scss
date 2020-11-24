@@ -2,7 +2,8 @@
     .v-toolbar__content {
         justify-content: space-around !important;
     }
-    button.v-btn {
+    // button.v-btn {
+    button.solidarnost_btn {
         width: 35px !important;
         height: 35px !important;
         color: $main-icon-color !important;
@@ -24,7 +25,8 @@
         width: 220px !important;
     }
     .v-chip__content,
-    i.v-icon {
+    i.solidarnost_icon,
+    .solidarnost_icon_avatar {
         color: $main-icon-color !important;
     }
     .v-avatar {
@@ -32,6 +34,7 @@
         min-width: 38px !important;
         height: 48px !important;
     }
+    //za favorit obavestenja
     i.v-icon.star_icon {
         color: yellow !important;
     }
