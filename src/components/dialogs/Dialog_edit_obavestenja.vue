@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="dialog_add_obavestenja_boolean" max-width="600px">
-    <div class="dialog_add_obavestenja">
+  <v-dialog v-model="dialog_edit_obavestenja_boolean" max-width="600px">
+    <div class="dialog_edit_obavestenja">
       <v-card>
         <v-card-title class="dialog_title justify-center">
           Unos novog obaveštenja
@@ -35,10 +35,15 @@
           </v-row>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="success" :disabled="!valid" @click="add_obavestenja"
+            <v-btn
+              color="success"
+              :disabled="!valid"
+              @click="add_edit_obavestenja"
               >Snimi</v-btn
             >
-            <v-btn color="error" @click="dialog_add_obavestenja_boolean = false"
+            <v-btn
+              color="error"
+              @click="dialog_edit_obavestenja_boolean = false"
               >Poništi</v-btn
             >
           </v-card-actions>
@@ -66,26 +71,23 @@ export default {
     };
   },
   created() {
-    // this.re_data = Object.assign({}, this.$store.state.edit_data);
-    // console.log(this.route);
-    // console.log(this.mode);
-    // console.log(this.re_data);
+    this.re_data = Object.assign({}, this.edit_data);
   },
 
   computed: {
-    //TRUE/FALSE DIALOG_ADD_OBAVESTENJA
-    dialog_add_obavestenja_boolean: {
+    //TRUE/FALSE DIALOG_EDIT_OBAVESTENJA
+    dialog_edit_obavestenja_boolean: {
       get() {
-        return this.$store.getters["_DIALOG/get_dialog_add_obavestenja"];
+        return this.$store.getters["_DIALOG/get_dialog_edit_obavestenja"];
       },
       set(newValue) {
-        this.$refs.form.reset(); //resetovanje validacije svaki put kada se podesi false na dialog_add_obavestenja.vue za prikazivanje dialoga(tj kada se upali dialog ili ugasi)
-        this.$store.dispatch("_DIALOG/set_dialog_add_obavestenja", newValue);
+        this.$refs.form.reset(); //resetovanje validacije svaki put kada se podesi false na DIALOG_EDIT_OBAVESTENJA.vue za prikazivanje dialoga(tj kada se upali dialog ili ugasi)
+        this.$store.dispatch("_DIALOG/set_dialog_edit_obavestenja", newValue);
       },
     },
   },
   methods: {
-    add_obavestenja() {
+    add_edit_obavestenja() {
       const validationResult = this.$refs.form.validate(); //provera da li je TRUE tj da li je prosla validacija
       if (validationResult === true) {
         this.$store
@@ -97,7 +99,7 @@ export default {
             text_obavestenja: this.re_data.text_obavestenja,
           })
           .then(() => {
-            this.dialog_add_obavestenja_boolean = false; //FALSE za dialog
+            this.dialog_edit_obavestenja_boolean = false; //FALSE za dialog
           });
       }
     },

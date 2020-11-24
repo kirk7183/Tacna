@@ -31,9 +31,11 @@
             display: flex;
             justify-content: flex-end;
             align-items: center !important;
+            margin-right: 15px !important;
         }
         p {
             margin: 0 !important;
+            // margin-left: 15px;
             line-height: 1.7rem !important;
         }
         &_smAndUp {
@@ -45,32 +47,10 @@
             .ime_prezime,
             .cifra {
                 font-size: 16px !important;
+                // margin-left: 25px !important;
             }
         }
-        // &_xs {
-        //     .column {
-        //         display: flex;
-        //         align-items: center !important;
-        //     }
-        // }
     }
-    // .row_uplata_isplata_xs {
-    //     .column {
-    //         display: flex;
-    //         align-items: center !important;
-    //     }
-    // }
-    // .row_uplata_isplata_smAndUp {
-    //     .uplata,
-    //     .isplata {
-    //         font-size: 20px;
-    //         justify-content: center !important;
-    //     }
-    //     .ime_prezime,
-    //     .cifra {
-    //         font-size: 16px !important;
-    //     }
-    // }
     .col_cifra {
         display: flex;
         align-items: center !important;

@@ -21,7 +21,7 @@
         <img
           class="profile-pic"
           :src="Facebook_Data.user_pic"
-          @click="dialog_da_ne = true"
+          @click="dialog_logout = true"
         />
       </div>
     </v-app-bar>
@@ -94,10 +94,10 @@
     </v-navigation-drawer>
 
     <!-- IMPORT COMPONENT -->
-    <DialogDaNe :tip_dialoga="'fb_logout'">
+    <DialogLogout>
       <template v-slot:title>Da li želite da se odjavite ?</template>
       <template v-slot:text></template>
-    </DialogDaNe>
+    </DialogLogout>
     <DialogLoading>
       <template v-slot:ispis>Logovanje je u toku</template>
     </DialogLoading>
@@ -106,24 +106,21 @@
 </template>
 
 <script>
-import DialogLoading from "@/components/dialogs/Dialog_loading";
-import DialogForLogin from "@/components/dialogs/Dialog_for_login";
 export default {
   components: {
-    DialogDaNe: () => import("@/components/dialogs/Dialog_da_ne.vue"),
-    DialogLoading,
-    DialogForLogin,
+    DialogLogout: () => import("@/components/dialogs/Dialog_logout.vue"),
+    DialogLoading: () => import("@/components/dialogs/Dialog_loading"),
+    DialogForLogin: () => import("@/components/dialogs/Dialog_for_login"),
   },
   data() {
     return {
-      showDialog_da_ne: false,
       activePage: 1,
       drawer: false,
       groupClose: null,
       sveOpcije: [
         { opcija: "Početna strana - Obavestenja", broj: 1 },
         { opcija: "Solidarnost Online - u pripremi", broj: 2 },
-        { opcija: "Aukcija - jos ne radi", broj: 3 },
+        { opcija: "Licitacije - jos ne radi", broj: 3 },
         { opcija: "Popusti - jos ne radi", broj: 4 },
         { opcija: "Nudim - jos ne radi", broj: 5 },
         { opcija: "Trazim - jos ne radi", broj: 6 },
@@ -145,7 +142,7 @@ export default {
       //ako postoji "darnost u URL onda pri Created() stranice stavi da je activePage=2"
     } else if (window.location.href.indexOf("solidarnost") > -1) {
       this.activePage = 2;
-    } else if (this.$route.path == "/aukcija") {
+    } else if (this.$route.path == "/licitacije") {
       this.activePage = 3;
     } else if (this.$route.path == "/popusti") {
       this.activePage = 4;
@@ -157,7 +154,6 @@ export default {
       this.activePage = 7;
     }
   },
-  beforeMount() {},
 
   computed: {
     //ako ima korisnik "dozvolu" vecu od 3 onda dobija checkbox sa odredjenim nazivom u zavisnosti od visine dozvole
@@ -198,21 +194,22 @@ export default {
         return this.$store.getters.Facebook_user_data;
       },
     },
-    //REUSABLE DIALOG ZA DA NE PITANJE
-    dialog_da_ne: {
+    //DIALOG ZA LOGOUT
+    dialog_logout: {
       get() {
-        return this.$store.getters.get_showDialog_da_ne;
+        // return this.$store.getters.get_showDialog_logout;
+        return this.$store.getters["_DIALOG/get_showDialog_logout"];
       },
       set(newValue) {
-        this.$store.dispatch("set_showDialog_da_ne", newValue);
+        this.$store.dispatch("_DIALOG/set_showDialog_logout", newValue);
       },
     },
     dialog_for_login: {
       get() {
-        return this.$store.getters.get_dialog_for_login;
+        return this.$store.getters["_DIALOG/get_dialog_for_login"];
       },
       set(newValue) {
-        this.$store.dispatch("set_dialog_for_login", newValue);
+        this.$store.dispatch("_DIALOG/set_dialog_for_login", newValue);
       },
     },
     //odredjivanje i postavljanje koje je dugme aktivno tj mali kruzic na icon
@@ -233,7 +230,7 @@ export default {
       if (this.Facebook_Data.user_displayName == "Niste logovani") {
         this.dialog_for_login = true;
       } else {
-        this.dialog_da_ne = true;
+        this.dialog_logout = true;
       }
     },
     changePage(broj) {
@@ -247,7 +244,7 @@ export default {
         this.$router.push({ path: "/solidarnost_online" });
         this.activePage = 2;
       } else if (broj == 3) {
-        this.$router.push({ path: "/aukcija" });
+        this.$router.push({ path: "/licitacije" });
         this.activePage = 3;
       } else if (broj == 4) {
         this.$router.push({ path: "/popusti" });

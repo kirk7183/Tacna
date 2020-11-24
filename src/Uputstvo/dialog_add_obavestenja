@@ -35,7 +35,10 @@
           </v-row>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="success" :disabled="!valid" @click="add_obavestenja"
+            <v-btn
+              color="success"
+              :disabled="!valid"
+              @click="add_edit_obavestenja"
               >Snimi</v-btn
             >
             <v-btn color="error" @click="dialog_add_obavestenja_boolean = false"
@@ -66,10 +69,9 @@ export default {
     };
   },
   created() {
-    // this.re_data = Object.assign({}, this.$store.state.edit_data);
-    // console.log(this.route);
-    // console.log(this.mode);
-    // console.log(this.re_data);
+    this.re_data = Object.assign({}, this.edit_data);
+    console.log(this.route);
+    console.log(this.mode);
   },
 
   computed: {
@@ -85,7 +87,7 @@ export default {
     },
   },
   methods: {
-    add_obavestenja() {
+    add_edit_obavestenja() {
       const validationResult = this.$refs.form.validate(); //provera da li je TRUE tj da li je prosla validacija
       if (validationResult === true) {
         this.$store

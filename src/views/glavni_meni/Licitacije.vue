@@ -1,7 +1,7 @@
 <template>
-  <v-container class="aukcija" fluid :class="breakpoints">
+  <v-container class="licitacije" fluid :class="breakpoints">
     <div class="content">
-      <p>Jos ne radi - Aukcija</p>
+      <p>Jos ne radi - Licitacije</p>
     </div>
   </v-container>
 </template>

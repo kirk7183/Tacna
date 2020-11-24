@@ -1,8 +1,8 @@
 <template>
   <v-app class="app">
     <Navbar v-if="this.$route.path != '/'"></Navbar>
+    <ExtraOptionFab></ExtraOptionFab>
     <v-main class="v-main">
-      <ExtraOptionFab></ExtraOptionFab>
       <transition name="fade" mode="out-in" class="pageTransition">
         <router-view></router-view>
       </transition>

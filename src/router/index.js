@@ -26,7 +26,7 @@ const routes = [{
     {
         path: '/home',
         name: 'Home',
-        redirect: 'Obavestenja',
+        redirect: 'obavestenja',
         component: Home,
         //CHILDRED !!!!
         children: [{
@@ -36,10 +36,10 @@ const routes = [{
                     import ('../views/glavni_meni/Obavestenja.vue')
             },
             {
-                path: '/aukcija',
-                name: 'Aukcija',
+                path: '/licitacije',
+                name: 'Licitacije',
                 component: () =>
-                    import ('../views/glavni_meni/Aukcija.vue')
+                    import ('../views/glavni_meni/Licitacije.vue')
             },
             {
                 path: '/popusti',
@@ -79,10 +79,10 @@ const routes = [{
                             import ('@/components/solidarnost_online/O_nama_so.vue')
                     },
                     {
-                        path: '/solidarnost_online/obavestenje_so',
-                        name: '/Obavestenje_so',
+                        path: '/solidarnost_online/obavestenja_so',
+                        name: 'Obavestenja_so',
                         component: () =>
-                            import ('@/components/solidarnost_online/Obavestenje_so.vue')
+                            import ('@/components/solidarnost_online/Obavestenja_so.vue')
                     },
                     {
                         path: '/solidarnost_online/donacije_so',
@@ -91,10 +91,10 @@ const routes = [{
                             import ('@/components/solidarnost_online/Donacije_so.vue')
                     },
                     {
-                        path: '/solidarnost_online/licitacija_so',
-                        name: 'Licitacija_so',
+                        path: '/solidarnost_online/licitacije_so',
+                        name: 'Licitacije_so',
                         component: () =>
-                            import ('@/components/solidarnost_online/Licitacija_so.vue')
+                            import ('@/components/solidarnost_online/Licitacije_so.vue')
                     },
                     {
                         path: '/solidarnost_online/banka_so',
