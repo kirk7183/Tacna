@@ -28,7 +28,7 @@
                 label="Obaveštenje"
                 counter
                 rows="8"
-                maxlength="1000"
+                maxlength="3000"
                 required
               ></v-textarea>
             </v-col>
