@@ -19,6 +19,7 @@
     src: local("HennyPenny"), url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");
 }
 
+@import url("https://fonts.googleapis.com/css?family=Poppins");
 *,
 html,
 body,
@@ -26,7 +27,7 @@ div.row {
     margin: 0;
     padding: 0;
     box-sizing: border-box !important;
-    font-family: 'Segoe UI historic';
+    font-family: 'Poppins', 'Segoe UI historic';
     font-size: 12px;
     color: black;
 }

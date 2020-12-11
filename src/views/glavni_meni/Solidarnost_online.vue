@@ -15,6 +15,7 @@
         </v-btn>
 
         <!--2nd breakpoint buttons mdAndUp -->
+
         <!-- bind za klasu su uradjena 2 ovde: da doda class name IconColor_selected[i]
           kao i da kada je LG i veci ekran da poveca chip size posto izgleda da prema vuetify oni nisu responsive -->
         <v-chip

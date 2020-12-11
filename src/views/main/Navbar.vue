@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar color="#8d81b8">
+    <v-app-bar color="#988BC7">
       <v-app-bar-nav-icon @click="iconClose"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <p class="ispis-tacna">Tacna</p>
