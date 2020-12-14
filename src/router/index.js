@@ -38,8 +38,35 @@ const routes = [{
             {
                 path: '/licitacije',
                 name: 'Licitacije',
+                redirect: '/licitacije/uputstvo_li',
                 component: () =>
-                    import ('../views/glavni_meni/Licitacije.vue')
+                    import ('../views/glavni_meni/Licitacije.vue'),
+                //CHILDRED !!!!
+                children: [{
+                        path: '/licitacije/uputstvo_li',
+                        name: 'Uputstvo_li',
+                        component: () =>
+                            import ('@/components/licitacije/Uputstvo_li.vue')
+                    },
+                    {
+                        path: '/licitacije/novaLicitacija_li',
+                        name: 'NovaLicitacija_li',
+                        component: () =>
+                            import ('@/components/licitacije/NovaLicitacija_li.vue')
+                    },
+                    {
+                        path: '/licitacije/licitiram_li',
+                        name: 'Licitiram_li',
+                        component: () =>
+                            import ('@/components/licitacije/Licitiram_li.vue')
+                    },
+                    {
+                        path: '/licitacije/zavrsene_li',
+                        name: 'Zavrsene_li',
+                        component: () =>
+                            import ('@/components/licitacije/Zavrsene_li.vue')
+                    }
+                ]
             },
             {
                 path: '/popusti',

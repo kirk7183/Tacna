@@ -13,6 +13,9 @@ import Snackbar from "@/components/add-ons/Snackbar.vue";
 export default {
   components: { Snackbar },
   computed: {
+    //breakpoints ako koristimo npr."sm-breakpoint" u css
+    //automatski bude podesen breakpoint i sve sto treba da se
+    //uradi jeste da se u scss napise .sm-breakpoint{ ove ide css}
     breakpoints() {
       switch (this.$vuetify.breakpoint.name) {
         case "lg":

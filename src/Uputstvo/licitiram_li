@@ -1,0 +1,179 @@
+<template>
+  <div class="licitiram_li">
+    <div v-for="(list, i) in sve_licitacije" :key="i">
+      <v-layout row wrap justify-center>
+        <v-card
+          class="mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
+          elevation="5"
+          min-width="260"
+          width="300"
+          v-for="(single, ii) in list.licitacije"
+          :key="ii"
+        >
+          <v-card-title>
+            <b>{{ truncate(single.nudim, 20) }}</b>
+          </v-card-title>
+
+          <v-card-text class="text-center">
+            <b>Korisnik:</b>
+            <p>
+              {{ truncate(single.korisnik_ime, 20) }}
+              {{ single.korisnik_prezime }}
+            </p>
+          </v-card-text>
+          <v-card-text class="text-center">
+            <b>Grupa:</b>
+            <p>{{ truncate(single.grupa, 20) }}</p>
+          </v-card-text>
+          <v-card-text class="text-center">
+            <b>Cena u DIN:</b>
+            <p>{{ pocetna_cena_u_DIN(single.pocetna_cena_u_DIN) }},00</p>
+          </v-card-text>
+
+          <v-card-text class="text-center">
+            <b>Postavljeno:</b>
+            <p>
+              <!--prosledjivanje datuma pocetka licitacije i koliko dana traje (1 dan =24h ili 2 dana=48h )-->
+              <!-- {{ pocetak_datumPrerada(single.pocetak_datum) }} <br /> -->
+              {{ kraj_datumPrerada(single.kraj_datum) }}
+            </p>
+            <p>
+              {{ single.pocetak_datum.toDate().getHours() }}h
+              {{ single.pocetak_datum.toDate().getMinutes() }}min
+            </p>
+          </v-card-text>
+          <v-card-text class="text-center">
+            <b>Vreme &#177; 30 sekunde:</b>
+
+            <!--IMPORT COMPONENT-->
+            <div class="row">
+              <Timer :pocetak="pocetak" :kraj="kraj"></Timer>
+            </div>
+            <!--KRAJ IMPORTA -->
+          </v-card-text>
+          <v-card-text class="text-center">
+            <b>Opis:</b>
+            <p>{{ truncate(single.opis_licitacije, 52) }}</p>
+          </v-card-text>
+        </v-card>
+      </v-layout>
+    </div>
+  </div>
+</template>
+
+<script>
+import Timer from "@/components/add-ons/Timer.vue";
+export default {
+  components: { Timer },
+  data() {
+    return {
+      pocetak: "",
+      kraj: "",
+      Meseci: [
+        "Januar",
+        "Februar",
+        "Mary",
+        "April",
+        "Maj",
+        "Jun",
+        "Jul",
+        "Avgust",
+        "Septembar",
+        "Oktobar",
+        "Novembar",
+        "December",
+      ],
+    };
+  },
+  created() {
+    this.$store.dispatch("pregled_svih_licitacija");
+  },
+  computed: {
+    sve_licitacije: {
+      get() {
+        return this.$store.getters.get_sve_licitacije;
+      },
+    },
+  },
+  methods: {
+    // STAVLJA 3 TACKICE NAKON ODREDJENOG BROJA KARAKTERA KOJI PROSLEDJUJEMO METODI
+    truncate(source, size) {
+      return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    },
+    //KRAJ
+    //STAVLJA TACKE (.) NAKON 3 BROJA RADI BOLJE PREGLEDNOSTI AKO JE VELIKI BROJ
+    pocetna_cena_u_DIN(newValue) {
+      const result = newValue
+        .replace(/\D/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return result;
+    },
+    //KRAJ
+    //PRETVARA MESECE(BROJEVE) U TEKSUALNI DATUM(npr. Januar ili Jan pogledaj niz u data())
+    mesecPrerada(month) {
+      return this.Meseci[month];
+    },
+    //kraj
+    //PRETVARA DATUM IZ FIREBASE KOJI SADRZI DATUM I VREME U POJEDINACNI DAN.MESEC I GODINU
+    pocetak_datumPrerada(pocetak_datum) {
+      let dan = pocetak_datum.toDate().getDate();
+      let mesec = this.mesecPrerada(pocetak_datum.toDate().getMonth());
+      let godina = pocetak_datum.toDate().getFullYear();
+      let sati = pocetak_datum.toDate().getHours();
+      let minuti = pocetak_datum.toDate().getMinutes();
+      let sekunde = pocetak_datum.toDate().getSeconds();
+      //pretvaranje za slanje u Timer.vue posto prima datum postavljen na odredjen nacin
+      let zaTimer_pocetak =
+        mesec +
+        " " +
+        dan +
+        ", " +
+        godina +
+        " " +
+        sati +
+        ":" +
+        minuti +
+        ":" +
+        sekunde;
+      //kraj pretvaranja
+      this.pocetak = zaTimer_pocetak; //this.pocetak se salje kao prop u Timer.vue
+      //ZA PRIKAZ POCETKA LICITACIJE
+      let zaPrikaz =
+        dan + " " + mesec + " " + godina + " " + sati + ":" + minuti; //pretvaranje za prikaz pocetka licitacije
+      return zaPrikaz; //vraca datum koji sluzi za prikaz pocetka licitacije
+    },
+    kraj_datumPrerada(kraj_datum) {
+      console.log(kraj_datum);
+      let dan = kraj_datum.toDate().getDate();
+      let mesec = this.mesecPrerada(kraj_datum.toDate().getMonth());
+      let godina = kraj_datum.toDate().getFullYear();
+      let sati = kraj_datum.toDate().getHours();
+      let minuti = kraj_datum.toDate().getMinutes();
+      let sekunde = kraj_datum.toDate().getSeconds();
+      //pretvaranje za slanje u Timer.vue posto prima datum postavljen na odredjen nacin
+      let zaTimer_kraj =
+        mesec +
+        " " +
+        dan +
+        ", " +
+        godina +
+        " " +
+        sati +
+        ":" +
+        minuti +
+        ":" +
+        sekunde;
+      //kraj pretvaranja
+      this.kraj = zaTimer_kraj; //this.kraj se salje kao prop u Timer.vue
+      //ZA PRIKAZ POCETKA LICITACIJE
+      let zaPrikaz =
+        dan + " " + mesec + " " + godina + " " + sati + ":" + minuti; //pretvaranje za prikaz pocetka licitacije
+      // console.log(this.kraj);
+      return zaPrikaz; //vraca datum koji sluzi za prikaz kraja licitacije
+    },
+  },
+};
+</script>
+
+<style>
+</style>

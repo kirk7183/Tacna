@@ -1,0 +1,91 @@
+<template>
+  <div>
+    <div class="d-flex">
+      <div class="card text-center" v-for="(time, i) in times" :key="i">
+        <div class="card-block px-2">
+          <h4 class="card-title red--text" style="font-size: 16px">
+            {{ time.time }}
+          </h4>
+        </div>
+        <div class="card-footer px-2">
+          {{ time.text }}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ["pocetak", "kraj"],
+  data() {
+    return {
+      //ovako treba da izgleda format koji componenta prima
+      //   startTime: "December 14, 2020 11:00:00",
+      //   endTime: "December 14, 2020 05:00:05 PM",
+      //
+      startTime: this.pocetka,
+      endTime: this.kraj,
+      times: [
+        { id: 0, text: "Dan", time: 1 },
+        { id: 1, text: "Sat", time: 1 },
+        { id: 2, text: "Min", time: 1 },
+        { id: 3, text: "Sek", time: 1 },
+      ],
+      progress: 100,
+      // isActive: false,
+      timeinterval: undefined,
+    };
+  },
+  created() {
+    //CREATED ZA TIMER
+    this.updateTimer();
+    this.timeinterval = setInterval(this.updateTimer, 1000);
+    //KRAJ ZA TIMER
+  },
+  methods: {
+    //ODAVDE SU METODE ZA TIMER
+    updateTimer: function () {
+      if (
+        this.times[3].time > 0 ||
+        this.times[2].time > 0 ||
+        this.times[1].time > 0 ||
+        this.times[0].time > 0
+      ) {
+        this.getTimeRemaining();
+        this.updateProgressBar();
+      } else {
+        clearTimeout(this.timeinterval);
+        // this.times[3].time = this.times[2].time = this.times[1].time = this.times[0].time = 0;
+        this.progress = 0;
+      }
+    },
+    getTimeRemaining: function () {
+      let t = Date.parse(new Date(this.endTime)) - Date.parse(new Date());
+      if (t >= 0) {
+        this.times[3].time = Math.floor((t / 1000) % 60); //seconds
+        this.times[2].time = Math.floor((t / 1000 / 60) % 60); //minutes
+        this.times[1].time = Math.floor((t / (1000 * 60 * 60)) % 24); //hours
+        this.times[0].time = Math.floor(t / (1000 * 60 * 60 * 24)); //days
+      } else {
+        this.times[3].time = this.times[2].time = this.times[1].time = this.times[0].time = 0;
+        this.progress = 0;
+      }
+    },
+    updateProgressBar: function () {
+      let startTime = Date.parse(new Date(this.startTime));
+      let currentTime = Date.parse(new Date());
+      let endTime = Date.parse(new Date(this.endTime));
+      let interval = parseFloat(
+        ((currentTime - startTime) / (endTime - startTime)) * 100
+      ).toFixed(2);
+      this.progress = 100 - interval;
+    },
+
+    //KRAJ ZA TIMER
+  },
+};
+</script>
+
+<style>
+</style>

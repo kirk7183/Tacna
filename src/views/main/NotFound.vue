@@ -3,7 +3,7 @@
     <v-layout row wrap justify-center>
       <v-flex>
         <h1 style="text-align: center">
-          Stranica koju zelite da posetite ne postoji !!!
+          Stranica koju želite da posetite ne postoji !!!
         </h1>
         <h4 class="text-center">
           Molimo Vas vratite se korak nazad i koristite meni za navigaciju.

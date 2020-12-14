@@ -32,6 +32,7 @@ export default new Vuex.Store({
             }
         },
         privilegije_boolean: false,
+        sve_licitacije: [],
     },
     getters: {
         get_IsLoggedIn: (state) => {
@@ -51,6 +52,9 @@ export default new Vuex.Store({
         },
         get_privilegije_boolean: (state) => {
             return state.privilegije_boolean
+        },
+        get_sve_licitacije: (state) => {
+            return state.sve_licitacije;
         }
     },
     mutations: {
@@ -72,6 +76,9 @@ export default new Vuex.Store({
         },
         PRIVILEGIJE_PRIKAZI(state, payload) {
             state.privilegije_boolean = payload
+        },
+        SVE_LICITACIJE(state, payload) {
+            state.sve_licitacije = payload
         }
     },
 
@@ -176,6 +183,8 @@ export default new Vuex.Store({
             });
         },
         //PROVERA DA LI JE KORISNIK LOGOVAN AKO SE UGASI BROWSER ILI SE REFRESH STRANICA DA OPET POKUPI PODATKE
+        //inace kada se login smatra se da je refresh-ovana stranica tako da je ovaj action poziva i on povlaci podatke ako ste 
+        //registrovani, a ako niste onda bude null
         check_is_user_logged_in({ commit, dispatch }) {
             //1 linija koda ispod brise obavestenja kada se refresh stranica da bi opet ocitalo iz baze ukoliko ima updatova
             firebase.auth().onAuthStateChanged((user) => {
@@ -216,9 +225,64 @@ export default new Vuex.Store({
         },
         show_privilegije({ commit }, newValue) {
             commit('PRIVILEGIJE_PRIKAZI', newValue)
+        },
+
+        nova_licitacija({ commit, getters }, payload) {
+            var reg_korisnik = getters.get_reg_korisnik;
+            //object reg_korisnik u sebi sadrzi object 'podaci' a u njemu podatke korisnika
+            var korisnik_id = reg_korisnik.podaci.korisnik_id;
+            //ime korisnika
+            var korisnik_ime = reg_korisnik.podaci.ime;
+            //prezime korisnika
+            var korisnik_prezime = reg_korisnik.podaci.prezime
+                //id licitacije je korisnikov id ali posto ne moze samo brojevi dodao sam 'korisnik_id' ispred
+            var id_licitacije = 'korisnik_id-' + korisnik_id;
+
+            var firestore_baza = firebase.firestore().collection("licitacije_u_toku").doc(id_licitacije);
+
+            // Atomically add to the "licitacije" array field.
+            firestore_baza.update({
+                licitacije: firebase.firestore.FieldValue.arrayUnion({
+                    nudim: payload.nudim,
+                    grupa: payload.grupa,
+                    pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                    trajanje_licitacije: payload.trajanje_licitacije,
+                    opis_licitacije: payload.opis_licitacije,
+                    pocetak_datum: payload.pocetak_datum,
+                    kraj_datum: payload.kraj_datum,
+                    korisnik_ime: korisnik_ime,
+                    korisnik_prezime: korisnik_prezime,
+                })
+            }).then(() => {
+                commit('TOGGLE_SNACKBAR', {
+                    boolean: true,
+                    message: 'Uspešno ste uneli novu licitaciju',
+                    color: 'success'
+                })
+            }).catch((error) => {
+                console.log(error)
+            })
+        },
+        //PREGLED SVIH LICITACIJA
+        pregled_svih_licitacija({ commit }) {
+            var firestore_baza = firebase.firestore().collection("licitacije_u_toku");
+            firestore_baza.get().then(querySnapshot => {
+                //pravljenje niza svih korisnika tj. njihovih licitacija
+                let tempListaLicitacija = [];
+                querySnapshot.forEach(doc => {
+                    const data = {
+                        doc_id: doc.id,
+                        licitacije: doc.data().licitacije
+
+                    }
+                    tempListaLicitacija.push(data)
+                    commit('SVE_LICITACIJE', tempListaLicitacija)
+                })
+            })
         }
+
     },
-    ///////////////////////// MODULI /////////////////////////////
+    ///////////////////////////// MODULI /////////////////////////////
     modules: {
         /////////// _API MODUL ////////////////
         _API: {
