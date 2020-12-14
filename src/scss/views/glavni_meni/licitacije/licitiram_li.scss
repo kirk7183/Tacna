@@ -1,0 +1,28 @@
+.licitiram_li {
+    .v-card {
+        cursor: pointer;
+    }
+    .v-card__title b {
+        font-size: 14px;
+    }
+    .v-card__text,
+    .v-card__text b {
+        font-size: 14px;
+        color: black !important;
+    }
+    .v-card__text {
+        text-align: left;
+    }
+    .v-card__text p {
+        font-size: 14px !important;
+        margin: 0;
+        padding-top: 5px;
+    }
+    .box {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .timera {
+        color: red;
+    }
+}

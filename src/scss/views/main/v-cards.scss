@@ -4,6 +4,8 @@
         .licitacije_so,
         .donacije_so,
         .banka_so,
+        .novaLicitacija_li,
+        .licitiram_li,
         .dialog_logout,
         .dialog_add_obavestenja,
         .dialog_delete_obavestenja {
@@ -11,7 +13,7 @@
                 padding: 4px !important;
             }
             .v-card__title {
-                font-family: 'Segoe UI historic' !important;
+                font-family: 'Poppins', 'Segoe UI historic' !important;
                 // font-weight: 600 !important;
                 justify-content: center !important;
                 background-color: $main-solidarnost;

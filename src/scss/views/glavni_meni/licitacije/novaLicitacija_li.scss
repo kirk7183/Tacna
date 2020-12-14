@@ -1,0 +1,53 @@
+.novaLicitacija_li {
+    .v-card__title {
+        margin-bottom: 20px !important;
+    }
+    .col {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .v-textarea {
+        padding: 0 12px !important;
+        margin: 0 !important;
+    }
+    .v-text-field {
+        padding: 0 12px !important;
+        margin: 0 !important;
+    }
+    .v-card__text {
+        padding: 0 !important;
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+        ;
+    }
+    .v-btn {
+        width: 75px !important;
+    }
+    .v-messages__message {
+        color: #ff5252 !important
+    }
+    .radio_button {
+        margin: 0 !important;
+        p {
+            padding: 0 10px 0 22px;
+            font-size: 14px;
+            margin: 0;
+        }
+    }
+    input,
+    textarea {
+        font-size: 14px;
+    }
+    //ZA INPUT GDE JE TYPE="NUMBER" DA SA DESNE STRANE NEMA DUGMENCE GORE DOLE
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+}

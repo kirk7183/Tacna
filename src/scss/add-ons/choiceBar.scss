@@ -1,8 +1,9 @@
-.solidatnost_online {
+.solidatnost_online,
+.licitacije {
     .v-toolbar__content {
         justify-content: space-around !important;
     }
-    // button.v-btn {
+    //opciono-dugme za mobilni dugme
     button.solidarnost_btn {
         width: 35px !important;
         height: 35px !important;
@@ -14,13 +15,15 @@
     .selected {
         border: thin solid $main-icon-color !important;
     }
+    //opciono-dugme standard (izmedju mobilne verzije i lgAndUp)
     .v-chip {
-        min-width: 100px !important;
+        min-width: 140px !important;
         // width: 200px !important;
         justify-content: center;
         background-color: white !important;
         cursor: pointer;
     }
+    //opciono-dugme za velike ekrane
     .v-chip-lgAndUp {
         width: 220px !important;
     }

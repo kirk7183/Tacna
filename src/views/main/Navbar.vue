@@ -138,11 +138,12 @@ export default {
     //When refresh page to check on what route is page and then setup activePage
     if (this.$route.path == "/obavestenje") {
       this.activePage = 1;
+      //OZNACI KOJA JE STRANICA POSLE REFRESH-A
       //provera ukoliko URL sadrzi deo reci solidarnost ("solidarnost") nebitno da li je parent ili child u URL-u
       //ako postoji "darnost u URL onda pri Created() stranice stavi da je activePage=2"
     } else if (window.location.href.indexOf("solidarnost") > -1) {
       this.activePage = 2;
-    } else if (this.$route.path == "/licitacije") {
+    } else if (window.location.href.indexOf("licitacije") > -1) {
       this.activePage = 3;
     } else if (this.$route.path == "/popusti") {
       this.activePage = 4;
