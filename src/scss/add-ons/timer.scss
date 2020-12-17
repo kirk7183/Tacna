@@ -1,0 +1,20 @@
+.timer {
+    .card {
+        text-align: center;
+    }
+    .card-block,
+    .card-footer {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    .card-title,
+    .zavrsenoPoruka {
+        color: red;
+        font-size: 18px;
+        font-weight: 900;
+        margin-bottom: 1px;
+    }
+    .zavrsenoPoruka {
+        padding-top: 10px;
+    }
+}

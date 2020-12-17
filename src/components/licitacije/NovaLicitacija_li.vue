@@ -3,8 +3,35 @@
     <v-row justify="center">
       <v-col cols="12" sm="10" md="5" class="pa-0">
         <v-card class="mx-2 my-4 mx-sm-4 my-sm-6 my-md-5" elevation="5">
-          <v-card-title> Nova licitacija </v-card-title>
+          <v-card-title :style="return_boja()"> Nova licitacija </v-card-title>
           <v-form ref="form" v-model="valid" lazy-validation>
+            <v-radio-group
+              row
+              v-model="vrsta_licitacije"
+              mandatory
+              dense
+              class="radio_group"
+            >
+              <v-layout justify-center wrap>
+                <v-radio
+                  name="active"
+                  label="Lična"
+                  value="licna"
+                  color="#988BC7"
+                  class="radio-button-vrsta licna"
+                  @click="boja_title = '#988BC7'"
+                ></v-radio>
+
+                <v-radio
+                  name="active"
+                  label="Humanitarna"
+                  value="humanitarna"
+                  color="success"
+                  class="radio-button-vrsta humanitarna"
+                  @click="boja_title = '#4CAF50'"
+                ></v-radio>
+              </v-layout>
+            </v-radio-group>
             <v-text-field
               dense
               v-model="nudim"
@@ -16,16 +43,14 @@
               required
             ></v-text-field>
 
-            <v-text-field
-              dense
+            <v-select
               v-model="grupa"
+              :items="lista_stvari"
+              label="Grupa"
+              dense
+              :menu-props="{ bottom: true, offsetY: true }"
               outlined
-              label="grupa-select treba"
-              counter
-              maxlength="50"
-              :rules="rules"
-              required
-            ></v-text-field>
+            ></v-select>
 
             <v-text-field
               v-model="pocetna_cena_u_DIN"
@@ -85,7 +110,9 @@ import Vue from "vue";
 export default {
   data() {
     return {
+      boja_title: "#988BC7",
       valid: false,
+      vrsta_licitacije: "",
       nudim: "",
       grupa: "",
       pocetna_cena_u_DIN: "",
@@ -109,6 +136,15 @@ export default {
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       Vue.nextTick(() => (this.pocetna_cena_u_DIN = result));
     },
+  },
+  created() {
+    //sa sortiranjem
+    this.lista_stvari = this.$store.getters.get_lista_stvari.sort(function (
+      a,
+      b
+    ) {
+      return a.localeCompare(b);
+    });
   },
 
   methods: {
@@ -134,6 +170,7 @@ export default {
         let kraj_datum = new Date(d); //pretvaranje iz milisekunde (koje JS automatski pretvara u njih kada dodajes neki dan) u pravi datum
 
         this.$store.dispatch("nova_licitacija", {
+          vrsta_licitacije: this.vrsta_licitacije,
           nudim: this.nudim,
           grupa: this.grupa,
           pocetna_cena_u_DIN: this.pocetna_cena_u_DIN,
@@ -146,6 +183,9 @@ export default {
     },
     obrisi() {
       this.$refs.form.reset();
+    },
+    return_boja() {
+      return "background-color:" + this.boja_title;
     },
   },
 };

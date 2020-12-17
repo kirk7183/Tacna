@@ -1,75 +1,104 @@
 <template>
   <div class="licitiram_li">
-    <div v-for="(list, i) in sve_licitacije" :key="i">
-      <v-layout row wrap justify-center>
-        <v-card
-          class="mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
-          elevation="5"
-          min-width="260"
-          width="300"
-          v-for="(single, ii) in list.licitacije"
-          :key="ii"
-        >
-          <!--NUDIM - TITLE-->
-          <v-card-title>
-            <b>{{ truncate(single.nudim, 20) }}</b>
-          </v-card-title>
-          <!--KRAJ NUDIM - TITLE-->
-          <div class="box">
-            <!--REAL-TIME PREOSTALO VREME LICITACIJE-->
-            <!--IMPORT COMPONENT-->
-            <v-card-text class="text-center">
-              <b>Preostalo vreme: &#177;</b>
-            </v-card-text>
-            <div class="row justify-center">
-              <Timer :pocetak="pocetak" :kraj="kraj" class="timera"></Timer>
-            </div>
-            <!--KRAJ IMPORTA -->
+    <v-layout justify-center wrap>
+      <v-flex xs7 sm10 md3>
+        <!-- v-model="grupa" -->
+        <v-select
+          class="sortiranje"
+          :items="lista_stvari"
+          label="Vrsta licitacije"
+          dense
+          :menu-props="{ bottom: true, offsetY: true }"
+          outlined
+        ></v-select>
+      </v-flex>
+      <v-flex xs7 sm5 md3>
+        <v-select
+          class="sortiranje"
+          :items="lista_stvari"
+          label="Grupe"
+          dense
+          :menu-props="{ bottom: true, offsetY: true }"
+          outlined
+        ></v-select>
+      </v-flex>
+      <v-flex xs7 sm5 md3>
+        <v-select
+          class="sortiranje"
+          :items="lista_stvari"
+          label="Cena"
+          dense
+          :menu-props="{ bottom: true, offsetY: true }"
+          outlined
+        ></v-select>
+      </v-flex>
+    </v-layout>
+    <!-- v-circular dok ocitava podatke -->
+    <div v-if="!loadedData" class="text-center mt-12">
+      <v-progress-circular
+        indeterminate
+        color="red"
+        class="progress_circular"
+      ></v-progress-circular>
+    </div>
+    <!--ako ima podataka prikazi ako nema prikazi div na dnu stranice-->
+    <div v-if="loadedData">
+      <div>
+        <v-layout row wrap justify-center>
+          <div v-for="(single, ii) in arrayData" :key="ii">
+            <v-card
+              class="mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
+              elevation="5"
+              min-width="260"
+              max-width="300"
+            >
+              <!--poziv da se uradi prerada datuma i vremena kako bi se rezultat poslao u komponentu 
+        Timer. Bez ovoga nece da prikaze datum. Inace ne vraca nikakav prikaz-->
+              {{ pocetak_datumPrerada(single.pocetak_datum) }}
+              {{ kraj_datumPrerada(single.kraj_datum) }}
 
-            <!--VREME LICITACIJE-->
-            <v-card-text class="text-center">
-              <b>Početak licitacije:</b>
-              <p>
-                <!--prosledjivanje datuma pocetka licitacije i koliko dana traje (1 dan =24h ili 2 dana=48h )-->
-                {{ pocetak_datumPrerada(single.pocetak_datum) }}
-              </p>
-              <br />
-              <b>Kraj licitacije:</b>
-              <p>{{ kraj_datumPrerada(single.kraj_datum) }}</p>
-            </v-card-text>
+              <!--NUDIM - TITLE-->
+              <!-- koja boja za title (licna- #988BC7 ili humanitarna-success)-->
+              <v-card-title :style="vrsta_licit(single.vrsta_licitacije)">
+                <b>{{ truncate(single.nudim, 25) }}</b>
+              </v-card-title>
+              <!--KRAJ NUDIM - TITLE-->
 
-            <!--KRAJ VREME LICITACIJE-->
-            <!--KRAJ REAL-TIME PREOSTALO VREME LICITACIJE-->
+              <div class="box">
+                <!--GRUPA -->
+                <v-card-text class="text-center">
+                  <b>Grupa:</b>
+                  <p>{{ truncate(single.grupa, 35) }}</p>
+                </v-card-text>
+                <v-card-text class="text-center">
+                  <b>Početna cena u DIN:</b>
+                  <p>{{ pocetna_cena_u_DIN(single.pocetna_cena_u_DIN) }},00</p>
+                </v-card-text>
+                <!--KRAJ GRUPA-->
 
-            <!--GRUPA -->
-            <v-card-text class="text-center">
-              <b>Grupa:</b>
-              <p>{{ truncate(single.grupa, 20) }}</p>
-            </v-card-text>
-            <v-card-text class="text-center">
-              <b>Cena u DIN:</b>
-              <p>{{ pocetna_cena_u_DIN(single.pocetna_cena_u_DIN) }},00</p>
-            </v-card-text>
-            <!--KRAJ GRUPA-->
-            <!--KORISNIK-->
-            <v-card-text class="text-center">
-              <b>Korisnik:</b>
-              <p>
-                {{ truncate(single.korisnik_ime, 20) }}
-                {{ single.korisnik_prezime }}
-              </p>
-            </v-card-text>
-            <!--KORISNIK-->
-
-            <!--OPIS LICITACIJE-->
-            <v-card-text class="text-center">
-              <b>Opis:</b>
-              <p>{{ truncate(single.opis_licitacije, 52) }}</p>
-            </v-card-text>
-            <!--KRAJ OPIS LICITACIJE-->
+                <!--REAL-TIME PREOSTALO VREME LICITACIJE-->
+                <!--IMPORT COMPONENT-->
+                <v-card-text class="text-center">
+                  <b>Preostalo vreme:</b>
+                </v-card-text>
+                <div class="row justify-center">
+                  <Timer
+                    :startTime="pocetak"
+                    :endTime="kraj"
+                    class="timera"
+                  ></Timer>
+                </div>
+                <!--KRAJ IMPORTA -->
+                <!--KRAJ REAL-TIME PREOSTALO VREME LICITACIJE-->
+              </div>
+            </v-card>
           </div>
-        </v-card>
-      </v-layout>
+        </v-layout>
+      </div>
+    </div>
+    <!--ako nema podataka ocitanih iz vuexa onda prikazi ovaj div-->
+    <div v-if="loadedData == 'nema_podataka'" class="nemaLicitacije">
+      Trenutno nema postavljenih licitacija za traženi kriterijum
     </div>
   </div>
 </template>
@@ -80,8 +109,9 @@ export default {
   components: { Timer },
   data() {
     return {
-      // pocetak: "",
-      // kraj: "",
+      loadedData: false,
+      boja_licitacije: null,
+      arrayData: [],
       Meseci: [
         "Januar",
         "Februar",
@@ -91,15 +121,61 @@ export default {
         "Jun",
         "Jul",
         "Avgust",
-        "Septembar",
-        "Oktobar",
-        "Novembar",
+        "September",
+        "Oktober",
+        "November",
+        "December",
+      ],
+      Months: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
         "December",
       ],
     };
   },
   created() {
+    //da povuce podatke iz firebase-a
     this.$store.dispatch("pregled_svih_licitacija");
+    //sortiranje
+    this.lista_stvari = this.$store.getters.get_lista_stvari.sort(function (
+      a,
+      b
+    ) {
+      return a.localeCompare(b); //na kraju niza stavlja nayive sa pocetnim š,č,ć,ž,đ
+    });
+    this.lista_stvari.unshift("SVE"); //naknadon na vrh liste dodaje "SVE" za listanje svih grupa
+  },
+  watch: {
+    //motri na computed sve_licitacije kada dobije podatke
+    sve_licitacije(newValue) {
+      //ako nije prazan i nema podatak "nema_podataka" tj. ako ima podataka onda...
+      if (
+        this.sve_licitacije.length != 0 &&
+        this.sve_licitacije != "nema_podataka"
+      ) {
+        //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra
+        this.loadedData = true;
+        //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
+        newValue.forEach((value) => {
+          value.licitacije.forEach((value1) => {
+            this.arrayData.push(value1);
+          });
+        });
+      }
+      //ako je prazan (nema podatke) a i u isto vreme ne pise "nema_podataka"
+      else {
+        this.loadedData = "nema_podataka";
+      }
+    },
   },
   computed: {
     sve_licitacije: {
@@ -124,7 +200,7 @@ export default {
     //KRAJ
     //PRETVARA MESECE(BROJEVE) U TEKSUALNI DATUM(npr. Januar ili Jan pogledaj niz u data())
     mesecPrerada(month) {
-      return this.Meseci[month];
+      return this.Months[month];
     },
     //kraj
     //PRETVARA DATUM IZ FIREBASE KOJI SADRZI DATUM I VREME U POJEDINACNI DAN.MESEC I GODINU
@@ -155,7 +231,7 @@ export default {
       //ZA PRIKAZ POCETKA LICITACIJE
       let zaPrikaz =
         dan + " " + mesec + " " + godina + " " + sati + ":" + minutiPrepravka; //pretvaranje za prikaz pocetka licitacije
-      return zaPrikaz; //vraca datum koji sluzi za prikaz pocetka licitacije
+      this.zaPrikazPocetak = zaPrikaz; //vraca datum koji sluzi za prikaz pocetka licitacije
     },
     kraj_datumPrerada(kraj_datum) {
       let dan = kraj_datum.toDate().getDate();
@@ -184,11 +260,20 @@ export default {
       //ZA PRIKAZ POCETKA LICITACIJE
       let zaPrikaz =
         dan + " " + mesec + " " + godina + " " + sati + ":" + minutiPrepravka; //pretvaranje za prikaz pocetka licitacije
-      return zaPrikaz; //vraca datum koji sluzi za prikaz kraja licitacije
+      this.zaPrikazKraj = zaPrikaz; //vraca datum koji sluzi za prikaz kraja licitacije
     },
-  },
-  pocetak(pocetak) {
-    return pocetak;
+    vrsta_licit(vrsta_licitacije) {
+      var boja;
+      if (vrsta_licitacije == "licna") {
+        boja = "background-color:#988BC7";
+      } else if (vrsta_licitacije == "humanitarna") {
+        boja = "background-color: #4CAF50";
+      } else {
+        //ako nije ni jedno obelezi tako sto ne stavljas nikakvu boju na title
+        boja = "background-color: transparent";
+      }
+      return boja;
+    },
   },
 };
 </script>

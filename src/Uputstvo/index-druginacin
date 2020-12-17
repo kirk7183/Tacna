@@ -28,13 +28,9 @@ export default new Vuex.Store({
                 datum_log: null,
                 happy_coin: null,
                 happy_coin_rez: null,
-                status: null,
-                br_telefona: null
+                status: null
             }
         },
-        lista_stvari: ["Оdeća i obuća", "Automobili, motorcikli i bicikli", "Igračke", "Hrana i piće", "Knjige, časopisi i stripovi", "Lov i ribolov", "Mobilni telefoni i oprema", "Kompijuteri i oprema", "Muzika i sve vezano za nju", "Nameštaj", "Nega (lica i tela) i šminka", "Poljoprivreda", "Sport i raznonoda", "TV, video i audio", "Uredjenje bašte i kuće"],
-        sort_vrsta: ["Sve", "Lična", "Humanitarna"],
-        sortiranje: ["Naziv a-z", "Naziv z-a", "Cena rastuće", "Cena opadajuće"],
         privilegije_boolean: false,
         sve_licitacije: [],
     },
@@ -59,9 +55,6 @@ export default new Vuex.Store({
         },
         get_sve_licitacije: (state) => {
             return state.sve_licitacije;
-        },
-        get_lista_stvari: (state) => {
-            return state.lista_stvari
         }
     },
     mutations: {
@@ -233,7 +226,7 @@ export default new Vuex.Store({
         show_privilegije({ commit }, newValue) {
             commit('PRIVILEGIJE_PRIKAZI', newValue)
         },
-        //POSTAVLJANJE NOVE LICITACIJE
+
         nova_licitacija({ commit, getters }, payload) {
             var reg_korisnik = getters.get_reg_korisnik;
             //object reg_korisnik u sebi sadrzi object 'podaci' a u njemu podatke korisnika
@@ -243,94 +236,70 @@ export default new Vuex.Store({
             //prezime korisnika
             var korisnik_prezime = reg_korisnik.podaci.prezime
                 //id licitacije je korisnikov id ali posto ne moze samo brojevi dodao sam 'korisnik_id' ispred
-            var id_licitacije = 'korisnik_id-' + korisnik_id; //korisnik_id-8
-            // console.log(id_licitacije)
-            //putanja u firebase
-            var firestore_baza = firebase.firestore().collection("licitacije_u_toku").doc(id_licitacije);
-
-            //uslov ako je korisnik registrovan na Marsu onda moze da postavlja licitacije
-            //stavio sam samo neke od uslova koje sam smatrao da treba proveriti da li podaci
-            //postoje u bazi tj. da li je korisnik registrovan
-            if (reg_korisnik.podaci.ime != null && reg_korisnik.podaci.datum_reg != null && reg_korisnik.podaci.dozvola != null) {
-                firestore_baza.get().then((docExist) => {
-                    //ako postoji "document" npr "korisnik_id-8" znaci samo update podataka
-                    if (docExist.exists) {
-                        // Update to the "licitacije" array field.
-                        firestore_baza.update({
-                            licitacije: firebase.firestore.FieldValue.arrayUnion({
-                                vrsta_licitacije: payload.vrsta_licitacije,
-                                nudim: payload.nudim,
-                                grupa: payload.grupa,
-                                pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
-                                trajanje_licitacije: payload.trajanje_licitacije,
-                                opis_licitacije: payload.opis_licitacije,
-                                pocetak_datum: payload.pocetak_datum,
-                                kraj_datum: payload.kraj_datum,
-                                korisnik_ime: korisnik_ime,
-                                korisnik_prezime: korisnik_prezime,
-                            })
-
+            var id_licitacije = 'korisnik_id-' + korisnik_id;
+            console.log(id_licitacije)
+                //putanja u firebase
+            var firestore_baza = firebase.firestore().collection("licitacije_u_toku").doc("korisnik_id-3");
+            firestore_baza.get().then((docExist) => {
+                if (docExist.exists) {
+                    // Update to the "licitacije" array field.
+                    firestore_baza.update({
+                        licitacije: firebase.firestore.FieldValue.arrayUnion({
+                            nudim: payload.nudim,
+                            grupa: payload.grupa,
+                            pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                            trajanje_licitacije: payload.trajanje_licitacije,
+                            opis_licitacije: payload.opis_licitacije,
+                            pocetak_datum: payload.pocetak_datum,
+                            kraj_datum: payload.kraj_datum,
+                            korisnik_ime: korisnik_ime,
+                            korisnik_prezime: korisnik_prezime,
                         })
-                    } else {
-                        //ako ne postoji "document" npr "korisnik_id-8" onda mora SET tj napravi document pod tim nazivom
-                        // add to the "licitacije" array field.
-                        firestore_baza.set({
-                            licitacije: firebase.firestore.FieldValue.arrayUnion({
-                                vrsta_licitacije: payload.vrsta_licitacije,
-                                nudim: payload.nudim,
-                                grupa: payload.grupa,
-                                pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
-                                trajanje_licitacije: payload.trajanje_licitacije,
-                                opis_licitacije: payload.opis_licitacije,
-                                pocetak_datum: payload.pocetak_datum,
-                                kraj_datum: payload.kraj_datum,
-                                korisnik_ime: korisnik_ime,
-                                korisnik_prezime: korisnik_prezime,
-                            })
 
-                        })
-                    }
-                }).then(() => {
-                    commit('TOGGLE_SNACKBAR', {
-                        boolean: true,
-                        message: 'Uspešno ste uneli novu licitaciju',
-                        color: 'success'
                     })
-                }).catch((error) => {
-                    console.log(error)
-                })
-            }
-            //ako nije registrovan ne moze da postavlja licitacije
-            else {
+                } else {
+                    // add to the "licitacije" array field.
+                    firestore_baza.set({
+                        licitacije: firebase.firestore.FieldValue.arrayUnion({
+                            nudim: payload.nudim,
+                            grupa: payload.grupa,
+                            pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                            trajanje_licitacije: payload.trajanje_licitacije,
+                            opis_licitacije: payload.opis_licitacije,
+                            pocetak_datum: payload.pocetak_datum,
+                            kraj_datum: payload.kraj_datum,
+                            korisnik_ime: korisnik_ime,
+                            korisnik_prezime: korisnik_prezime,
+                        })
+
+                    })
+                }
+            }).then(() => {
                 commit('TOGGLE_SNACKBAR', {
                     boolean: true,
-                    message: 'Morate se prvo registrovati',
-                    color: 'error'
+                    message: 'Uspešno ste uneli novu licitaciju',
+                    color: 'success'
                 })
-            }
+            }).catch((error) => {
+                console.log(error)
+            })
         },
         //PREGLED SVIH LICITACIJA
         pregled_svih_licitacija({ commit }) {
             var firestore_baza = firebase.firestore().collection("licitacije_u_toku");
             firestore_baza.get().then(querySnapshot => {
+                //pravljenje niza svih korisnika tj. njihovih licitacija
                 let tempListaLicitacija = [];
-                //provera da li ima podataka uopste, ako nema poslati da nema podataka
-                //kako bi se Licitiram_li.vue ocitalo i izbacio DIV koji ispisuje da nema podataka 
-                if (querySnapshot.empty) {
-                    tempListaLicitacija.push('nema_podataka')
-                } else {
-                    //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
-                    querySnapshot.forEach(doc => {
+                querySnapshot.forEach(doc => {
+                    doc.data().licitacije.forEach((singleData) => {
                         const data = {
                             doc_id: doc.id,
-                            licitacije: doc.data().licitacije
+                            licitacije: singleData
                         }
                         tempListaLicitacija.push(data)
-
+                        commit('SVE_LICITACIJE', tempListaLicitacija)
                     })
-                }
-                commit('SVE_LICITACIJE', tempListaLicitacija)
-
+                })
             })
         }
 
@@ -356,8 +325,8 @@ export default new Vuex.Store({
 
             },
             actions: {
-                //PROVERA NA MARSU DA LI JE REGISTROVAN (uporedjivane mail-a koji se dobija sa fronta)
-                // I AKO JESTE VRACAJU SE PODACI IZ BAZE
+                //PROVERA NA MARSU DA LI JE REGISTROVAN (uporedjivane mail-a) I AKO JESTE 
+                //VRACAJU SE PODACI IZ BAZE
                 api_is_reg_check({ commit }, user_email) {
                     $api.provera_privilegija({ user_email: user_email }).then(response => {
                         //pravljenje local storage za sid (response podatak sa marsa)
