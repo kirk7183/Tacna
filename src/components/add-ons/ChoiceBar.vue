@@ -1,4 +1,5 @@
 <template>
+  <!--bar pri vrhu stranice gde biramo nova_licitacija, uputstvo, licitacije itd-->
   <v-app-bar class="app-bar" color="gray" elevation="1" height="50">
     <div v-for="(single, i) in icons" :key="i">
       <!--1st breakpoint buttons smAndDown -->

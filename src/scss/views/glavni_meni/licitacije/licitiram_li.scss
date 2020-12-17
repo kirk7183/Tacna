@@ -25,4 +25,19 @@
     .timera {
         color: red;
     }
+    .nemaLicitacije {
+        color: red;
+        margin-top: 150px;
+        text-align: center;
+        font-size: 16px;
+    }
+    //kruzic koji se vrti (prikaz ocitavanja)
+    .progress_circular circle {
+        color: $main-icon-color;
+    }
+    .sortiranje {
+        padding-top: 50px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
 }

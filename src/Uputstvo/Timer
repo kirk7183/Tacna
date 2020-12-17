@@ -1,20 +1,20 @@
 <template>
-  <div class="timer">
-    <div v-if="zavrsenoPoruka === null" class="d-flex">
-      <div class="card" v-for="(time, i) in times" :key="i">
-        <div class="card-block">
-          <p class="card-title">
+  <div>
+    <div class="d-flex">
+      <div class="card text-center" v-for="(time, i) in times" :key="i">
+        <div class="card-block px-2">
+          <h4 class="card-title red--text" style="font-size: 16px">
             {{ time.time }}
-          </p>
+          </h4>
         </div>
-        <div class="card-footer">
+        <div class="card-footer px-2">
           {{ time.text }}
         </div>
       </div>
     </div>
-    <div v-if="zavrsenoPoruka != null" class="zavrsenoPoruka">
-      {{ zavrsenoPoruka }}
-    </div>
+    <!-- <div v-else>
+      <h4 class="card-title red--text" style="font-size: 16px">ZAVRŠENO</h4>
+    </div> -->
   </div>
 </template>
 
@@ -26,6 +26,9 @@ export default {
       //ovako treba da izgleda format koji componenta prima
       //   startTime: "December 14, 2020 11:00:00",
       //   endTime: "December 14, 2020 05:00:05 PM",
+      //
+      //   startTime: this.pocetka,
+      //   endTime: this.kraj,
       times: [
         { id: 0, text: "Dan", time: 1 },
         { id: 1, text: "Sat", time: 1 },
@@ -35,12 +38,14 @@ export default {
       progress: 100,
       // isActive: false,
       timeinterval: undefined,
-      zavrsenoPoruka: null,
     };
   },
   beforeMount: function () {
     this.updateTimer();
     this.timeinterval = setInterval(this.updateTimer, 1000);
+    // console.log(`timer + this.pocetak ` + this.pocetak);
+    console.log(`timer + starttime ` + this.startTime);
+    console.log(`timer + endTime ` + this.endTime);
   },
   methods: {
     updateTimer: function () {
@@ -57,7 +62,6 @@ export default {
         clearTimeout(this.timeinterval);
         // this.times[3].time = this.times[2].time = this.times[1].time = this.times[0].time = 0;
         this.progress = 0;
-        this.zavrsenoPoruka = "Kraj licitacije";
       }
     },
     getTimeRemaining: function () {
