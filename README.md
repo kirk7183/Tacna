@@ -43,7 +43,7 @@ Firebase (hosting, authentication, cloud firestore, storage)
 
 ## devDependencies:
 
-cli, babel, eslint, router, vuex, sass, vuetify
+cli, babel, eslint, router, vuex, sass-dart, vuetify
 
 ## Short info:
 
