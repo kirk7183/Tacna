@@ -21,6 +21,10 @@ Build Setup
 
 JavaScript
 
+## CSS
+
+Sass/SCSS (with dart-sass)
+
 ## Framework:
 
 Vue + Vuex (State management pattern + library)
@@ -31,7 +35,7 @@ Vuetify - still waiting for a version that can be integrated into Vue 3
 
 ## Database:
 
-still considering
+https://admin.mars-server.net/auth/login
 
 ## Server:
 
