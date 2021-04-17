@@ -53,9 +53,9 @@
     </v-card>
 
     <!--IMPORT COMPONENT-->
+    <!-- :mode="mode" -->
     <DialogEditObavestenja
       v-if="dialog_edit_obavestenja_boolean"
-      :mode="mode"
       :route="this.$route.path"
       :edit_data="edit_data"
     ></DialogEditObavestenja>
@@ -74,7 +74,7 @@ export default {
   },
   data() {
     return {
-      mode: "edit_obavestenje",
+      // mode: "edit_obavestenje",
       edit_data: {
         id_obavestenja: "",
         naslov_obavestenja: "",

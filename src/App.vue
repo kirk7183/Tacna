@@ -19,7 +19,6 @@ import ScrollUpFab from "@/views/main/ScrollUp_Fab.vue";
 import ExtraOptionFab from "@/views/main/ExtraOption_Fab.vue";
 export default {
   name: "App",
-
   components: {
     Footer,
     Navbar,

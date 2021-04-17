@@ -2,11 +2,10 @@
   <div class="licitiram_li">
     <v-layout justify-center wrap>
       <v-flex xs7 sm10 md3>
-        <!-- v-model="grupa" -->
         <v-select
           class="sortiranje"
-          :items="lista_stvari"
-          label="Vrsta licitacije"
+          :items="sort_vrsta"
+          v-model="defaultSelected_sort_vrsta"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -16,7 +15,7 @@
         <v-select
           class="sortiranje"
           :items="lista_stvari"
-          label="Grupe"
+          v-model="defaultSelected_lista_stvari"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -25,8 +24,8 @@
       <v-flex xs7 sm5 md3>
         <v-select
           class="sortiranje"
-          :items="lista_stvari"
-          label="Cena"
+          :items="sortiranje_od_do"
+          v-model="defaultSelected_sortiranje_od_do"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -47,7 +46,7 @@
         <v-layout row wrap justify-center>
           <div v-for="(single, ii) in arrayData" :key="ii">
             <v-card
-              class="mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
+              class="card_licitacije mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
               elevation="5"
               min-width="260"
               max-width="300"
@@ -83,6 +82,7 @@
                 </v-card-text>
                 <div class="row justify-center">
                   <Timer
+                    :single_data="single"
                     :startTime="pocetak"
                     :endTime="kraj"
                     class="timera"
@@ -109,9 +109,13 @@ export default {
   components: { Timer },
   data() {
     return {
+      defaultSelected_sort_vrsta: "SVE",
+      defaultSelected_lista_stvari: "SVE",
+      defaultSelected_sortiranje_od_do: "SVE",
       loadedData: false,
       boja_licitacije: null,
       arrayData: [],
+      korisnik_id: "",
       Meseci: [
         "Januar",
         "Februar",
@@ -143,16 +147,28 @@ export default {
     };
   },
   created() {
+    //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
+    this.$store.dispatch("onSnapShot");
+
     //da povuce podatke iz firebase-a
     this.$store.dispatch("pregled_svih_licitacija");
-    //sortiranje
+
+    //lista sort_vrsta(Sve,licna,humanitarna)
+    this.sort_vrsta = this.$store.getters.get_sort_vrsta;
+    this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
+
+    //lista i sortiranje lista_stvari
     this.lista_stvari = this.$store.getters.get_lista_stvari.sort(function (
       a,
       b
     ) {
-      return a.localeCompare(b); //na kraju niza stavlja nayive sa pocetnim š,č,ć,ž,đ
+      return a.localeCompare(b); //na kraju niza stavlja nazive sa pocetnim š,č,ć,ž,đ
     });
-    this.lista_stvari.unshift("SVE"); //naknadon na vrh liste dodaje "SVE" za listanje svih grupa
+    this.lista_stvari.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
+
+    //lista sortiranje_od_do(Naziv a-z, naziv z-a, cena rastuce, cena opadajuce)
+    this.sortiranje_od_do = this.$store.getters.get_sortiranje_od_do;
+    this.sortiranje_od_do.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
   },
   watch: {
     //motri na computed sve_licitacije kada dobije podatke
@@ -162,13 +178,13 @@ export default {
         this.sve_licitacije.length != 0 &&
         this.sve_licitacije != "nema_podataka"
       ) {
-        //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra
+        //obrisi sve i postavi da je prazan array
+        this.arrayData = [];
+        //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra i prestao circular za ocitavanje
         this.loadedData = true;
         //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
         newValue.forEach((value) => {
-          value.licitacije.forEach((value1) => {
-            this.arrayData.push(value1);
-          });
+          this.arrayData.push(value);
         });
       }
       //ako je prazan (nema podatke) a i u isto vreme ne pise "nema_podataka"

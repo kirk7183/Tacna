@@ -3,7 +3,7 @@
     <div class="dialog_edit_obavestenja">
       <v-card>
         <v-card-title class="dialog_title justify-center">
-          Unos novog obaveštenja
+          Prerada starog obaveštenja
         </v-card-title>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row>
@@ -55,12 +55,13 @@
 
 <script>
 export default {
-  props: ["route", "mode", "edit_data"],
+  props: ["route", "edit_data"],
   data() {
     return {
       // id_obavestenja: "",
       // naslov_obavestenja: "",
       // text_obavestenja: "",
+      mode: "edit_obavestenje",
       valid: false,
       re_data: {},
       rules: [
