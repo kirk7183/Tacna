@@ -9,7 +9,7 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
-                v-model="re_data.naslov_obavestenja"
+                v-model="naslov_obavestenja"
                 outlined
                 label="Naslov obaveštenja:"
                 counter
@@ -50,11 +50,12 @@
 
 <script>
 export default {
-  props: ["route", "mode", "edit_data"],
+  props: ["route", "edit_data"],
   data() {
     return {
       // id_obavestenja: "",
-      // naslov_obavestenja: "",
+      naslov_obavestenja: "",
+      mode: "add_obavestenje",
       // text_obavestenja: "",
       valid: false,
       re_data: {},
@@ -93,7 +94,7 @@ export default {
             mode: this.mode,
             route: this.route,
             id_obavestenja: this.re_data.id_obavestenja,
-            naslov_obavestenja: this.re_data.naslov_obavestenja,
+            naslov_obavestenja: this.naslov_obavestenja,
             text_obavestenja: this.re_data.text_obavestenja,
           })
           .then(() => {

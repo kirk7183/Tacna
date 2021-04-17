@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  props: ["startTime", "endTime"],
+  props: ["startTime", "endTime", "single_data"],
   data() {
     return {
       //ovako treba da izgleda format koji componenta prima
@@ -57,7 +57,11 @@ export default {
         clearTimeout(this.timeinterval);
         // this.times[3].time = this.times[2].time = this.times[1].time = this.times[0].time = 0;
         this.progress = 0;
-        this.zavrsenoPoruka = "Kraj licitacije";
+        this.zavrsenoPoruka = "Završena licitacija";
+
+        // slanje u Vuex kako bi se prebacilo u listu zavrsenih licitacija
+        this.$store.dispatch("zavrsene_licitacije_move");
+        console.log(this.single_data.nudim);
       }
     },
     getTimeRemaining: function () {
