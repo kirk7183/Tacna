@@ -110,6 +110,7 @@ import Vue from "vue";
 export default {
   data() {
     return {
+      lista_stvari: [],
       boja_title: "#988BC7",
       valid: false,
       vrsta_licitacije: "",
@@ -138,13 +139,19 @@ export default {
     },
   },
   created() {
-    //sa sortiranjem
-    this.lista_stvari = this.$store.getters.get_lista_stvari.sort(function (
-      a,
-      b
-    ) {
-      return a.localeCompare(b);
+    //lista stvari iz Vuexa
+    this.$store.getters.get_lista_stvari.forEach((element) => {
+      this.lista_stvari.push(element);
     });
+    //sortiranje
+    this.lista_stvari.sort((a, b) => {
+      if (a < b) return -1;
+      if (a > b) return 1;
+    });
+
+    //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na
+    //sredini niza a ja zelim da bude na kraju
+    this.lista_stvari.push("Neodredjeno");
   },
 
   methods: {

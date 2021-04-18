@@ -33,7 +33,7 @@ export default new Vuex.Store({
       },
     },
     lista_stvari: [
-      "Оdeća i obuća",
+      "Odeća i obuća",
       "Automobili, motorcikli i bicikli",
       "Igračke",
       "Hrana i piće",
@@ -48,7 +48,6 @@ export default new Vuex.Store({
       "Sport i raznonoda",
       "TV, video i audio",
       "Uredjenje bašte i kuće",
-      "Neodredjeno",
     ],
     sort_vrsta: ["Lična", "Humanitarna"],
     sortiranje_od_do: [
@@ -387,9 +386,9 @@ export default new Vuex.Store({
       }
     },
     //PREGLED SVIH LICITACIJA
-    pregled_svih_licitacija({ commit }) {
-      var firestore_baza = firebase.firestore().collection("licitacije_u_toku");
-      firestore_baza.get().then((querySnapshot) => {
+    async pregled_svih_licitacija({ commit }) {
+      let firestore_baza = firebase.firestore().collection("licitacije_u_toku");
+      await firestore_baza.get().then((querySnapshot) => {
         let tempListaLicitacija = [];
         //provera da li ima podataka uopste, ako nema poslati da nema podataka
         //kako bi se Licitiram_li.vue ocitalo i izbacio DIV koji ispisuje da nema podataka
