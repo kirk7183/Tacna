@@ -109,6 +109,7 @@ export default {
   components: { Timer },
   data() {
     return {
+      lista_stvari: [],
       defaultSelected_sort_vrsta: "SVE",
       defaultSelected_lista_stvari: "SVE",
       defaultSelected_sortiranje_od_do: "SVE",
@@ -147,24 +148,29 @@ export default {
     };
   },
   created() {
-    //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
-    this.$store.dispatch("onSnapShot");
-
     //da povuce podatke iz firebase-a
     this.$store.dispatch("pregled_svih_licitacija");
+
+    //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
+    this.$store.dispatch("onSnapShot");
 
     //lista sort_vrsta(Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
 
-    //lista i sortiranje lista_stvari
-    this.lista_stvari = this.$store.getters.get_lista_stvari.sort(function (
-      a,
-      b
-    ) {
-      return a.localeCompare(b); //na kraju niza stavlja nazive sa pocetnim š,č,ć,ž,đ
+    //lista stvari iz Vuexa
+    this.$store.getters.get_lista_stvari.forEach((element) => {
+      this.lista_stvari.push(element);
     });
+    //sortiranje
+    this.lista_stvari.sort((a, b) => {
+      if (a < b) return -1;
+      if (a > b) return 1;
+    });
+    //pa posle sortiranja dodajemo na pocetku i na kraju niza
     this.lista_stvari.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
+    this.lista_stvari.push("Neodredjeno"); //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na
+    //sredini niza a ja zelim da bude na kraju
 
     //lista sortiranje_od_do(Naziv a-z, naziv z-a, cena rastuce, cena opadajuce)
     this.sortiranje_od_do = this.$store.getters.get_sortiranje_od_do;
