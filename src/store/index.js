@@ -460,6 +460,33 @@ export default new Vuex.Store({
       });
     },
 
+    async sortingChange1({ commit }) {
+      let firestore_baza = firebase.firestore().collection("licitacije_u_toku");
+      await firestore_baza
+        .where("grupa", "==", "Igračke")
+        .where("nudim", "==", "slicice za album")
+        .get()
+        .then((querySnapshot) => {
+          let tempListaLicitacija = [];
+          //provera da li ima podataka uopste, ako nema poslati da nema podataka
+          //kako bi se Licitiram_li.vue ocitalo i izbacio DIV koji ispisuje da nema podataka
+          if (querySnapshot.empty) {
+            tempListaLicitacija.push("nema_podataka");
+          } else {
+            //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
+            querySnapshot.forEach((doc) => {
+              const data = {
+                doc_id: doc.id,
+                ...doc.data(),
+              };
+              tempListaLicitacija.push(data);
+            });
+          }
+          // console.log(tempListaLicitacija);
+          commit("SVE_LICITACIJE", tempListaLicitacija);
+        });
+    },
+
     //PREBACIVANJE ZAVRSENIH LICITACIJA U FIREBASE U DRUGU GRUPU "ZAVRSENE LICITACIJE"
     zavrsene_licitacije_move() {
       //kako resiti problem pretrage delova reci u firebase

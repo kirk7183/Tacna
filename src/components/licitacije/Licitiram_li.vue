@@ -178,6 +178,8 @@ export default {
   },
   watch: {
     //motri na computed sve_licitacije kada dobije podatke
+    //ovo je na pocetku kada se ocitavaju SVE stvari (nisam jos odredio
+    //po kom kriterijumu ce to bi - da li po preostalom vremenu ili necem drugom )
     sve_licitacije(newValue) {
       //ako nije prazan i nema podatak "nema_podataka" tj. ako ima podataka onda...
       if (
@@ -197,6 +199,16 @@ export default {
       else {
         this.loadedData = "nema_podataka";
       }
+    },
+
+    //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
+    //trazi iz Firebase stvari po tom kriterijumu
+    defaultSelected_lista_stvari() {
+      this.$store.dispatch("sortingChange1", {
+        filter_Vrsta: this.defaultSelected_sort_vrsta,
+        filter_ListaStvari: this.defaultSelected_lista_stvari,
+        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
+      });
     },
   },
   computed: {
