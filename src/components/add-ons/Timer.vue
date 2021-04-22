@@ -60,8 +60,7 @@ export default {
         this.zavrsenoPoruka = "Završena licitacija";
 
         // slanje u Vuex kako bi se prebacilo u listu zavrsenih licitacija
-        this.$store.dispatch("zavrsene_licitacije_move");
-        console.log(this.single_data.nudim);
+        this.$store.dispatch("zavrsene_licitacije_move", this.single_data);
       }
     },
     getTimeRemaining: function () {

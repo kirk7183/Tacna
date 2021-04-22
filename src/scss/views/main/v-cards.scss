@@ -1,78 +1,79 @@
-        .obavestenja,
-        .o_nama_so,
-        .obavestenja_so,
-        .licitacije_so,
-        .donacije_so,
-        .banka_so,
-        .novaLicitacija_li,
-        .licitiram_li,
-        .dialog_logout,
-        .dialog_add_obavestenja,
-        .dialog_delete_obavestenja {
-            .v-card {
-                padding: 4px !important;
-            }
-            .v-card__title {
-                font-family: 'Poppins', 'Segoe UI historic' !important;
-                // font-weight: 600 !important;
-                justify-content: center !important;
-                background-color: $main-solidarnost;
-                // font-size: 18px !important;
-                word-break: keep-all;
-                // justify-self: space-around !important;
-                text-align: center;
-                padding-left: 15px !important;
-                padding-right: 15px !important;
-                padding-top: 7px !important;
-                padding-bottom: 7px !important;
-            }
-            .v-card__text {
-                padding-top: 10px !important;
-                padding-bottom: 8px !important;
-                line-height: 1.5rem !important;
-            }
-            .first-child {
-                margin-top: 24px;
-            }
-            .ceo-text {
-                color: black !important;
-                // text-align: justify !important;
-                font-size: 14px !important;
-                // text-indent: 1.2em !important;
-                margin-bottom: 10px !important;
-                &-naslov {
-                    text-align: center;
-                    margin-top: 25px;
-                    margin-bottom: 20px;
-                    line-height: 2.5rem !important;
-                    font-weight: 600 !important;
-                    &-xs {
-                        font-size: 16px;
-                    }
-                    &-smAndUp {
-                        font-size: 20px;
-                    }
-                }
-                &-podnaslov {
-                    font-size: 17px !important;
-                    margin-top: 24px;
-                    text-align: center;
-                }
-            }
-            .no-indent {
-                text-indent: 0 !important;
-            }
-            .no-align {
-                text-align: start !important;
-            }
-            .column {
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-            .bank_card {
-                background-color: $main-v-card-background;
-            }
-            i {
-                padding: 0 !important;
-            }
-        }
+.obavestenja,
+.o_nama_so,
+.obavestenja_so,
+.licitacije_so,
+.donacije_so,
+.banka_so,
+.novaLicitacija_li,
+.licitiram_li,
+.zavrsene_li,
+.dialog_logout,
+.dialog_add_obavestenja,
+.dialog_delete_obavestenja {
+  .v-card {
+    padding: 4px !important;
+  }
+  .v-card__title {
+    font-family: "Poppins", "Segoe UI historic" !important;
+    // font-weight: 600 !important;
+    justify-content: center !important;
+    background-color: $main-solidarnost;
+    // font-size: 18px !important;
+    word-break: keep-all;
+    // justify-self: space-around !important;
+    text-align: center;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+  }
+  .v-card__text {
+    padding-top: 10px !important;
+    padding-bottom: 8px !important;
+    line-height: 1.5rem !important;
+  }
+  .first-child {
+    margin-top: 24px;
+  }
+  .ceo-text {
+    color: black !important;
+    // text-align: justify !important;
+    font-size: 14px !important;
+    // text-indent: 1.2em !important;
+    margin-bottom: 10px !important;
+    &-naslov {
+      text-align: center;
+      margin-top: 25px;
+      margin-bottom: 20px;
+      line-height: 2.5rem !important;
+      font-weight: 600 !important;
+      &-xs {
+        font-size: 16px;
+      }
+      &-smAndUp {
+        font-size: 20px;
+      }
+    }
+    &-podnaslov {
+      font-size: 17px !important;
+      margin-top: 24px;
+      text-align: center;
+    }
+  }
+  .no-indent {
+    text-indent: 0 !important;
+  }
+  .no-align {
+    text-align: start !important;
+  }
+  .column {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .bank_card {
+    background-color: $main-v-card-background;
+  }
+  i {
+    padding: 0 !important;
+  }
+}

@@ -41,7 +41,7 @@
       ></v-progress-circular>
     </div>
     <!--ako ima podataka prikazi ako nema prikazi div na dnu stranice-->
-    <div v-if="loadedData">
+    <div v-if="loadedData != 'nema_podataka'">
       <div>
         <v-layout row wrap justify-center>
           <div v-for="(single, ii) in arrayData" :key="ii">
@@ -154,7 +154,7 @@ export default {
     //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
     this.$store.dispatch("onSnapShot");
 
-    //lista sort_vrsta(Sve,licna,humanitarna)
+    //lista sort_vrsta iz Vuexa (Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
 
@@ -203,13 +203,21 @@ export default {
 
     //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
     //trazi iz Firebase stvari po tom kriterijumu
-    defaultSelected_lista_stvari() {
-      this.$store.dispatch("sortingChange1", {
-        filter_Vrsta: this.defaultSelected_sort_vrsta,
+    defaultSelected_sort_vrsta() {
+      this.$store.dispatch("sortingChange", {
+        filter_Vrsta: this.defaultSelected_sort_vrsta.toLowerCase(),
         filter_ListaStvari: this.defaultSelected_lista_stvari,
         filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
     },
+    defaultSelected_lista_stvari() {
+      this.$store.dispatch("sortingChange", {
+        filter_Vrsta: this.defaultSelected_sort_vrsta.toLowerCase(),
+        filter_ListaStvari: this.defaultSelected_lista_stvari,
+        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
+      });
+    },
+    defaultSelected_sortiranje_od_do() {},
   },
   computed: {
     sve_licitacije: {

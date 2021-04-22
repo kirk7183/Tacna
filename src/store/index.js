@@ -58,6 +58,7 @@ export default new Vuex.Store({
     ],
     privilegije_boolean: false,
     sve_licitacije: [],
+    zavrsene_licitacije: [],
   },
   getters: {
     get_IsLoggedIn: (state) => {
@@ -80,6 +81,9 @@ export default new Vuex.Store({
     },
     get_sve_licitacije: (state) => {
       return state.sve_licitacije;
+    },
+    get_zavrsene_licitacije: (state) => {
+      return state.zavrsene_licitacije;
     },
     get_sort_vrsta: (state) => {
       return state.sort_vrsta;
@@ -114,24 +118,40 @@ export default new Vuex.Store({
     SVE_LICITACIJE(state, payload) {
       state.sve_licitacije = payload;
     },
-    UPDATE_LICITACIJU(state, todo) {
+    ZAVRSENE_LICITACIJE(state, payload) {
+      state.zavrsene_licitacije = payload;
+    },
+    ADD_LICITACIJE(state, obj_licit) {
+      state.sve_licitacije.push({
+        random_id: obj_licit.random_id,
+        vrsta_licitacije: obj_licit.vrsta_licitacije,
+        nudim: obj_licit.nudim,
+        grupa: obj_licit.grupa,
+        pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+        trajanje_licitacije: obj_licit.trajanje_licitacije,
+        opis_licitacije: obj_licit.opis_licitacije,
+        pocetak_datum: obj_licit.pocetak_datum,
+        kraj_datum: obj_licit.kraj_datum,
+        korisnik_ime: obj_licit.korisnik_ime,
+        korisnik_prezime: obj_licit.korisnik_prezime,
+      });
+    },
+    UPDATE_LICITACIJU(state, obj_licit) {
       const index = state.sve_licitacije.findIndex(
-        (item) => item.doc_id == todo.id
+        (item) => item.doc_id == obj_licit.id
       );
-      console.log(index);
-      console.log(todo);
       state.sve_licitacije.splice(index, 1, {
-        random_id: todo.random_id,
-        vrsta_licitacije: todo.vrsta_licitacije,
-        nudim: todo.nudim,
-        grupa: todo.grupa,
-        pocetna_cena_u_DIN: todo.pocetna_cena_u_DIN,
-        trajanje_licitacije: todo.trajanje_licitacije,
-        opis_licitacije: todo.opis_licitacije,
-        pocetak_datum: todo.pocetak_datum,
-        kraj_datum: todo.kraj_datum,
-        korisnik_ime: todo.korisnik_ime,
-        korisnik_prezime: todo.korisnik_prezime,
+        random_id: obj_licit.random_id,
+        vrsta_licitacije: obj_licit.vrsta_licitacije,
+        nudim: obj_licit.nudim,
+        grupa: obj_licit.grupa,
+        pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+        trajanje_licitacije: obj_licit.trajanje_licitacije,
+        opis_licitacije: obj_licit.opis_licitacije,
+        pocetak_datum: obj_licit.pocetak_datum,
+        kraj_datum: obj_licit.kraj_datum,
+        korisnik_ime: obj_licit.korisnik_ime,
+        korisnik_prezime: obj_licit.korisnik_prezime,
       });
     },
     DELETE_LICITACIJU(state, id) {
@@ -139,6 +159,50 @@ export default new Vuex.Store({
 
       if (index >= 0) {
         state.sve_licitacije.splice(index, 1);
+      }
+    },
+    UPDATE_ZAVRSENU(state, obj_licit) {
+      const index = state.zavrsene_licitacije.findIndex(
+        (item) => item.doc_id == obj_licit.id
+      );
+      state.zavrsene_licitacije.splice(index, 1, {
+        random_id: obj_licit.random_id,
+        vrsta_licitacije: obj_licit.vrsta_licitacije,
+        nudim: obj_licit.nudim,
+        grupa: obj_licit.grupa,
+        pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+        trajanje_licitacije: obj_licit.trajanje_licitacije,
+        opis_licitacije: obj_licit.opis_licitacije,
+        pocetak_datum: obj_licit.pocetak_datum,
+        kraj_datum: obj_licit.kraj_datum,
+        korisnik_ime: obj_licit.korisnik_ime,
+        korisnik_prezime: obj_licit.korisnik_prezime,
+      });
+    },
+
+    ADD_ZAVRSENU(state, obj_licit) {
+      state.zavrsene_licitacije.push({
+        random_id: obj_licit.random_id,
+        vrsta_licitacije: obj_licit.vrsta_licitacije,
+        nudim: obj_licit.nudim,
+        grupa: obj_licit.grupa,
+        pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+        trajanje_licitacije: obj_licit.trajanje_licitacije,
+        opis_licitacije: obj_licit.opis_licitacije,
+        pocetak_datum: obj_licit.pocetak_datum,
+        kraj_datum: obj_licit.kraj_datum,
+        korisnik_ime: obj_licit.korisnik_ime,
+        korisnik_prezime: obj_licit.korisnik_prezime,
+      });
+    },
+
+    DELETE_ZAVRSENU(state, id) {
+      const index = state.zavrsene_licitacije.findIndex(
+        (item) => item.doc_id == id
+      );
+
+      if (index >= 0) {
+        state.zavrsene_licitacije.splice(index, 1);
       }
     },
   },
@@ -304,11 +368,14 @@ export default new Vuex.Store({
       var korisnik_prezime = reg_korisnik.podaci.prezime;
       //id licitacije je korisnikov id ali posto ne moze samo brojevi dodao sam 'korisnik_id' ispred
       // var id_licitacije = "korisnik_id-" + korisnik_id; //korisnik_id-8
-      //random broj koji dobijamo sabiranjem 2 random broja bla bla. Ovde ne postoji pravilo
+      //random broj koji dobijamo sabiranjem 5 random broja bla bla. Ovde ne postoji pravilo
       //jedostavno sam sam ubacio neke brojeve i sabrao i mnozio sa 3 random broja. Sto vise random broja to veca verovatnoca da nece broj da se pogodi
       var random_id =
         Math.floor(Math.random() * 1000000) * 2 -
         5 +
+        Math.floor(Math.random() + Math.random()) +
+        Math.floor(Math.random() + Math.random()) +
+        Math.floor(Math.random() + Math.random()) +
         Math.floor(Math.random() + Math.random());
       //putanja u firebase
       var firestore_baza = firebase
@@ -404,7 +471,6 @@ export default new Vuex.Store({
             tempListaLicitacija.push(data);
           });
         }
-        // console.log(tempListaLicitacija);
         commit("SVE_LICITACIJE", tempListaLicitacija);
       });
     },
@@ -413,24 +479,27 @@ export default new Vuex.Store({
       var firestore_baza = firebase.firestore().collection("licitacije_u_toku");
       firestore_baza.onSnapshot((snapShot) => {
         snapShot.docChanges().forEach((change) => {
-          //ovo nije jos odradjeno kada se doda nova akucija da refresh tj doda
-          //drugom korisniku
+          if (change.type === "added") {
+            const source = change.doc.metadata.hasPendingWrites
+              ? "Local"
+              : "Server";
 
-          // if (change.type === "added") {
-          //   const source = change.doc.metadata.hasPendingWrites
-          //     ? "Local"
-          //     : "Server";
-
-          //   if (source === "Server") {
-          //     commit("addTodo", {
-          //       id: change.doc.id,
-          //       title: change.doc.data().title,
-          //       byWho: change.doc.data().byWho,
-          //       info: change.doc.data().info,
-          //       completed: false,
-          //     });
-          //   }
-          // }
+            if (source === "Server") {
+              commit("ADD_LICITACIJE", {
+                random_id: change.doc.data().random_id,
+                vrsta_licitacije: change.doc.data().vrsta_licitacije,
+                nudim: change.doc.data().nudim,
+                grupa: change.doc.data().grupa,
+                pocetna_cena_u_DIN: change.doc.data().pocetna_cena_u_DIN,
+                trajanje_licitacije: change.doc.data().trajanje_licitacije,
+                opis_licitacije: change.doc.data().opis_licitacije,
+                pocetak_datum: change.doc.data().pocetak_datum,
+                kraj_datum: change.doc.data().kraj_datum,
+                korisnik_ime: change.doc.data().korisnik_ime,
+                korisnik_prezime: change.doc.data().korisnik_prezime,
+              });
+            }
+          }
           if (change.type === "modified") {
             commit("UPDATE_LICITACIJU", {
               random_id: change.doc.data().random_id,
@@ -460,16 +529,76 @@ export default new Vuex.Store({
       });
     },
 
-    async sortingChange1({ commit }) {
+    onSnapShot_zavrsene({ commit, dispatch }) {
+      var firestore_baza = firebase
+        .firestore()
+        .collection("licitacije_zavrsene");
+      firestore_baza.onSnapshot((snapShot) => {
+        snapShot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            const source = change.doc.metadata.hasPendingWrites
+              ? "Local"
+              : "Server";
+
+            if (source === "Server") {
+              commit("ADD_ZAVRSENU", {
+                random_id: change.doc.data().random_id,
+                vrsta_licitacije: change.doc.data().vrsta_licitacije,
+                nudim: change.doc.data().nudim,
+                grupa: change.doc.data().grupa,
+                pocetna_cena_u_DIN: change.doc.data().pocetna_cena_u_DIN,
+                trajanje_licitacije: change.doc.data().trajanje_licitacije,
+                opis_licitacije: change.doc.data().opis_licitacije,
+                pocetak_datum: change.doc.data().pocetak_datum,
+                kraj_datum: change.doc.data().kraj_datum,
+                korisnik_ime: change.doc.data().korisnik_ime,
+                korisnik_prezime: change.doc.data().korisnik_prezime,
+              });
+            }
+          }
+          if (change.type === "modified") {
+            commit("UPDATE_ZAVRSENU", {
+              random_id: change.doc.data().random_id,
+              vrsta_licitacije: change.doc.data().vrsta_licitacije,
+              nudim: change.doc.data().nudim,
+              grupa: change.doc.data().grupa,
+              pocetna_cena_u_DIN: change.doc.data().pocetna_cena_u_DIN,
+              trajanje_licitacije: change.doc.data().trajanje_licitacije,
+              opis_licitacije: change.doc.data().opis_licitacije,
+              pocetak_datum: change.doc.data().pocetak_datum,
+              kraj_datum: change.doc.data().kraj_datum,
+              korisnik_ime: change.doc.data().korisnik_ime,
+              korisnik_prezime: change.doc.data().korisnik_prezime,
+            });
+            //mora da se pozove ponovno ocitavanje zato sto u licitiral_li.vue
+            //ima  {{ pocetak_datumPrerada(single.pocetak_datum) }} a ono se pokrece
+            //samo kada se renderuje stranica, sto u slucaju update nije moguce
+            //u slucaju delete_licitaciju nema potrebe da se refresh stranica
+            //ali ipak pogledati posto baca gresku
+
+            dispatch("pregled_zavrsenih_licitacija");
+          }
+          if (change.type === "removed") {
+            commit("DELETE_ZAVRSENU", change.doc.id);
+          }
+        });
+      });
+    },
+
+    async sortingChange({ commit }, payload) {
       let firestore_baza = firebase.firestore().collection("licitacije_u_toku");
+
+      //u firebase vrsta_licitacije="licna" a u v-select je "lična" pa mora da se izbace kukice na slovima
+      if (payload.filter_Vrsta == "lična") {
+        payload.filter_Vrsta = "licna";
+      }
+
       await firestore_baza
-        .where("grupa", "==", "Igračke")
-        .where("nudim", "==", "slicice za album")
+        .where("vrsta_licitacije", "==", payload.filter_Vrsta)
+        .where("grupa", "==", payload.filter_ListaStvari)
         .get()
         .then((querySnapshot) => {
           let tempListaLicitacija = [];
-          //provera da li ima podataka uopste, ako nema poslati da nema podataka
-          //kako bi se Licitiram_li.vue ocitalo i izbacio DIV koji ispisuje da nema podataka
           if (querySnapshot.empty) {
             tempListaLicitacija.push("nema_podataka");
           } else {
@@ -482,13 +611,53 @@ export default new Vuex.Store({
               tempListaLicitacija.push(data);
             });
           }
-          // console.log(tempListaLicitacija);
           commit("SVE_LICITACIJE", tempListaLicitacija);
         });
     },
 
-    //PREBACIVANJE ZAVRSENIH LICITACIJA U FIREBASE U DRUGU GRUPU "ZAVRSENE LICITACIJE"
-    zavrsene_licitacije_move() {
+    //PREBACIVANJE ZAVRSENIH LICITACIJA U FIREBASE U DRUGU GRUPU "ZAVRSENE LICITACIJE" KADA ISTEKNE VREME
+    async zavrsene_licitacije_move(context, payload) {
+      let firestore_baza = firebase.firestore().collection("licitacije_u_toku");
+      let firestore_baza_zavrsene = firebase
+        .firestore()
+        .collection("licitacije_zavrsene")
+        .doc();
+
+      await firestore_baza
+        .where("random_id", "==", payload.random_id)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            //delete iz kolekcije "licitacije_u_toku"
+            doc.ref
+              .delete()
+              .then(() => {
+                // querySnapshot.forEach(() => {
+                //write u kolekciju "licitacije_zavrsene"
+                firestore_baza_zavrsene.set({
+                  random_id: payload.random_id,
+                  vrsta_licitacije: payload.vrsta_licitacije,
+                  nudim: payload.nudim,
+                  grupa: payload.grupa,
+                  pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                  trajanje_licitacije: payload.trajanje_licitacije,
+                  opis_licitacije: payload.opis_licitacije,
+                  pocetak_datum: payload.pocetak_datum,
+                  kraj_datum: payload.kraj_datum,
+                  korisnik_ime: payload.korisnik_ime,
+                  korisnik_prezime: payload.korisnik_prezime,
+                });
+                // });
+              })
+              .catch((error) => {
+                console.log("Greska" + error);
+              });
+          });
+        })
+        .catch((error) => {
+          console.log("Greska" + error);
+        });
+
       //kako resiti problem pretrage delova reci u firebase
       //pretraga je iskljucivo od pocetka reci, nikako od sredine reci (ne mora cela rec)
       //Warning: all search criteria in firestore is CASE SENSITIVE
@@ -529,6 +698,29 @@ export default new Vuex.Store({
       //       console.log("snapshot");
       //     }
       //   });
+    },
+    async pregled_zavrsenih_licitacija({ commit }) {
+      let firestore_baza = firebase
+        .firestore()
+        .collection("licitacije_zavrsene");
+      await firestore_baza.get().then((querySnapshot) => {
+        let tempLista_zavrs_Licitacija = [];
+        //provera da li ima podataka uopste, ako nema poslati da nema podataka
+        //kako bi se Licitiram_li.vue ocitalo i izbacio DIV koji ispisuje da nema podataka
+        if (querySnapshot.empty) {
+          tempLista_zavrs_Licitacija.push("nema_podataka");
+        } else {
+          //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
+          querySnapshot.forEach((doc) => {
+            const data = {
+              doc_id: doc.id,
+              ...doc.data(),
+            };
+            tempLista_zavrs_Licitacija.push(data);
+          });
+        }
+        commit("ZAVRSENE_LICITACIJE", tempLista_zavrs_Licitacija);
+      });
     },
   },
   ///////////////////////////// MODULI /////////////////////////////
