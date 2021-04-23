@@ -153,9 +153,6 @@ export default {
     //da povuce podatke iz firebase-a
     this.$store.dispatch("pregled_svih_licitacija");
 
-    //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
-    this.$store.dispatch("onSnapShot");
-
     //lista sort_vrsta iz Vuexa (Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa

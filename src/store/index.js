@@ -454,34 +454,11 @@ export default new Vuex.Store({
     },
     //PREGLED SVIH LICITACIJA
     async pregled_svih_licitacija({ commit }) {
-      console.log(this.state.sve_licitacije.length);
-      console.log(this.state.sve_licitacije);
+      //praznimo array sve_licitacije uvek na pocetku ...ako recimo imamo
+      //ocitano nesto od podataka pa predjemo na drugu stranicu pa opet
+      //odemo na licitar_li on ce na vec postojece podatke dodati iste i duplirati podatke
+      this.state.sve_licitacije = [];
 
-      let firestore_baza = firebase.firestore().collection("licitacije_u_toku");
-      await firestore_baza.get().then((querySnapshot) => {
-        let tempListaLicitacija = [];
-        //provera da li ima podataka uopste, ako nema poslati da nema podataka
-        //kako bi se Licitiram_li.vue ocitalo i izbacio DIV koji ispisuje da nema podataka
-        if (querySnapshot.empty) {
-          tempListaLicitacija.push("nema_podataka");
-        } else {
-          //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
-          console.log(this.state.sve_licitacije.length);
-          console.log(this.state.sve_licitacije);
-
-          querySnapshot.forEach((doc) => {
-            const data = {
-              doc_id: doc.id,
-              ...doc.data(),
-            };
-            tempListaLicitacija.push(data);
-          });
-        }
-        commit("SVE_LICITACIJE", tempListaLicitacija);
-      });
-    },
-
-    onSnapShot({ commit }) {
       var firestore_baza = firebase.firestore().collection("licitacije_u_toku");
       firestore_baza.onSnapshot((snapShot) => {
         snapShot.docChanges().forEach((change) => {
