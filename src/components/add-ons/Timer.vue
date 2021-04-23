@@ -1,6 +1,6 @@
 <template>
   <div class="timer">
-    <div v-if="zavrsenoPoruka === null" class="d-flex">
+    <div v-if="zavrsenoPoruka != 'Završena licitacija'" class="d-flex">
       <div class="card" v-for="(time, i) in times" :key="i">
         <div class="card-block">
           <p class="card-title">
@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div v-if="zavrsenoPoruka != null" class="zavrsenoPoruka">
+    <div v-if="zavrsenoPoruka == 'Završena licitacija'" class="zavrsenoPoruka">
       {{ zavrsenoPoruka }}
     </div>
   </div>
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  props: ["startTime", "endTime", "single_data"],
+  props: ["startTime", "endTime", "single_data", "keya"],
   data() {
     return {
       //ovako treba da izgleda format koji componenta prima
@@ -45,6 +45,8 @@ export default {
   methods: {
     updateTimer: function () {
       if (
+        //ovaj uslov je ispunjen (uvek je vise od 0 zato sto je
+        //u data() postavljeno da bude 1)
         this.times[3].time > 0 ||
         this.times[2].time > 0 ||
         this.times[1].time > 0 ||
@@ -54,13 +56,16 @@ export default {
         this.updateProgressBar();
         this.startTime;
       } else {
+        //kada izracuna razliku ako je 0 ili ispod 0 onda odradi ovaj block code-a
         clearTimeout(this.timeinterval);
         // this.times[3].time = this.times[2].time = this.times[1].time = this.times[0].time = 0;
         this.progress = 0;
         this.zavrsenoPoruka = "Završena licitacija";
 
         // slanje u Vuex kako bi se prebacilo u listu zavrsenih licitacija
-        this.$store.dispatch("zavrsene_licitacije_move", this.single_data);
+        setTimeout(() => {
+          this.$store.dispatch("zavrsene_licitacije_move", this.single_data);
+        }, 4000);
       }
     },
     getTimeRemaining: function () {

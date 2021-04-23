@@ -161,11 +161,8 @@ export default new Vuex.Store({
         state.sve_licitacije.splice(index, 1);
       }
     },
-    UPDATE_ZAVRSENU(state, obj_licit) {
-      const index = state.zavrsene_licitacije.findIndex(
-        (item) => item.doc_id == obj_licit.id
-      );
-      state.zavrsene_licitacije.splice(index, 1, {
+    ADD_ZAVRSENU(state, obj_licit) {
+      state.zavrsene_licitacije.push({
         random_id: obj_licit.random_id,
         vrsta_licitacije: obj_licit.vrsta_licitacije,
         nudim: obj_licit.nudim,
@@ -180,8 +177,11 @@ export default new Vuex.Store({
       });
     },
 
-    ADD_ZAVRSENU(state, obj_licit) {
-      state.zavrsene_licitacije.push({
+    UPDATE_ZAVRSENU(state, obj_licit) {
+      const index = state.zavrsene_licitacije.findIndex(
+        (item) => item.doc_id == obj_licit.id
+      );
+      state.zavrsene_licitacije.splice(index, 1, {
         random_id: obj_licit.random_id,
         vrsta_licitacije: obj_licit.vrsta_licitacije,
         nudim: obj_licit.nudim,
@@ -454,6 +454,9 @@ export default new Vuex.Store({
     },
     //PREGLED SVIH LICITACIJA
     async pregled_svih_licitacija({ commit }) {
+      console.log(this.state.sve_licitacije.length);
+      console.log(this.state.sve_licitacije);
+
       let firestore_baza = firebase.firestore().collection("licitacije_u_toku");
       await firestore_baza.get().then((querySnapshot) => {
         let tempListaLicitacija = [];
@@ -463,6 +466,9 @@ export default new Vuex.Store({
           tempListaLicitacija.push("nema_podataka");
         } else {
           //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
+          console.log(this.state.sve_licitacije.length);
+          console.log(this.state.sve_licitacije);
+
           querySnapshot.forEach((doc) => {
             const data = {
               doc_id: doc.id,
@@ -475,7 +481,7 @@ export default new Vuex.Store({
       });
     },
 
-    onSnapShot({ commit, dispatch }) {
+    onSnapShot({ commit }) {
       var firestore_baza = firebase.firestore().collection("licitacije_u_toku");
       firestore_baza.onSnapshot((snapShot) => {
         snapShot.docChanges().forEach((change) => {
@@ -520,7 +526,7 @@ export default new Vuex.Store({
             //u slucaju delete_licitaciju nema potrebe da se refresh stranica
             //ali ipak pogledati posto baca gresku
 
-            dispatch("pregled_svih_licitacija");
+            // dispatch("pregled_svih_licitacija");
           }
           if (change.type === "removed") {
             commit("DELETE_LICITACIJU", change.doc.id);
@@ -529,7 +535,7 @@ export default new Vuex.Store({
       });
     },
 
-    onSnapShot_zavrsene({ commit, dispatch }) {
+    onSnapShot_zavrsene({ commit }) {
       var firestore_baza = firebase
         .firestore()
         .collection("licitacije_zavrsene");
@@ -576,7 +582,7 @@ export default new Vuex.Store({
             //u slucaju delete_licitaciju nema potrebe da se refresh stranica
             //ali ipak pogledati posto baca gresku
 
-            dispatch("pregled_zavrsenih_licitacija");
+            // dispatch("pregled_zavrsenih_licitacija");
           }
           if (change.type === "removed") {
             commit("DELETE_ZAVRSENU", change.doc.id);
@@ -627,31 +633,25 @@ export default new Vuex.Store({
         .where("random_id", "==", payload.random_id)
         .get()
         .then((querySnapshot) => {
+          //write u kolekciju "licitacije_zavrsene"
+          firestore_baza_zavrsene.set({
+            random_id: payload.random_id,
+            vrsta_licitacije: payload.vrsta_licitacije,
+            nudim: payload.nudim,
+            grupa: payload.grupa,
+            pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+            trajanje_licitacije: payload.trajanje_licitacije,
+            opis_licitacije: payload.opis_licitacije,
+            pocetak_datum: payload.pocetak_datum,
+            kraj_datum: payload.kraj_datum,
+            korisnik_ime: payload.korisnik_ime,
+            korisnik_prezime: payload.korisnik_prezime,
+          });
           querySnapshot.forEach((doc) => {
             //delete iz kolekcije "licitacije_u_toku"
-            doc.ref
-              .delete()
-              .then(() => {
-                // querySnapshot.forEach(() => {
-                //write u kolekciju "licitacije_zavrsene"
-                firestore_baza_zavrsene.set({
-                  random_id: payload.random_id,
-                  vrsta_licitacije: payload.vrsta_licitacije,
-                  nudim: payload.nudim,
-                  grupa: payload.grupa,
-                  pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
-                  trajanje_licitacije: payload.trajanje_licitacije,
-                  opis_licitacije: payload.opis_licitacije,
-                  pocetak_datum: payload.pocetak_datum,
-                  kraj_datum: payload.kraj_datum,
-                  korisnik_ime: payload.korisnik_ime,
-                  korisnik_prezime: payload.korisnik_prezime,
-                });
-                // });
-              })
-              .catch((error) => {
-                console.log("Greska" + error);
-              });
+            doc.ref.delete().catch((error) => {
+              console.log("Greska" + error);
+            });
           });
         })
         .catch((error) => {

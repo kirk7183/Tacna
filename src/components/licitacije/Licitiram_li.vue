@@ -40,11 +40,11 @@
         class="progress_circular"
       ></v-progress-circular>
     </div>
-    <!--ako ima podataka prikazi ako nema prikazi div na dnu stranice-->
+    <!--ako ima podataka prikazi ih, ako nema podataka prikazi div na dnu stranice-->
     <div v-if="loadedData != 'nema_podataka'">
       <div>
         <v-layout row wrap justify-center>
-          <div v-for="(single, ii) in arrayData" :key="ii">
+          <div v-for="single in arrayData" :key="single.random_id">
             <v-card
               class="card_licitacije mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
               elevation="5"
@@ -52,7 +52,9 @@
               max-width="300"
             >
               <!--poziv da se uradi prerada datuma i vremena kako bi se rezultat poslao u komponentu 
-        Timer. Bez ovoga nece da prikaze datum. Inace ne vraca nikakav prikaz-->
+               Timer. Bez ovoga nece da prikaze datum. Inace ne vraca nikakav prikaz. Ovo se radi zato sto 
+               ako artikal nema vreme onda ce da izbaci  "Trenutno nema postavljenih licitacija za traženi kriterijum"
+               sto znaci da ce artikle da prebaci u kolekciju "licitacije zavrsene"-->
               {{ pocetak_datumPrerada(single.pocetak_datum) }}
               {{ kraj_datumPrerada(single.kraj_datum) }}
 
@@ -158,7 +160,7 @@ export default {
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
 
-    //lista stvari iz Vuexa
+    //lista lista_stvari iz Vuexa
     this.$store.getters.get_lista_stvari.forEach((element) => {
       this.lista_stvari.push(element);
     });
@@ -217,7 +219,9 @@ export default {
         filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
     },
-    defaultSelected_sortiranje_od_do() {},
+    defaultSelected_sortiranje_od_do() {
+      //treba odraditi
+    },
   },
   computed: {
     sve_licitacije: {
@@ -253,7 +257,7 @@ export default {
       let sati = pocetak_datum.toDate().getHours();
       let minuti = pocetak_datum.toDate().getMinutes();
       //prepravka da ne prikazuje "15:5" vec "15:05" za vreme
-      let minutiPrepravka = minuti < 10 ? "0" + minuti : minuti;
+      // let minutiPrepravka = minuti < 10 ? "0" + minuti : minuti;
       let sekunde = pocetak_datum.toDate().getSeconds();
       //pretvaranje za slanje u Timer.vue posto prima datum postavljen na odredjen nacin
       let zaTimer_pocetak =
@@ -271,9 +275,9 @@ export default {
       //kraj pretvaranja
       this.pocetak = zaTimer_pocetak; //this.pocetak se salje kao prop u Timer.vue
       //ZA PRIKAZ POCETKA LICITACIJE
-      let zaPrikaz =
-        dan + " " + mesec + " " + godina + " " + sati + ":" + minutiPrepravka; //pretvaranje za prikaz pocetka licitacije
-      this.zaPrikazPocetak = zaPrikaz; //vraca datum koji sluzi za prikaz pocetka licitacije
+      // let zaPrikaz =
+      //   dan + " " + mesec + " " + godina + " " + sati + ":" + minutiPrepravka; //pretvaranje za prikaz pocetka licitacije
+      // this.zaPrikazPocetak = zaPrikaz; //vraca datum koji sluzi za prikaz pocetka licitacije
     },
     kraj_datumPrerada(kraj_datum) {
       let dan = kraj_datum.toDate().getDate();
@@ -282,7 +286,7 @@ export default {
       let sati = kraj_datum.toDate().getHours();
       let minuti = kraj_datum.toDate().getMinutes();
       //prepravka da ne prikazuje "15:5" vec "15:05" za vreme
-      let minutiPrepravka = minuti < 10 ? "0" + minuti : minuti;
+      // let minutiPrepravka = minuti < 10 ? "0" + minuti : minuti;
       let sekunde = kraj_datum.toDate().getSeconds();
       //pretvaranje za slanje u Timer.vue posto prima datum postavljen na odredjen nacin
       let zaTimer_kraj =
@@ -300,9 +304,9 @@ export default {
       //kraj pretvaranja
       this.kraj = zaTimer_kraj; //this.kraj se salje kao prop u Timer.vue i ne sme da se stavi u data() inace ce da pravi infinity loop zato sto je to reactive data
       //ZA PRIKAZ POCETKA LICITACIJE
-      let zaPrikaz =
-        dan + " " + mesec + " " + godina + " " + sati + ":" + minutiPrepravka; //pretvaranje za prikaz pocetka licitacije
-      this.zaPrikazKraj = zaPrikaz; //vraca datum koji sluzi za prikaz kraja licitacije
+      // let zaPrikaz =
+      //   dan + " " + mesec + " " + godina + " " + sati + ":" + minutiPrepravka; //pretvaranje za prikaz pocetka licitacije
+      // this.zaPrikazKraj = zaPrikaz; //vraca datum koji sluzi za prikaz kraja licitacije
     },
     vrsta_licit(vrsta_licitacije) {
       var boja;
