@@ -16,7 +16,7 @@
                 <v-radio
                   name="active"
                   label="Lična"
-                  value="licna"
+                  value="Lična"
                   color="#988BC7"
                   class="radio-button-vrsta licna"
                   @click="boja_title = '#988BC7'"
@@ -25,7 +25,7 @@
                 <v-radio
                   name="active"
                   label="Humanitarna"
-                  value="humanitarna"
+                  value="Humanitarna"
                   color="success"
                   class="radio-button-vrsta humanitarna"
                   @click="boja_title = '#4CAF50'"
@@ -45,7 +45,7 @@
 
             <v-select
               v-model="grupa"
-              :items="lista_stvari"
+              :items="grupa_lista"
               label="Grupa"
               dense
               :menu-props="{ bottom: true, offsetY: true }"
@@ -110,13 +110,13 @@ import Vue from "vue";
 export default {
   data() {
     return {
-      lista_stvari: [],
+      grupa_lista: [],
       boja_title: "#988BC7",
       valid: false,
       vrsta_licitacije: "",
       nudim: "",
       grupa: "",
-      pocetna_cena_u_DIN: "",
+      pocetna_cena_u_DIN: null,
       trajanje_licitacije: "",
       opis_licitacije: "",
       rules: [
@@ -133,6 +133,7 @@ export default {
   watch: {
     pocetna_cena_u_DIN(newValue) {
       const result = newValue
+        .toString()
         .replace(/\D/g, "")
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       Vue.nextTick(() => (this.pocetna_cena_u_DIN = result));
@@ -140,18 +141,18 @@ export default {
   },
   created() {
     //lista stvari iz Vuexa
-    this.$store.getters.get_lista_stvari.forEach((element) => {
-      this.lista_stvari.push(element);
+    this.$store.getters.get_grupa.forEach((element) => {
+      this.grupa_lista.push(element);
     });
     //sortiranje
-    this.lista_stvari.sort((a, b) => {
+    this.grupa_lista.sort((a, b) => {
       if (a < b) return -1;
       if (a > b) return 1;
     });
 
     //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na
     //sredini niza a ja zelim da bude na kraju
-    this.lista_stvari.push("Neodredjeno");
+    this.grupa_lista.push("Neodredjeno");
   },
 
   methods: {
@@ -163,7 +164,7 @@ export default {
         const result = this.pocetna_cena_u_DIN
           .replace(/\D/g, "")
           .replace(/\B(?=(\d{3})+(?!\d))/g, "");
-        this.pocetna_cena_u_DIN = result;
+        this.pocetna_cena_u_DIN = parseInt(result); //parse to integer da bi posle u Firebase sortirao dobro
         //kraj brisanja tacke (.)
 
         var d = new Date();

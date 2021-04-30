@@ -41,4 +41,68 @@
     padding-left: 15px !important;
     padding-right: 15px !important;
   }
+  .switch_title {
+    width: 200px;
+
+    font-size: 15px;
+    word-break: keep-all;
+    text-align: center;
+  }
+  .switch {
+    margin-top: 0 !important;
+    padding-top: 4px !important;
+    height: 32px !important;
+    //DA SWITCH FALSE PROMENI FIXNU BELU BOJU U CRVENU TJ. NA LEVO
+    .v-input--selection-controls__input div {
+      color: red;
+    }
+    .v-input__slot {
+      margin-top: 8px !important;
+    }
+  }
+  .put_border {
+    padding: 10px;
+    border-radius: 25px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    -ms-border-radius: 25px;
+    -o-border-radius: 25px;
+  }
+  .left_switch {
+    border: thin solid red;
+  }
+  .right_switch {
+    border: thin solid #2196f3;
+  }
+  //da ne moze text da se selektuje
+  .pointer {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+   supported by Chrome, Edge, Opera and Firefox */
+  }
+
+  //za TAG  <transition name="fade_out">
+  // .list-item {
+  //   display: inline-block;
+  //   margin-right: 10px;
+  // }
+  // .list-enter-active,
+  // .list-leave-active {
+  //   transition: all 2s;
+  //   -webkit-transition: all 2s;
+  //   -moz-transition: all 2s;
+  //   -ms-transition: all 2s;
+  //   -o-transition: all 2s;
+  // }
 }
