@@ -48,7 +48,9 @@
           </p>
           <!--Sekcija za ispis podataka korisnika (displayName sa FB, 
           happy coin iz baze tj sa Marsa i prepoznavanje da li ima extra opcije i koje)-->
-          <div class="logovan_korisnik_info">
+
+          <!-- OVO SAM UGASIO NIJE RADILO KAKO TREBA AKO NIJE REGISTROVAN KORISNIK-->
+          <!-- <div class="logovan_korisnik_info">
             <div class="happy_coin" v-if="check_is_loggedIn">
               <v-img src="@/assets/happy-coin.png" max-width="30px"></v-img>
               <p class="v-list-item__title fb-name">
@@ -63,7 +65,7 @@
                 class="checkbox"
               ></v-checkbox>
             </div>
-          </div>
+          </div> -->
           <v-btn
             text
             class="login_logout_btn"

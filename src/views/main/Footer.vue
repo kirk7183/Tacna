@@ -3,7 +3,7 @@
   <v-footer padless height="auto">
     <v-card class="flex" color="#8d81b8">
       <v-card-text class="py-2 caption white--text text-center">
-        2020 -
+        2021 -
         <strong>
           Developed by Igor Vasić
           <br />e-mail: vasicigorjsp@gmail.com
