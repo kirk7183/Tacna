@@ -434,6 +434,7 @@ export default new Vuex.Store({
     //LICITACIJE U TOKU PRIKAZ (licitiram_li)
     async licitacije_podaci({ commit }) {
       this.state.sve_licitacije = [];
+
       var firestore_baza = firebase.firestore().collection("licitacije_u_toku");
 
       var datum = new Date(); //trenutni datum i trenutno vreme
@@ -639,14 +640,15 @@ export default new Vuex.Store({
         });
     },
 
+    //MOJE LICITACIJE
     async moje_licitacije({ commit, getters }) {
+    
       let firestore_baza = await firebase
         .firestore()
         .collection("licitacije_u_toku");
 
-      var reg_korisnik = getters.get_reg_korisnik;
       //object reg_korisnik u sebi sadrzi object 'podaci' a u njemu podatke korisnika
-      // var korisnik_id = reg_korisnik.podaci.korisnik_id;
+      var reg_korisnik = getters.get_reg_korisnik;
       //ime korisnika
       var korisnik_ime = reg_korisnik.podaci.ime;
       //prezime korisnika
@@ -661,6 +663,7 @@ export default new Vuex.Store({
         .get()
         .then((querySnapshot) => {
           let tempListaLicitacija = [];
+
           if (querySnapshot.empty) {
             tempListaLicitacija.push("nema_podataka");
           } else {
@@ -668,6 +671,7 @@ export default new Vuex.Store({
             querySnapshot.forEach((doc) => {
               const data = {
                 doc_id: doc.id,
+                // moje_licitacije:true,
                 ...doc.data(),
               };
               tempListaLicitacija.push(data);
@@ -675,6 +679,7 @@ export default new Vuex.Store({
           }
           commit("SVE_LICITACIJE", tempListaLicitacija);
         });
+      // }
     },
 
     //PREBACIVANJE ZAVRSENIH LICITACIJA U FIREBASE U DRUGU GRUPU "ZAVRSENE LICITACIJE" KADA ISTEKNE VREME

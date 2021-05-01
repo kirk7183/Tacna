@@ -130,13 +130,13 @@
       Trenutno nema postavljenih licitacija za traženi kriterijum
     </div>
 
-    <!--ako nije logovan onda prikazi ovaj div-->
-    <div v-if="loadedData == 'niste_logovani'" class="nemaLicitacije">
+    <!--ako nije logovan i switch1 = false tj. na levo je (moje licitacije) onda prikazi ovaj div-->
+    <div v-if="!isLoggedIn && !switch1" class="nemaLicitacije">
       Molimo Vas logujte se
     </div>
 
-    <!--ako je logovan ali nije registrovan onda prikazi ovaj div-->
-    <div v-if="loadedData == 'niste_registrovani'" class="nemaLicitacije">
+    <!--ako je logovan ali nije registrovan i switch1 = false tj. na levo je (moje licitacije) onda prikazi ovaj div-->
+    <div v-if="isLoggedIn && !isRegister && !switch1" class="nemaLicitacije">
       Da bi ste postavljali ili pregledali svoje licitacije morate biti
       registrovani
     </div>
@@ -155,9 +155,11 @@ export default {
       defaultSelected_grupa: "SVE",
       defaultSelected_sortiranje_od_do: "Preostalo vreme - manje",
       loadedData: false,
+      isLoggedIn: false,
+      isRegister: false,
       boja_licitacije: null,
       arrayData: [],
-      korisnik_id: "",
+      // korisnik_id: "",
       Meseci: [
         "Januar",
         "Februar",
@@ -221,33 +223,60 @@ export default {
     //lista sortiranje_od_do(Naziv a-z, naziv z-a, cena rastuce, cena opadajuce)
     this.sortiranje_od_do = this.$store.getters.get_sortiranje_od_do;
   },
+  computed: {
+    get_sve_licitacije: {
+      get() {
+        return this.$store.getters.get_sve_licitacije;
+      },
+    },
+
+    //da li je logovan korisnik
+    get_check_is_loggedIn: {
+      get() {
+        return this.$store.getters.get_IsLoggedIn;
+      },
+    },
+
+    // //podaci iz baze sa Marsa
+    get_check_reg_korisnik: {
+      get() {
+        return this.$store.getters.get_reg_korisnik.podaci;
+      },
+    },
+  },
   watch: {
     //motri na computed sve_licitacije kada dobije podatke
     //ovo je na pocetku kada se ocitavaju SVE stvari (nisam jos odredio
     //po kom kriterijumu ce to bi - da li po preostalom vremenu ili necem drugom )
-    sve_licitacije(newValue) {
+    get_sve_licitacije(newValue) {
       //setTimeout je da ne bi prikazalo prvo "Trenutno nema postavljenih licitacija za traženi kriterijum"
       //pa odmah zatim array listu licitacije_u_toku
-      setTimeout(() => {
-        //ako nije prazan i nema podatak "nema_podataka" tj. ako ima podataka onda...
-        if (
-          this.sve_licitacije.length != 0 &&
-          this.sve_licitacije != "nema_podataka"
-        ) {
-          //obrisi sve i postavi da je prazan array
-          this.arrayData = [];
-          //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra i prestao circular za ocitavanje
-          this.loadedData = true;
-          //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
-          newValue.forEach((value) => {
-            this.arrayData.push(value);
-          });
-        }
+      // setTimeout(() => {
+      //ako nije prazan i nema podatak "nema_podataka" tj. ako ima podataka onda...
+      // if (
+      // newValue[0] == "niste_logovani" ||
+      // newValue[0] == "niste_registrovani" ||
+      // newValue[0] == "nema_podataka"
+      // if (this.switch1)
+      if (newValue != 0 && newValue != "nema_podataka") {
+        // )
+        // {
+        //   this.loadedData = newValue[0];
+        // }
         //ako je prazan (nema podatke) a i u isto vreme ne pise "nema_podataka"
-        else {
-          this.loadedData = "nema_podataka";
-        }
-      }, 1000);
+        // else
+        //obrisi sve i postavi da je prazan array
+        this.arrayData = [];
+        //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
+        newValue.forEach((value) => {
+          this.arrayData.push(value);
+        });
+        //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra i prestao circular za ocitavanje
+        this.loadedData = true;
+      } else {
+        this.loadedData = "nema_podataka";
+      }
+      // }, 1000);
     },
 
     switch1() {
@@ -256,29 +285,70 @@ export default {
         this.$store.dispatch("licitacije_podaci");
       } else {
         //ako nije logovan
-        if (!this.check_is_loggedIn) {
-          this.loadedData = "niste_logovani";
-        }
-        //ako je logovan ali nije registrovan (znaci ne moze da postavlja licitacije a to znaci da nema svoje postavljene licitacije )
-        else if (
-          this.check_is_loggedIn &&
-          this.reg_korisnik.podaci == undefined
-        ) {
-          this.loadedData = "niste_registrovani";
-        } else {
+        // if (!this.check_is_loggedIn) {
+        //   this.loadedData = "niste_logovani";
+        // }
+        // //ako je logovan ali nije registrovan (znaci ne moze da postavlja licitacije a to znaci da nema svoje postavljene licitacije )
+        // else if (
+        //   this.check_is_loggedIn &&
+        //   this.reg_korisnik.podaci == undefined
+        // ) {
+        //   this.loadedData = "niste_registrovani";
+        // } else {
+
+        //ako je korisnik registrovan (tek onda moze da pravi svoje licitacije) i ako je logovan(tek onda moze i da ih vidi)
+        if (this.isRegister && this.isLoggedIn) {
           this.$store.dispatch("moje_licitacije");
+        } else {
+          //ako je switch na levo a nije logovan i registrovan onda obrisi prikaz (moje licitacije)
+          this.arrayData = [];
+        }
+        // }
+      }
+    },
+
+    get_check_is_loggedIn(newValue) {
+      if (newValue) {
+        this.isLoggedIn = true;
+        // newValue.then(() => {
+        //   if (!this.switch1 && this.isLoggedIn && this.isRegister) {
+        //     // newValue.then(){
+        //     //   console.log("fdsfds")
+        //     // }
+        //     this.$store.dispatch("moje_licitacije");
+        //dodatna opcija ako je i switch1 na levo(false) tj.na moje licitacije, plus je i logovan i registrovan korisnik  onda pozovi ocitavanje mojih licitacija
+        // if (!this.switch1 && this.isLoggedIn) {
+        //   // newValue.then(){
+        //   //   console.log("fdsfds")
+        //   // }
+        //   this.$store.dispatch("moje_licitacije");
+        // }
+      } else if (!newValue) {
+        this.isLoggedIn = false;
+
+        //dodatna opcija ako je i switch1 na levo(false) tj. na moje licitacije onda obrisi array mojih licitacija
+        if (!this.switch1) {
+          this.arrayData = [];
+          // this.$store.state.sve_licitacije = [];
         }
       }
     },
-    check_is_loggedIn() {
-      if (!this.check_is_loggedIn) {
-        this.loadedData = "niste_logovani";
-      }
-      if (this.check_is_loggedIn && this.reg_korisnik.podaci == undefined) {
-        this.loadedData = "niste_registrovani";
-      }
 
-      // this.switch1 = true;
+    get_check_reg_korisnik(newValue) {
+      if (newValue.korisnik_id != null || newValue.korisnik_id != undefined) {
+        this.isRegister = true;
+        //dodatna opcija kada dobijemo informaciju da je korisnik logovan tj. da postoji korisnik_id sa MARS-a znaci da je korisnik registrovan
+        //tada proveravamo da li je switch false (na levo) i da li u ovoj komponenti je isLoggedIn i isRegister na true
+        if (!this.switch1 && this.isLoggedIn && this.isRegister) {
+          //ovo je kada se login i logout a na moje licitacije smo da refresh na licu mesta
+          this.$store.dispatch("moje_licitacije");
+        }
+      } else if (
+        newValue.korisnik_id == null ||
+        newValue.korisnik_id == undefined
+      ) {
+        this.isRegister = false;
+      }
     },
 
     //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
@@ -306,27 +376,6 @@ export default {
         filter_ListaStvari: this.defaultSelected_grupa,
         filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
-    },
-  },
-  computed: {
-    sve_licitacije: {
-      get() {
-        return this.$store.getters.get_sve_licitacije;
-      },
-    },
-
-    //da li je logovan korisnik
-    check_is_loggedIn: {
-      get() {
-        return this.$store.getters.get_IsLoggedIn;
-      },
-    },
-
-    //podaci iz baze sa Marsa
-    reg_korisnik: {
-      get() {
-        return this.$store.getters.get_reg_korisnik;
-      },
     },
   },
 
