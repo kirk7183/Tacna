@@ -4,7 +4,7 @@
     <v-card class="flex" color="#8d81b8">
       <v-card-text class="py-2 caption white--text text-center">
         2021 -
-        <strong>
+        <strong class="white--text">
           Developed by Igor Vasić
           <br />e-mail: vasicigorjsp@gmail.com
         </strong>

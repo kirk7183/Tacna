@@ -131,6 +131,7 @@ export default new Vuex.Store({
       );
       //ako je rezultat nije "0" ili veci(1) tj. ako je rezultat "-1" znaci da ne postoji
       //podatak sa tim doc_id u bazi, sto znaci da ako ubacimo podatak onda nece biti dupliranja
+
       if (!(index >= 0)) {
         state.sve_licitacije.push({
           doc_id: obj_licit.doc_id,
@@ -138,7 +139,7 @@ export default new Vuex.Store({
           vrsta_licitacije: obj_licit.vrsta_licitacije,
           nudim: obj_licit.nudim,
           grupa: obj_licit.grupa,
-          pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+          pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
           trajanje_licitacije: obj_licit.trajanje_licitacije,
           opis_licitacije: obj_licit.opis_licitacije,
           pocetak_datum: obj_licit.pocetak_datum,
@@ -167,7 +168,7 @@ export default new Vuex.Store({
           vrsta_licitacije: obj_licit.vrsta_licitacije,
           nudim: obj_licit.nudim,
           grupa: obj_licit.grupa,
-          pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+          pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
           trajanje_licitacije: obj_licit.trajanje_licitacije,
           opis_licitacije: obj_licit.opis_licitacije,
           pocetak_datum: obj_licit.pocetak_datum,
@@ -190,7 +191,7 @@ export default new Vuex.Store({
         vrsta_licitacije: obj_licit.vrsta_licitacije,
         nudim: obj_licit.nudim,
         grupa: obj_licit.grupa,
-        pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+        pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
         trajanje_licitacije: obj_licit.trajanje_licitacije,
         opis_licitacije: obj_licit.opis_licitacije,
         pocetak_datum: obj_licit.pocetak_datum,
@@ -212,7 +213,7 @@ export default new Vuex.Store({
   },
 
   actions: {
-    Facebook_login({ commit, dispatch }) {
+    async Facebook_login({ commit, dispatch }) {
       let user_displayName;
       let user_id;
       let user_email;
@@ -222,13 +223,14 @@ export default new Vuex.Store({
       dispatch("_DIALOG/set_show_dialog_loading", true, { root: true });
       //obavezno u main.js mora biti importovan import "firebase/auth" inace login preko fb nece da radi;
       var provider = new firebase.auth.FacebookAuthProvider();
-      firebase
+      await firebase
         .auth()
         .signInWithPopup(provider)
         .then((result) => {
           if (result) {
             //USER DISPLAY NAME ON FB
             user_displayName = result.user.displayName;
+
             //NEED ID FOR FULL PATH OF PROFILE IMAGE ON FB JUST LIKE access_token
             user_id = result.additionalUserInfo.profile.id;
             //E-MAIL OF USER
@@ -370,13 +372,16 @@ export default new Vuex.Store({
       var korisnik_ime = reg_korisnik.podaci.ime;
       //prezime korisnika
       var korisnik_prezime = reg_korisnik.podaci.prezime;
+      //email korisnika
+      var korisnik_email = reg_korisnik.podaci.email;
+
       //id licitacije je korisnikov id ali posto ne moze samo brojevi dodao sam 'korisnik_id' ispred
       // var id_licitacije = "korisnik_id-" + korisnik_id; //korisnik_id-8
       //random broj koji dobijamo sabiranjem 5 random broja bla bla. Ovde ne postoji pravilo
       //jedostavno sam sam ubacio neke brojeve i sabrao i mnozio sa 3 random broja. Sto vise random broja to veca verovatnoca da nece broj da se pogodi
       var random_id =
         Math.floor(Math.random() * 1000000) * 2 -
-        5 +
+        5 + //ovo sa *1000000 i *2 -5 bla bla to je primer sta sve moze, linije ispod su kako bi trebalo da se pise
         Math.floor(Math.random() + Math.random()) +
         Math.floor(Math.random() + Math.random()) +
         Math.floor(Math.random() + Math.random()) +
@@ -400,14 +405,16 @@ export default new Vuex.Store({
             random_id: random_id,
             vrsta_licitacije: payload.vrsta_licitacije,
             nudim: payload.nudim,
+            nudim_lowerCase: payload.nudim.toLowerCase(), //mora zbog .sortBy u Firestore zato sto je case sensitive (npr. "Igor" ce da stavi ispred "ana" iako je "a" ispred "I". Medjutim casesensitive stavlja veliko slovo ispred malih slova)
             grupa: payload.grupa,
-            pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+            pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
             trajanje_licitacije: payload.trajanje_licitacije,
             opis_licitacije: payload.opis_licitacije,
             pocetak_datum: payload.pocetak_datum,
             kraj_datum: payload.kraj_datum,
-            korisnik_ime: korisnik_ime,
+            korisnik_ime: korisnik_ime, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
             korisnik_prezime: korisnik_prezime,
+            korisnik_email: korisnik_email, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload. //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
             zavrsena_licitacija: false, //ovo postavljamo na pocetku da znamo da je licitacija u toku
           })
           .then(() => {
@@ -476,7 +483,7 @@ export default new Vuex.Store({
               vrsta_licitacije: singleResult.data().vrsta_licitacije,
               nudim: singleResult.data().nudim,
               grupa: singleResult.data().grupa,
-              pocetna_cena_u_DIN: singleResult.data().pocetna_cena_u_DIN,
+              pocetna_cena_u_RSD: singleResult.data().pocetna_cena_u_RSD,
               trajanje_licitacije: singleResult.data().trajanje_licitacije,
               opis_licitacije: singleResult.data().opis_licitacije,
               pocetak_datum: singleResult.data().pocetak_datum,
@@ -495,10 +502,25 @@ export default new Vuex.Store({
       //Jedini glavni kriterijum ovde je da ocitava .limit
 
       let zavrseno = payload.zavrseno; //true(zavrsene licitacije) ili false(u toku licitacije)
-
       let firestore_baza = await firebase
         .firestore()
         .collection("licitacije_u_toku");
+
+      //ako je switch false znaci da je kliknuto na "moje licitacije" i tada trazimo licitacije onoga ko je logovan preko FaceBook-a
+      //u suprotnom ovaj block koda se nece desiti tj. to znaci da je switch=true tj. da je na "Licitacije u toku" i sortiranje ce se vrsiti za sve korisnike koji imaju u toku neku licitaciju
+      if (payload.switch == false) {
+        firestore_baza = await firestore_baza.where(
+          "korisnik_email",
+          "==",
+          `${this.state.Facebook_user_data.user_email}`
+        );
+      } else {
+        firestore_baza = await firestore_baza.where(
+          "zavrsena_licitacija",
+          "==",
+          zavrseno
+        );
+      }
 
       //VRSTA LICITACIJE
       //ako NIJE vrsta licitacije ="SVE" onda pretrazi po onome sto je prosledjeno kao payload
@@ -533,41 +555,33 @@ export default new Vuex.Store({
       }
       //Naziv A-Z
       if (payload.filter_sortiranje_od_do == "Naziv A-Z") {
-        firestore_baza = await firestore_baza
-          // .orderBy("kraj_datum") //ovo moram da stavim zato sto Firestore trazi da *first orderBy* bude po .where koji je iznad
-
-          // .orderBy("kraj_datum", "asc")
-          // .where("kraj_datum", ">", datum)
-          // .where("zavrsena_licitacija", "==", false)
-          // .orderBy("kraj_datum", "asc")
-          .orderBy("nudim", "asc"); //pa sam tek onda radio pretrazivanje koje meni treba
+        firestore_baza = await firestore_baza.orderBy("nudim_lowerCase", "asc"); //pa sam tek onda radio pretrazivanje koje meni treba
       }
       //Naziv Z-A
       if (payload.filter_sortiranje_od_do == "Naziv Z-A") {
-        firestore_baza = await firestore_baza
-          // .where("zavrsena_licitacija", "==", false)
-          // .where("kraj_datum", ">", datum)
-          // .orderBy("kraj_datum", "asc")
-          .orderBy("nudim", "desc"); //pa sam tek onda radio pretrazivanje koje meni treba
+        firestore_baza = await firestore_baza.orderBy(
+          "nudim_lowerCase",
+          "desc"
+        ); //pa sam tek onda radio pretrazivanje koje meni treba
       }
       //Cena rastuce
       if (payload.filter_sortiranje_od_do == "Cena rastuće") {
         firestore_baza = firestore_baza
           // .where("kraj_datum", ">=", datum)
           // .orderBy("kraj_datum") //ovo moram da stavim zato sto Firestore trazi da *first orderBy* bude po .where koji je iznad
-          .orderBy("pocetna_cena_u_DIN", "asc"); //pa sam tek onda radio pretrazivanje koje meni treba
+          .orderBy("pocetna_cena_u_RSD", "asc"); //pa sam tek onda radio pretrazivanje koje meni treba
       }
       //Cena opadajuce
       if (payload.filter_sortiranje_od_do == "Cena opadajuće") {
         firestore_baza = firestore_baza
           // .where("kraj_datum", ">=", datum)
           // .orderBy("kraj_datum") //ovo moram da stavim zato sto Firestore trazi da *first orderBy* bude po .where koji je iznad
-          .orderBy("pocetna_cena_u_DIN", "desc"); //pa sam tek onda radio pretrazivanje koje meni treba
+          .orderBy("pocetna_cena_u_RSD", "desc"); //pa sam tek onda radio pretrazivanje koje meni treba
       }
 
       //pozivanje komande za slanje ka Firebase uz limit od najvise 10 rezultata
       await firestore_baza
-        .where("zavrsena_licitacija", "==", zavrseno)
+
         .limit(10)
         .get()
         .then((querySnapshot) => {
@@ -593,7 +607,7 @@ export default new Vuex.Store({
       let firestore_baza = firebase.firestore().collection("licitacije_u_toku");
       var datum = new Date();
 
-      //provera i postavljanje "zavrsena_licitacija" na true tj. ako je datum i vreme vreci od trenutka kada smo otvorili stranicu (znaci da je licitacija gotova)
+      //postavljanje "zavrsena_licitacija" na true tj. ako je datum i vreme vreci od trenutka kada smo otvorili stranicu (znaci da je licitacija gotova)
       await firestore_baza
         .where("kraj_datum", "<=", datum)
         .where("zavrsena_licitacija", "==", false)
@@ -619,10 +633,11 @@ export default new Vuex.Store({
       await firestore_baza
         //prikaz samo onih ciji "kraj_datum" je manji ili jednak trenutnom (prilikom pokretanja tj. refresh stranice)
         .where("zavrsena_licitacija", "==", true)
-        .orderBy("nudim", "asc")
+        .orderBy("nudim_lowerCase", "asc")
         .limit(10)
         .get()
         .then((querySnapshot) => {
+          console.log("fdsfsd");
           let tempListaLicitacija = [];
           if (querySnapshot.empty) {
             tempListaLicitacija.push("nema_podataka");
@@ -642,7 +657,6 @@ export default new Vuex.Store({
 
     //MOJE LICITACIJE
     async moje_licitacije({ commit, getters }) {
-    
       let firestore_baza = await firebase
         .firestore()
         .collection("licitacije_u_toku");
@@ -650,14 +664,17 @@ export default new Vuex.Store({
       //object reg_korisnik u sebi sadrzi object 'podaci' a u njemu podatke korisnika
       var reg_korisnik = getters.get_reg_korisnik;
       //ime korisnika
-      var korisnik_ime = reg_korisnik.podaci.ime;
-      //prezime korisnika
-      var korisnik_prezime = reg_korisnik.podaci.prezime;
+      // var korisnik_ime = reg_korisnik.podaci.ime;
+      // //prezime korisnika
+      // var korisnik_prezime = reg_korisnik.podaci.prezime;
+      //email korisnika
+      var korisnik_email = reg_korisnik.podaci.email;
 
       await firestore_baza
         //prikaz samo onih ciji "kraj_datum" je manji ili jednak trenutnom (prilikom pokretanja tj. refresh stranice)
-        .where("korisnik_ime", "==", korisnik_ime)
-        .where("korisnik_prezime", "==", korisnik_prezime)
+        // .where("korisnik_ime", "==", korisnik_ime)
+        // .where("korisnik_prezime", "==", korisnik_prezime)
+        .where("korisnik_email", "==", korisnik_email)
         .orderBy("kraj_datum", "asc")
         .limit(10)
         .get()
@@ -671,7 +688,6 @@ export default new Vuex.Store({
             querySnapshot.forEach((doc) => {
               const data = {
                 doc_id: doc.id,
-                // moje_licitacije:true,
                 ...doc.data(),
               };
               tempListaLicitacija.push(data);
@@ -722,7 +738,7 @@ export default new Vuex.Store({
     //       vrsta_licitacije: payload.vrsta_licitacije,
     //       nudim: payload.nudim,
     //       grupa: payload.grupa,
-    //       pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+    //       pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
     //       trajanje_licitacije: payload.trajanje_licitacije,
     //       opis_licitacije: payload.opis_licitacije,
     //       pocetak_datum: payload.pocetak_datum,

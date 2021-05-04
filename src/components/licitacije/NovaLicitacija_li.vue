@@ -45,6 +45,7 @@
 
             <v-select
               v-model="grupa"
+              :rules="rules_select"
               :items="grupa_lista"
               label="Grupa"
               dense
@@ -53,10 +54,10 @@
             ></v-select>
 
             <v-text-field
-              v-model="pocetna_cena_u_DIN"
+              v-model="pocetna_cena_u_RSD"
               :rules="rules_number"
               outlined
-              label="Početna cena u DIN"
+              label="Početna cena u RSD"
               counter
               maxlength="7"
               required
@@ -116,7 +117,7 @@ export default {
       vrsta_licitacije: "",
       nudim: "",
       grupa: "",
-      pocetna_cena_u_DIN: null,
+      pocetna_cena_u_RSD: null,
       trajanje_licitacije: "",
       opis_licitacije: "",
       rules: [
@@ -126,17 +127,20 @@ export default {
       ],
       rules_number: [
         (v) => !!v || "Molimo Vas popunite polje",
-        (v) => (v && v >= 0) || "Molimo Vas upisite cenu",
+        (v) => (v && v >= 1) || "Molimo Vas upisite cenu",
       ],
+      rules_select: [(v) => !!v || "Molimo Vas odaberite grupu"],
     };
   },
   watch: {
-    pocetna_cena_u_DIN(newValue) {
-      const result = newValue
-        .toString()
-        .replace(/\D/g, "")
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      Vue.nextTick(() => (this.pocetna_cena_u_DIN = result));
+    pocetna_cena_u_RSD(newValue) {
+      if (newValue != undefined) {
+        const result = newValue
+          .toString()
+          .replace(/\D/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        Vue.nextTick(() => (this.pocetna_cena_u_RSD = result));
+      }
     },
   },
   created() {
@@ -161,10 +165,10 @@ export default {
       var validnost = this.$refs.form.validate();
       if (validnost) {
         //brisanje tacke (.) posle treceg broja
-        const result = this.pocetna_cena_u_DIN
+        const result = this.pocetna_cena_u_RSD
           .replace(/\D/g, "")
           .replace(/\B(?=(\d{3})+(?!\d))/g, "");
-        this.pocetna_cena_u_DIN = parseInt(result); //parse to integer da bi posle u Firebase sortirao dobro
+        this.pocetna_cena_u_RSD = parseInt(result); //parse to integer da bi posle u Firebase sortirao dobro
         //kraj brisanja tacke (.)
 
         var d = new Date();
@@ -181,7 +185,7 @@ export default {
           vrsta_licitacije: this.vrsta_licitacije,
           nudim: this.nudim,
           grupa: this.grupa,
-          pocetna_cena_u_DIN: this.pocetna_cena_u_DIN,
+          pocetna_cena_u_RSD: this.pocetna_cena_u_RSD,
           trajanje_licitacije: this.trajanje_licitacije,
           opis_licitacije: this.opis_licitacije,
           pocetak_datum: pocetak_datum,

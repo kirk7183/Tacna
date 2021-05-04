@@ -52,7 +52,7 @@
             </v-card-text>
             <v-card-text class="text-center">
               <b>Cena u DIN:</b>
-              <p>{{ pocetna_cena_u_DIN(single.pocetna_cena_u_DIN) }},00</p>
+              <p>{{ pocetna_cena_u_RSD(single.pocetna_cena_u_RSD) }},00</p>
             </v-card-text>
             <!--KRAJ GRUPA-->
             <!--KORISNIK-->
@@ -135,7 +135,7 @@ export default {
     },
     //KRAJ
     //STAVLJA TACKE (.) NAKON 3 BROJA RADI BOLJE PREGLEDNOSTI AKO JE VELIKI BROJ
-    pocetna_cena_u_DIN(newValue) {
+    pocetna_cena_u_RSD(newValue) {
       const result = newValue
         .replace(/\D/g, "")
         .replace(/\B(?=(\d{3})+(?!\d))/g, ".");

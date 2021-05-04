@@ -19,7 +19,7 @@
               </p>
               <div class="novac">
                 <p class="stanje_text">Doniran novac :</p>
-                <p class="stanje_novac">14.350,00 din</p>
+                <p class="stanje_novac">14.350,00 RSD</p>
               </div>
             </v-card-text>
             <v-card-text class="px-1 px-md-7">
@@ -62,7 +62,7 @@
                     <p class="ime_prezime">Jovan Stević</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">30.000,00 din</p>
+                    <p class="cifra">30.000,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -80,7 +80,7 @@
                     <p class="ime_prezime">Pera Perić</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">500,00 din</p>
+                    <p class="cifra">500,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -98,7 +98,7 @@
                     <p class="ime_prezime">Jovana Jovanović</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">1500,00 din</p>
+                    <p class="cifra">1500,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -122,7 +122,7 @@
                     </p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">50.000,00 din</p>
+                    <p class="cifra">50.000,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -140,7 +140,7 @@
                     <p class="ime_prezime">S.R "Perović"</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">1.000,00 din</p>
+                    <p class="cifra">1.000,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -158,7 +158,7 @@
                     <p class="ime_prezime">anonimno</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">500,00 din</p>
+                    <p class="cifra">500,00 RSD</p>
                   </v-col>
                 </v-row>
               </div>
@@ -182,7 +182,7 @@
                     <p class="ime_prezime">Jovan Stević</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">30.000,00 din</p>
+                    <p class="cifra">30.000,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -200,7 +200,7 @@
                     <p class="ime_prezime">Pera Perić</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">25000,00 din</p>
+                    <p class="cifra">25000,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -218,7 +218,7 @@
                     <p class="ime_prezime">Jovana Jovanović</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">1500,00 din</p>
+                    <p class="cifra">1500,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -242,7 +242,7 @@
                     </p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">10.000,00 din</p>
+                    <p class="cifra">10.000,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -260,7 +260,7 @@
                     <p class="ime_prezime">S.R "Perović"</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">1.000,00 din</p>
+                    <p class="cifra">1.000,00 RSD</p>
                   </v-col>
                 </v-row>
                 <v-row
@@ -278,7 +278,7 @@
                     <p class="ime_prezime">anonimno</p>
                   </v-col>
                   <v-col cols="4" sm="3" md="4" class="column col_cifra">
-                    <p class="cifra">500,00 din</p>
+                    <p class="cifra">500,00 RSD</p>
                   </v-col>
                 </v-row>
               </div>

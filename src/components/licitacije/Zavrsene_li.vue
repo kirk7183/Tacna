@@ -77,8 +77,8 @@
                   <p>{{ truncate(single.grupa, 35) }}</p>
                 </v-card-text>
                 <v-card-text class="text-center">
-                  <b>Početna cena u DIN:</b>
-                  <p>{{ pocetna_cena_u_DIN(single.pocetna_cena_u_DIN) }},00</p>
+                  <b>Početna cena u RSD:</b>
+                  <p>{{ pocetna_cena_u_RSD(single.pocetna_cena_u_RSD) }},00</p>
                 </v-card-text>
                 <!--KRAJ GRUPA-->
 
@@ -156,67 +156,56 @@ export default {
   },
 
   created() {
-    //da povuce podatke iz firebase-a
+    //da povuce podatke iz firebase-a za zavrsene licitacije
     this.$store.dispatch("zavrsene_licitacije_prikaz");
 
-    // //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
-    // this.$store.dispatch("onSnapShot");
-
-    //lista sort_vrsta iz Vuexa (Sve,licna,humanitarna)
+    //array sort_vrsta iz Vuexa (Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
 
-    //lista grupa iz Vuexa
+    //array grupa iz Vuexa
     this.$store.getters.get_grupa.forEach((element) => {
       this.grupa.push(element);
     });
-    //sortiranje
+    //sortiranje array-a grupa POCETAK
     this.grupa.sort((a, b) => {
       if (a < b) return -1;
       if (a > b) return 1;
     });
     //pa posle sortiranja dodajemo na pocetku i na kraju niza
     this.grupa.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
-    this.grupa.push("Neodredjeno"); //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na
-    //sredini niza a ja zelim da bude na kraju
+    this.grupa.push("Neodredjeno"); //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na sredini niza a ja zelim da bude na kraju
 
-    //lista sortiranje_od_do(Naziv a-z, naziv z-a, cena rastuce, cena opadajuce)
+    //array sortiranje_od_do(Naziv a-z, naziv z-a, cena rastuce, cena opadajuce)
     this.sortiranje_od_do = [...this.$store.getters.get_sortiranje_od_do];
     //posto u zavrsene licitacije ne treba sortiranje po vremenu onda ih brisemo iz arraya koji smo ubacili komandom iznad
     this.sortiranje_od_do.splice(0, 2); //brisanje od 0 i 1 indexa u array-u (vreme blize i dalje)
   },
   watch: {
     //motri na computed sve_licitacije kada dobije podatke
-    //ovo je na pocetku kada se ocitavaju SVE stvari (nisam jos odredio
-    //po kom kriterijumu ce to bi - da li po preostalom vremenu ili necem drugom )
+    //ovo je na pocetku kada se ocitavaju SVE stvari (pocetno ocitavanje je po preostalom vremenu)
     sve_licitacije(newValue) {
-      //setTimeout je da ne bi prikazalo prvo "Trenutno nema završenih licitacija za traženi kriterijum"
-      //pa odmah zatim array listu licitacije_u_toku
-      setTimeout(() => {
-        //ako nije prazan i nema podatak "nema_podataka" tj. ako ima podataka onda...
-        if (
-          this.sve_licitacije.length != 0 &&
-          this.sve_licitacije != "nema_podataka"
-        ) {
-          //obrisi sve i postavi da je prazan array
-          this.arrayData = [];
-          //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra i prestao circular za ocitavanje
-          this.loadedData = true;
-          //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
-          newValue.forEach((value) => {
-            this.arrayData.push(value);
-          });
-        }
-        //ako je prazan (nema podatke) a i u isto vreme ne pise "nema_podataka"
-        else {
-          this.loadedData = "nema_podataka";
-        }
-      }, 1000);
+      if (newValue != 0 && newValue != "nema_podataka") {
+        this.arrayData = [];
+        //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
+        newValue.forEach((value) => {
+          this.arrayData.push(value);
+        });
+        //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra i prestao circular za ocitavanje
+        this.loadedData = true;
+      }
+      //ali ako "nema_podataka" je vraceno onda prikazi DIV da nema podataka
+      //do tada loadedData=false tj. circular (v-progress-circular) ce se vrteti
+      else if (newValue == "nema_podataka") {
+        this.loadedData = "nema_podataka";
+      }
     },
 
     //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
     //trazi iz Firebase stvari po tom kriterijumu
     defaultSelected_sort_vrsta() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular
       this.$store.dispatch("sortingChange", {
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
         filter_Vrsta: this.defaultSelected_sort_vrsta,
@@ -225,6 +214,8 @@ export default {
       });
     },
     defaultSelected_grupa() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular
       this.$store.dispatch("sortingChange", {
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
         filter_Vrsta: this.defaultSelected_sort_vrsta,
@@ -233,6 +224,8 @@ export default {
       });
     },
     defaultSelected_sortiranje_od_do() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular
       this.$store.dispatch("sortingChange", {
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
         filter_Vrsta: this.defaultSelected_sort_vrsta,
@@ -256,7 +249,7 @@ export default {
     },
     //KRAJ
     //STAVLJA TACKE (.) NAKON 3 BROJA RADI BOLJE PREGLEDNOSTI AKO JE VELIKI BROJ
-    pocetna_cena_u_DIN(newValue) {
+    pocetna_cena_u_RSD(newValue) {
       const result = newValue
         .toString()
         .replace(/\D/g, "")
