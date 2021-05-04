@@ -138,7 +138,7 @@ export default new Vuex.Store({
           vrsta_licitacije: obj_licit.vrsta_licitacije,
           nudim: obj_licit.nudim,
           grupa: obj_licit.grupa,
-          pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+          pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
           trajanje_licitacije: obj_licit.trajanje_licitacije,
           opis_licitacije: obj_licit.opis_licitacije,
           pocetak_datum: obj_licit.pocetak_datum,
@@ -160,7 +160,7 @@ export default new Vuex.Store({
         vrsta_licitacije: obj_licit.vrsta_licitacije,
         nudim: obj_licit.nudim,
         grupa: obj_licit.grupa,
-        pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+        pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
         trajanje_licitacije: obj_licit.trajanje_licitacije,
         opis_licitacije: obj_licit.opis_licitacije,
         pocetak_datum: obj_licit.pocetak_datum,
@@ -192,7 +192,7 @@ export default new Vuex.Store({
           vrsta_licitacije: obj_licit.vrsta_licitacije,
           nudim: obj_licit.nudim,
           grupa: obj_licit.grupa,
-          pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+          pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
           trajanje_licitacije: obj_licit.trajanje_licitacije,
           opis_licitacije: obj_licit.opis_licitacije,
           pocetak_datum: obj_licit.pocetak_datum,
@@ -215,7 +215,7 @@ export default new Vuex.Store({
         vrsta_licitacije: obj_licit.vrsta_licitacije,
         nudim: obj_licit.nudim,
         grupa: obj_licit.grupa,
-        pocetna_cena_u_DIN: obj_licit.pocetna_cena_u_DIN,
+        pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
         trajanje_licitacije: obj_licit.trajanje_licitacije,
         opis_licitacije: obj_licit.opis_licitacije,
         pocetak_datum: obj_licit.pocetak_datum,
@@ -432,7 +432,7 @@ export default new Vuex.Store({
                 vrsta_licitacije: payload.vrsta_licitacije,
                 nudim: payload.nudim,
                 grupa: payload.grupa,
-                pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
                 trajanje_licitacije: payload.trajanje_licitacije,
                 opis_licitacije: payload.opis_licitacije,
                 pocetak_datum: payload.pocetak_datum,
@@ -450,7 +450,7 @@ export default new Vuex.Store({
                 vrsta_licitacije: payload.vrsta_licitacije,
                 nudim: payload.nudim,
                 grupa: payload.grupa,
-                pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
                 trajanje_licitacije: payload.trajanje_licitacije,
                 opis_licitacije: payload.opis_licitacije,
                 pocetak_datum: payload.pocetak_datum,
@@ -538,7 +538,7 @@ export default new Vuex.Store({
                   vrsta_licitacije: change.doc.data().vrsta_licitacije,
                   nudim: change.doc.data().nudim,
                   grupa: change.doc.data().grupa,
-                  pocetna_cena_u_DIN: change.doc.data().pocetna_cena_u_DIN,
+                  pocetna_cena_u_RSD: change.doc.data().pocetna_cena_u_RSD,
                   trajanje_licitacije: change.doc.data().trajanje_licitacije,
                   opis_licitacije: change.doc.data().opis_licitacije,
                   pocetak_datum: change.doc.data().pocetak_datum,
@@ -555,7 +555,7 @@ export default new Vuex.Store({
                 vrsta_licitacije: change.doc.data().vrsta_licitacije,
                 nudim: change.doc.data().nudim,
                 grupa: change.doc.data().grupa,
-                pocetna_cena_u_DIN: change.doc.data().pocetna_cena_u_DIN,
+                pocetna_cena_u_RSD: change.doc.data().pocetna_cena_u_RSD,
                 trajanje_licitacije: change.doc.data().trajanje_licitacije,
                 opis_licitacije: change.doc.data().opis_licitacije,
                 pocetak_datum: change.doc.data().pocetak_datum,
@@ -597,7 +597,7 @@ export default new Vuex.Store({
     //             vrsta_licitacije: change.doc.data().vrsta_licitacije,
     //             nudim: change.doc.data().nudim,
     //             grupa: change.doc.data().grupa,
-    //             pocetna_cena_u_DIN: change.doc.data().pocetna_cena_u_DIN,
+    //             pocetna_cena_u_RSD: change.doc.data().pocetna_cena_u_RSD,
     //             trajanje_licitacije: change.doc.data().trajanje_licitacije,
     //             opis_licitacije: change.doc.data().opis_licitacije,
     //             pocetak_datum: change.doc.data().pocetak_datum,
@@ -614,7 +614,7 @@ export default new Vuex.Store({
     //           vrsta_licitacije: change.doc.data().vrsta_licitacije,
     //           nudim: change.doc.data().nudim,
     //           grupa: change.doc.data().grupa,
-    //           pocetna_cena_u_DIN: change.doc.data().pocetna_cena_u_DIN,
+    //           pocetna_cena_u_RSD: change.doc.data().pocetna_cena_u_RSD,
     //           trajanje_licitacije: change.doc.data().trajanje_licitacije,
     //           opis_licitacije: change.doc.data().opis_licitacije,
     //           pocetak_datum: change.doc.data().pocetak_datum,
@@ -712,14 +712,14 @@ export default new Vuex.Store({
         firestore_baza = firestore_baza
           // .where("kraj_datum", ">=", datum)
           // .orderBy("kraj_datum") //ovo moram da stavim zato sto Firestore trazi da *first orderBy* bude po .where koji je iznad
-          .orderBy("pocetna_cena_u_DIN", "asc"); //pa sam tek onda radio pretrazivanje koje meni treba
+          .orderBy("pocetna_cena_u_RSD", "asc"); //pa sam tek onda radio pretrazivanje koje meni treba
       }
       //Cena opadajuce
       if (payload.filter_sortiranje_od_do == "Cena opadajuće") {
         firestore_baza = firestore_baza
           // .where("kraj_datum", ">=", datum)
           // .orderBy("kraj_datum") //ovo moram da stavim zato sto Firestore trazi da *first orderBy* bude po .where koji je iznad
-          .orderBy("pocetna_cena_u_DIN", "desc"); //pa sam tek onda radio pretrazivanje koje meni treba
+          .orderBy("pocetna_cena_u_RSD", "desc"); //pa sam tek onda radio pretrazivanje koje meni treba
       }
 
       //pozivanje komande za slanje ka Firebase uz limit od najvise 10 rezultata
@@ -814,7 +814,7 @@ export default new Vuex.Store({
       //       vrsta_licitacije: payload.vrsta_licitacije,
       //       nudim: payload.nudim,
       //       grupa: payload.grupa,
-      //       pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+      //       pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
       //       trajanje_licitacije: payload.trajanje_licitacije,
       //       opis_licitacije: payload.opis_licitacije,
       //       pocetak_datum: payload.pocetak_datum,

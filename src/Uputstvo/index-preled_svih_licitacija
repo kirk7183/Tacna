@@ -247,7 +247,7 @@ export default new Vuex.Store({
                         licitacije: firebase.firestore.FieldValue.arrayUnion({
                             nudim: payload.nudim,
                             grupa: payload.grupa,
-                            pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                            pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
                             trajanje_licitacije: payload.trajanje_licitacije,
                             opis_licitacije: payload.opis_licitacije,
                             pocetak_datum: payload.pocetak_datum,
@@ -263,7 +263,7 @@ export default new Vuex.Store({
                         licitacije: firebase.firestore.FieldValue.arrayUnion({
                             nudim: payload.nudim,
                             grupa: payload.grupa,
-                            pocetna_cena_u_DIN: payload.pocetna_cena_u_DIN,
+                            pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
                             trajanje_licitacije: payload.trajanje_licitacije,
                             opis_licitacije: payload.opis_licitacije,
                             pocetak_datum: payload.pocetak_datum,

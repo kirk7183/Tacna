@@ -1,0 +1,65 @@
+   //NE BRISATI
+      // dodavanje sve odjednom u bazi ako nesto fali
+      await firestore_baza.get().then((result) => {
+        result.forEach((singleResult) => {
+          var firestore_doc = firebase
+            .firestore()
+            .collection("licitacije_u_toku")
+            .doc(singleResult.id);
+
+          firestore_doc.set(
+            {
+              korisnik_email: "kirk7183@yahoo.co.uk",
+            },
+            //da ne promeni ceo document vec samo da doda "korisnik_email"
+            { merge: true }
+          );
+        });
+      });
+
+      //izmena naziva fielda (field) npr. "pocetna_cena_u_RSD" u "pocetna_cena_u_DIN",
+      //a da pri tom vrednosti (value) ostanu iste.  
+
+
+
+
+      //ovo bas i nije najbolje ali eto da se ima
+      //NE BRISATI
+      // promena - postavljanje stare vrednosti(VALUE) na novi (FIELD) sve odjednom u bazi
+      await firestore_baza.get().then((result) => {
+        result.forEach((singleResult) => {
+          var docID = firebase
+            .firestore()
+            .collection("licitacije_u_toku")
+            .doc(singleResult.id);
+
+          if (singleResult.data().pocetna_cena_u_DIN != undefined) {
+            console.log(singleResult.data().nudim);
+            //belezimo trenutnu vrednost pocetna_cena_u_DIN u promenljivu trenutna_vrednost
+            var trenutna_vrednost = singleResult.data().pocetna_cena_u_DIN;
+          }
+          //pravimo novi FIELD pocetna_cena_u_RSD i ubacujemo u dokument
+          //i ubacujemo trenutnu vrednost
+          docID.set(
+            {
+              pocetna_cena_u_RSD: trenutna_vrednost,
+            },
+            //da ne promeni ceo document vec samo da doda "pocetna_cena_u_RSD"
+            { merge: true }
+          );
+
+          //zatim radimo brisanje pocetna_cena_u_DIN fieldova u tim dokumentima
+
+          //brisanje iz baze sa uslovom ako je DIN (ne postoji pocetna_cena_u_DIN) onda
+          //obrisati ako u sebi ima (pocetna_cena_u_RSD)
+          if (singleResult.data().pocetna_cena_u_RSD == undefined) {
+            console.log(singleResult.data().nudim);
+            docID.set(
+              {
+                pocetna_cena_u_DIN: firebase.firestore.FieldValue.delete(),
+              },
+              { merge: true }
+            );
+          }
+        });
+      });

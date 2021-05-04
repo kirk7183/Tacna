@@ -5,7 +5,7 @@
         <v-select
           class="sortiranje"
           :items="sort_vrsta"
-          v-model="defaultSelected_sort_vrsta"
+          v-model="get_selected_vrsta"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -15,7 +15,7 @@
         <v-select
           class="sortiranje"
           :items="grupa"
-          v-model="defaultSelected_grupa"
+          v-model="get_selected_grupa"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -25,7 +25,7 @@
         <v-select
           class="sortiranje"
           :items="sortiranje_od_do"
-          v-model="defaultSelected_sortiranje_od_do"
+          v-model="get_selected_sortiranje_od_do"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -39,15 +39,16 @@
           <p
             class="switch_title pointer pa-3 mx-1 my-0"
             :class="!switch1 ? `put_border left_switch` : ``"
-            @click="switch1 = false"
+            @click="switch1_false"
           >
             Moje licitacije
           </p>
           <v-switch v-model="switch1" class="switch" color="blue"> </v-switch>
+          <!--loadedData = false je da pocne da vrti circular, a gasi se posle u watch: get_sve_licitacije(newValue)-->
           <p
             class="switch_title pointer pa-3 mx-1 my-0"
             :class="switch1 ? `put_border right_switch` : ``"
-            @click="switch1 = true"
+            @click="switch1_true"
           >
             Licitacije u toku
           </p>
@@ -63,7 +64,7 @@
         class="progress_circular"
       ></v-progress-circular>
     </div>
-    <!--ako ima podataka prikazi ih, ako nema podataka prikazi div na dnu stranice-->
+    <!--ako ima podataka prikazi ih, ako nema podataka prikazi div na dnu stranice (v-else)-->
     <div v-if="loadedData == true">
       <div>
         <v-layout row wrap justify-center>
@@ -99,8 +100,8 @@
                   <p>{{ truncate(single.grupa, 35) }}</p>
                 </v-card-text>
                 <v-card-text class="text-center">
-                  <b>Početna cena u DIN:</b>
-                  <p>{{ pocetna_cena_u_DIN(single.pocetna_cena_u_DIN) }},00</p>
+                  <b>Početna cena u RSD:</b>
+                  <p>{{ pocetna_cena_u_RSD(single.pocetna_cena_u_RSD) }},00</p>
                 </v-card-text>
                 <!--KRAJ GRUPA-->
 
@@ -125,14 +126,19 @@
         </v-layout>
       </div>
     </div>
-    <!--ako nema podataka ocitanih iz vuexa onda prikazi ovaj div-->
-    <div v-if="loadedData == 'nema_podataka'" class="nemaLicitacije">
-      Trenutno nema postavljenih licitacija za traženi kriterijum
-    </div>
-
     <!--ako nije logovan i switch1 = false tj. na levo je (moje licitacije) onda prikazi ovaj div-->
     <div v-if="!isLoggedIn && !switch1" class="nemaLicitacije">
       Molimo Vas logujte se
+    </div>
+    <!--kada nema podataka-->
+    <div
+      v-if="
+        (isRegister == true && loadedData == 'nema_podataka') || //za moje licitacije (mora da bude registrovan takodje)
+        (switch1 == true && loadedData == 'nema_podataka') //za licitacije u toku (nije bitno da li je logovan ili ne)
+      "
+      class="nemaLicitacije"
+    >
+      Trenutno nema postavljenih licitacija za traženi kriterijum
     </div>
 
     <!--ako je logovan ali nije registrovan i switch1 = false tj. na levo je (moje licitacije) onda prikazi ovaj div-->
@@ -151,15 +157,11 @@ export default {
     return {
       switch1: null,
       grupa: [],
-      defaultSelected_sort_vrsta: "SVE",
-      defaultSelected_grupa: "SVE",
-      defaultSelected_sortiranje_od_do: "Preostalo vreme - manje",
       loadedData: false,
       isLoggedIn: false,
       isRegister: false,
       boja_licitacije: null,
       arrayData: [],
-      // korisnik_id: "",
       Meseci: [
         "Januar",
         "Februar",
@@ -193,36 +195,42 @@ export default {
 
   created() {
     //posto je this.switch=null na pocetku treba da se stavi da je true da bi u *watch
-    //pratili promenu i pokrenuli Vuex onSnapshot
+    //"switch1" pratio promenu i pokrenuo u Vuex "licitacije_podaci" ili
+    //"moje_licitacije" u zavisnosti da li je "switch1" true ili false
     this.switch1 = true;
 
-    //da povuce podatke iz firebase-a
-    // this.$store.dispatch("pregled_svih_licitacija", this.arrayData);
-
-    // //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
-    // this.$store.dispatch("onSnapShot");
-
-    //lista sort_vrsta iz Vuexa (Sve,licna,humanitarna)
+    //array sort_vrsta iz Vuexa (Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
 
-    //lista grupa iz Vuexa
+    //array grupa iz Vuexa
     this.$store.getters.get_grupa.forEach((element) => {
       this.grupa.push(element);
     });
-    //sortiranje
+    //sortiranje array-a grupa
     this.grupa.sort((a, b) => {
       if (a < b) return -1;
       if (a > b) return 1;
     });
     //pa posle sortiranja dodajemo na pocetku i na kraju niza
     this.grupa.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
-    this.grupa.push("Neodredjeno"); //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na
-    //sredini niza a ja zelim da bude na kraju
+    this.grupa.push("Neodredjeno"); //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na sredini niza a ja zelim da bude na kraju
 
-    //lista sortiranje_od_do(Naziv a-z, naziv z-a, cena rastuce, cena opadajuce)
+    //array sortiranje_od_do(Naziv a-z, naziv z-a, cena rastuce, cena opadajuce)
     this.sortiranje_od_do = this.$store.getters.get_sortiranje_od_do;
+
+    //postavljanje initial state iz Vuexa za isLoggedIn
+    this.isLoggedIn = this.$store.getters.get_IsLoggedIn;
+    //postavljanje initial state iz Vuexa za isRegister
+    //btw ako imamo IF u LIFeCYCLE HOOK onda mora na kraju da bude zato sto posle njega nece da nastavi dalji nista da odradjuje
+    if (
+      this.$store.getters.get_reg_korisnik.podaci.korisnik_id != null ||
+      this.$store.getters.get_reg_korisnik.podaci.korisnik_id != undefined
+    ) {
+      this.isRegister = true;
+    }
   },
+
   computed: {
     get_sve_licitacije: {
       get() {
@@ -243,28 +251,38 @@ export default {
         return this.$store.getters.get_reg_korisnik.podaci;
       },
     },
+    //v-select odabrano
+    get_selected_vrsta: {
+      get() {
+        return this.$store.getters.get_selected_vrsta;
+      },
+      set(newValue) {
+        return this.$store.dispatch("setSelected_vrsta", newValue);
+      },
+    },
+    get_selected_grupa: {
+      get() {
+        return this.$store.getters.get_selected_grupa;
+      },
+      set(newValue) {
+        return this.$store.dispatch("setSelected_grupa", newValue);
+      },
+    },
+    get_selected_sortiranje_od_do: {
+      get() {
+        return this.$store.getters.get_selected_sortiranje_od_do;
+      },
+      set(newValue) {
+        return this.$store.dispatch("setSelected_sortiranje_od_do", newValue);
+      },
+    },
+    //v-select odabrano KRAJ
   },
   watch: {
-    //motri na computed sve_licitacije kada dobije podatke
-    //ovo je na pocetku kada se ocitavaju SVE stvari (nisam jos odredio
-    //po kom kriterijumu ce to bi - da li po preostalom vremenu ili necem drugom )
+    //motri na computed get_sve_licitacije kada dobije podatke
+    //ovo je na pocetku kada se ocitavaju SVE stvari (pocetno ocitavanje je po preostalom vremenu)
     get_sve_licitacije(newValue) {
-      //setTimeout je da ne bi prikazalo prvo "Trenutno nema postavljenih licitacija za traženi kriterijum"
-      //pa odmah zatim array listu licitacije_u_toku
-      // setTimeout(() => {
-      //ako nije prazan i nema podatak "nema_podataka" tj. ako ima podataka onda...
-      // if (
-      // newValue[0] == "niste_logovani" ||
-      // newValue[0] == "niste_registrovani" ||
-      // newValue[0] == "nema_podataka"
-      // if (this.switch1)
       if (newValue != 0 && newValue != "nema_podataka") {
-        // )
-        // {
-        //   this.loadedData = newValue[0];
-        // }
-        //ako je prazan (nema podatke) a i u isto vreme ne pise "nema_podataka"
-        // else
         //obrisi sve i postavi da je prazan array
         this.arrayData = [];
         //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
@@ -273,75 +291,47 @@ export default {
         });
         //..onda postavi loadedData=true kako bi se render div kada je true tj. prikazao div i rendovali podaci unutra i prestao circular za ocitavanje
         this.loadedData = true;
-      } else {
+      }
+      //ali ako "nema_podataka" je vraceno onda prikazi DIV da nema podataka
+      //do tada loadedData=false tj. circular (v-progress-circular) ce se vrteti
+      else if (newValue == "nema_podataka") {
         this.loadedData = "nema_podataka";
       }
-      // }, 1000);
     },
 
     switch1() {
-      if (this.switch1) {
-        //da nadgleda svaku promenu u firebase (ako neko izbrise nesto, promeni ili doda)
-        this.$store.dispatch("licitacije_podaci");
-      } else {
-        //ako nije logovan
-        // if (!this.check_is_loggedIn) {
-        //   this.loadedData = "niste_logovani";
-        // }
-        // //ako je logovan ali nije registrovan (znaci ne moze da postavlja licitacije a to znaci da nema svoje postavljene licitacije )
-        // else if (
-        //   this.check_is_loggedIn &&
-        //   this.reg_korisnik.podaci == undefined
-        // ) {
-        //   this.loadedData = "niste_registrovani";
-        // } else {
-
-        //ako je korisnik registrovan (tek onda moze da pravi svoje licitacije) i ako je logovan(tek onda moze i da ih vidi)
-        if (this.isRegister && this.isLoggedIn) {
-          this.$store.dispatch("moje_licitacije");
-        } else {
-          //ako je switch na levo a nije logovan i registrovan onda obrisi prikaz (moje licitacije)
-          this.arrayData = [];
-        }
-        // }
-      }
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular
+      this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+        zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+      });
     },
 
     get_check_is_loggedIn(newValue) {
       if (newValue) {
         this.isLoggedIn = true;
-        // newValue.then(() => {
-        //   if (!this.switch1 && this.isLoggedIn && this.isRegister) {
-        //     // newValue.then(){
-        //     //   console.log("fdsfds")
-        //     // }
-        //     this.$store.dispatch("moje_licitacije");
-        //dodatna opcija ako je i switch1 na levo(false) tj.na moje licitacije, plus je i logovan i registrovan korisnik  onda pozovi ocitavanje mojih licitacija
-        // if (!this.switch1 && this.isLoggedIn) {
-        //   // newValue.then(){
-        //   //   console.log("fdsfds")
-        //   // }
-        //   this.$store.dispatch("moje_licitacije");
-        // }
       } else if (!newValue) {
         this.isLoggedIn = false;
-
-        //dodatna opcija ako je i switch1 na levo(false) tj. na moje licitacije onda obrisi array mojih licitacija
+        //dodatna opcija ako je i switch1 na levo(false) tj. na moje licitacije onda obrisi arrayData array
         if (!this.switch1) {
           this.arrayData = [];
-          // this.$store.state.sve_licitacije = [];
         }
       }
     },
 
     get_check_reg_korisnik(newValue) {
+      console.log(newValue);
       if (newValue.korisnik_id != null || newValue.korisnik_id != undefined) {
+        //ako ima korisnik_id znaci da je korisnik registrovan. A ako dobijamo korisnik_id znaci da je i trenutno logovan (ne moze da dobijemo podatak korisnik_id ako nije logovan)
         this.isRegister = true;
-        //dodatna opcija kada dobijemo informaciju da je korisnik logovan tj. da postoji korisnik_id sa MARS-a znaci da je korisnik registrovan
-        //tada proveravamo da li je switch false (na levo) i da li u ovoj komponenti je isLoggedIn i isRegister na true
+        //false, true, true
         if (!this.switch1 && this.isLoggedIn && this.isRegister) {
-          //ovo je kada se login i logout a na moje licitacije smo da refresh na licu mesta
-          this.$store.dispatch("moje_licitacije");
+          //ovo je kada se login i logout a na "moje licitacije" smo. Da licu mesta prikaze array kada se logujemo ili da obrise array ako se izlogujemo.
+          this.$store.dispatch("sortingChange", {
+            switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+            zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+          });
         }
       } else if (
         newValue.korisnik_id == null ||
@@ -351,42 +341,89 @@ export default {
       }
     },
 
-    //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
-    //trazi iz Firebase stvari po tom kriterijumu
-    defaultSelected_sort_vrsta() {
+    get_selected_vrsta() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
-        filter_Vrsta: this.defaultSelected_sort_vrsta,
-        filter_ListaStvari: this.defaultSelected_grupa,
-        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
     },
-    defaultSelected_grupa() {
+    get_selected_grupa() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
-        filter_Vrsta: this.defaultSelected_sort_vrsta,
-        filter_ListaStvari: this.defaultSelected_grupa,
-        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
     },
-    defaultSelected_sortiranje_od_do() {
+    get_selected_sortiranje_od_do() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
-        filter_Vrsta: this.defaultSelected_sort_vrsta,
-        filter_ListaStvari: this.defaultSelected_grupa,
-        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
     },
+
+    // //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
+    // //trazi iz Firebase stvari po tom kriterijumu
+    // defaultSelected_sort_vrsta() {
+    //   this.arrayData = []; //isprazni sve iz liste
+    //   this.loadedData = false; //pokreni circular
+    //   this.$store.dispatch("sortingChange", {
+    //     switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+    //     zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+    //     filter_Vrsta: this.defaultSelected_sort_vrsta,
+    //     filter_ListaStvari: this.defaultSelected_grupa,
+    //     filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
+    //   });
+    // },
+    // defaultSelected_grupa() {
+    //   this.arrayData = []; //isprazni sve iz liste
+    //   this.loadedData = false; //pokreni circular
+    //   this.$store.dispatch("sortingChange", {
+    //     switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+    //     zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+    //     filter_Vrsta: this.defaultSelected_sort_vrsta,
+    //     filter_ListaStvari: this.defaultSelected_grupa,
+    //     filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
+    //   });
+    // },
+    // defaultSelected_sortiranje_od_do() {
+    //   this.arrayData = []; //isprazni sve iz liste
+    //   this.loadedData = false; //pokreni circular
+    //   this.$store.dispatch("sortingChange", {
+    //     switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+    //     zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+    //     filter_Vrsta: this.defaultSelected_sort_vrsta,
+    //     filter_ListaStvari: this.defaultSelected_grupa,
+    //     filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
+    //   });
+    // },
   },
 
   methods: {
-    // STAVLJA 3 TACKICE NAKON ODREDJENOG BROJA KARAKTERA KOJI PROSLEDJUJEMO METODI
+    switch1_false() {
+      //ako vec nije FALSE onda prebaci na FALSE
+      if (this.switch1 != false) {
+        this.switch1 = false;
+        this.loadedData = true;
+      }
+    },
+    switch1_true() {
+      //ako vec nije TRUE onda prebaci na TRUE
+      if (this.switch1 != true) {
+        this.switch1 = true;
+        this.loadedData = false;
+      }
+    }, // STAVLJA 3 TACKICE NAKON ODREDJENOG BROJA KARAKTERA KOJI PROSLEDJUJEMO METODI
     truncate(source, size) {
       return source.length > size ? source.slice(0, size - 1) + "…" : source;
     },
     //KRAJ
     //STAVLJA TACKE (.) NAKON 3 BROJA RADI BOLJE PREGLEDNOSTI AKO JE VELIKI BROJ
-    pocetna_cena_u_DIN(newValue) {
+    pocetna_cena_u_RSD(newValue) {
       const result = newValue
         .toString()
         .replace(/\D/g, "")

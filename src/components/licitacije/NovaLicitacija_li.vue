@@ -1,6 +1,6 @@
 <template>
   <div class="novaLicitacija_li">
-    <v-row justify="center">
+    <v-row v-if="isLoggedIn && isRegister" justify="center">
       <v-col cols="12" sm="10" md="5" class="pa-0">
         <v-card class="mx-2 my-4 mx-sm-4 my-sm-6 my-md-5" elevation="5">
           <v-card-title :style="return_boja()"> Nova licitacija </v-card-title>
@@ -45,6 +45,7 @@
 
             <v-select
               v-model="grupa"
+              :rules="rules_select"
               :items="grupa_lista"
               label="Grupa"
               dense
@@ -53,10 +54,10 @@
             ></v-select>
 
             <v-text-field
-              v-model="pocetna_cena_u_DIN"
+              v-model="pocetna_cena_u_RSD"
               :rules="rules_number"
               outlined
-              label="Početna cena u DIN"
+              label="Početna cena u RSD"
               counter
               maxlength="7"
               required
@@ -102,6 +103,15 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!--ako nije logovan onda prikazi ovaj div-->
+    <div v-if="!isLoggedIn" class="nemaLicitacije">Molimo Vas logujte se</div>
+
+    <!--ako je logovan ali nije registrovan onda prikazi ovaj div-->
+    <div v-if="isLoggedIn && !isRegister" class="nemaLicitacije">
+      Da bi ste postavljali ili pregledali svoje licitacije morate biti
+      registrovani
+    </div>
   </div>
 </template>
 
@@ -110,13 +120,15 @@ import Vue from "vue";
 export default {
   data() {
     return {
+      isLoggedIn: false,
+      isRegister: false,
       grupa_lista: [],
       boja_title: "#988BC7",
       valid: false,
       vrsta_licitacije: "",
       nudim: "",
       grupa: "",
-      pocetna_cena_u_DIN: null,
+      pocetna_cena_u_RSD: null,
       trajanje_licitacije: "",
       opis_licitacije: "",
       rules: [
@@ -126,20 +138,53 @@ export default {
       ],
       rules_number: [
         (v) => !!v || "Molimo Vas popunite polje",
-        (v) => (v && v >= 0) || "Molimo Vas upisite cenu",
+        (v) => (v && v >= 1) || "Molimo Vas upisite cenu",
       ],
+      rules_select: [(v) => !!v || "Molimo Vas odaberite grupu"],
     };
   },
   watch: {
-    pocetna_cena_u_DIN(newValue) {
-      const result = newValue
-        .toString()
-        .replace(/\D/g, "")
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      Vue.nextTick(() => (this.pocetna_cena_u_DIN = result));
+    pocetna_cena_u_RSD(newValue) {
+      if (newValue != undefined) {
+        const result = newValue
+          .toString()
+          .replace(/\D/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        Vue.nextTick(() => (this.pocetna_cena_u_RSD = result));
+      }
+    },
+    get_check_is_loggedIn(newValue) {
+      if (newValue) {
+        this.isLoggedIn = true;
+      } else {
+        this.isLoggedIn = false;
+      }
+    },
+
+    get_check_reg_korisnik(newValue) {
+      if (newValue.korisnik_id != null || newValue.korisnik_id != undefined) {
+        //ako ima korisnik_id znaci da je korisnik registrovan. A ako dobijamo korisnik_id znaci da je i trenutno logovan (ne moze da dobijemo podatak korisnik_id ako nije logovan)
+        this.isRegister = true;
+      } else if (
+        newValue.korisnik_id == null ||
+        newValue.korisnik_id == undefined
+      ) {
+        this.isRegister = false;
+      }
     },
   },
   created() {
+    //mora....kada se menjaju stranice ne dobija initial state iz Vuexa
+    //postavljanje initial state iz Vuexa za isLoggedIn
+    this.isLoggedIn = this.$store.getters.get_IsLoggedIn;
+    //postavljanje initial state iz Vuexa za isRegister
+    if (
+      this.$store.getters.get_reg_korisnik.podaci.korisnik_id != null ||
+      this.$store.getters.get_reg_korisnik.podaci.korisnik_id != undefined
+    ) {
+      this.isRegister = true;
+    }
+
     //lista stvari iz Vuexa
     this.$store.getters.get_grupa.forEach((element) => {
       this.grupa_lista.push(element);
@@ -154,6 +199,21 @@ export default {
     //sredini niza a ja zelim da bude na kraju
     this.grupa_lista.push("Neodredjeno");
   },
+  computed: {
+    //da li je logovan korisnik
+    get_check_is_loggedIn: {
+      get() {
+        return this.$store.getters.get_IsLoggedIn;
+      },
+    },
+
+    // //podaci iz baze sa Marsa
+    get_check_reg_korisnik: {
+      get() {
+        return this.$store.getters.get_reg_korisnik.podaci;
+      },
+    },
+  },
 
   methods: {
     postavi() {
@@ -161,10 +221,10 @@ export default {
       var validnost = this.$refs.form.validate();
       if (validnost) {
         //brisanje tacke (.) posle treceg broja
-        const result = this.pocetna_cena_u_DIN
+        const result = this.pocetna_cena_u_RSD
           .replace(/\D/g, "")
           .replace(/\B(?=(\d{3})+(?!\d))/g, "");
-        this.pocetna_cena_u_DIN = parseInt(result); //parse to integer da bi posle u Firebase sortirao dobro
+        this.pocetna_cena_u_RSD = parseInt(result); //parse to integer da bi posle u Firebase sortirao dobro
         //kraj brisanja tacke (.)
 
         var d = new Date();
@@ -181,7 +241,7 @@ export default {
           vrsta_licitacije: this.vrsta_licitacije,
           nudim: this.nudim,
           grupa: this.grupa,
-          pocetna_cena_u_DIN: this.pocetna_cena_u_DIN,
+          pocetna_cena_u_RSD: this.pocetna_cena_u_RSD,
           trajanje_licitacije: this.trajanje_licitacije,
           opis_licitacije: this.opis_licitacije,
           pocetak_datum: pocetak_datum,
