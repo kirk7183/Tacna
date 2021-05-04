@@ -537,7 +537,8 @@ export default new Vuex.Store({
         .collection("licitacije_u_toku");
 
       var datum = new Date();
-      //postavljanje "zavrsena_licitacija" na true tj. ako je datum i vreme vreci od trenutka kada smo otvorili stranicu (znaci da je licitacija gotova)
+
+      //POSTAVLJANJE "zavrsena_licitacija" na true tj. ako je datum i vreme vreci od trenutka kada smo otvorili stranicu (znaci da je licitacija gotova)
       await firestore_baza
         .where("kraj_datum", "<=", datum)
         .where("zavrsena_licitacija", "==", false)
