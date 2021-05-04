@@ -5,7 +5,7 @@
         <v-select
           class="sortiranje"
           :items="sort_vrsta"
-          v-model="defaultSelected_sort_vrsta"
+          v-model="get_selected_vrsta"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -15,7 +15,7 @@
         <v-select
           class="sortiranje"
           :items="grupa"
-          v-model="defaultSelected_grupa"
+          v-model="get_selected_grupa"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -25,7 +25,7 @@
         <v-select
           class="sortiranje"
           :items="sortiranje_od_do"
-          v-model="defaultSelected_sortiranje_od_do"
+          v-model="get_selected_sortiranje_od_do"
           dense
           :menu-props="{ bottom: true, offsetY: true }"
           outlined
@@ -117,9 +117,6 @@ export default {
   data() {
     return {
       grupa: [],
-      defaultSelected_sort_vrsta: "SVE",
-      defaultSelected_grupa: "SVE",
-      defaultSelected_sortiranje_od_do: "Naziv A-Z",
       loadedData: false,
       boja_licitacije: null,
       arrayData: [],
@@ -157,7 +154,10 @@ export default {
 
   created() {
     //da povuce podatke iz firebase-a za zavrsene licitacije
-    this.$store.dispatch("zavrsene_licitacije_prikaz");
+    this.$store.dispatch("sortingChange", {
+      switch: true, //ako je true onda je za sve licitacije, ako je false onda znaci da je kliknuto na moje licitacije
+      zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
+    });
 
     //array sort_vrsta iz Vuexa (Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
@@ -180,12 +180,57 @@ export default {
     this.sortiranje_od_do = [...this.$store.getters.get_sortiranje_od_do];
     //posto u zavrsene licitacije ne treba sortiranje po vremenu onda ih brisemo iz arraya koji smo ubacili komandom iznad
     this.sortiranje_od_do.splice(0, 2); //brisanje od 0 i 1 indexa u array-u (vreme blize i dalje)
+
+    //posto smo gore izbacili (Preostalo vreme - manje i Preostalo vreme - više)
+    //kada odemo na licitacije_li i imamo v-select npr. "Preostalo vreme - manje" i vratimo se na zavrsene_li, da v-select ne bi ostao prazan
+    //stavljeno je da sortira na "Naziv A-Z"
+    if (
+      this.get_selected_sortiranje_od_do == "Preostalo vreme - manje" ||
+      this.get_selected_sortiranje_od_do == "Preostalo vreme - više"
+    )
+      this.get_selected_sortiranje_od_do = "Naziv A-Z";
   },
+  computed: {
+    get_sve_licitacije: {
+      get() {
+        return this.$store.getters.get_sve_licitacije;
+      },
+    },
+
+    //v-select odabrano
+    get_selected_vrsta: {
+      get() {
+        return this.$store.getters.get_selected_vrsta;
+      },
+      set(newValue) {
+        return this.$store.dispatch("setSelected_vrsta", newValue);
+      },
+    },
+    get_selected_grupa: {
+      get() {
+        return this.$store.getters.get_selected_grupa;
+      },
+      set(newValue) {
+        return this.$store.dispatch("setSelected_grupa", newValue);
+      },
+    },
+    get_selected_sortiranje_od_do: {
+      get() {
+        return this.$store.getters.get_selected_sortiranje_od_do;
+      },
+      set(newValue) {
+        return this.$store.dispatch("setSelected_sortiranje_od_do", newValue);
+      },
+    },
+    //v-select odabrano KRAJ
+  },
+
   watch: {
     //motri na computed sve_licitacije kada dobije podatke
     //ovo je na pocetku kada se ocitavaju SVE stvari (pocetno ocitavanje je po preostalom vremenu)
-    sve_licitacije(newValue) {
+    get_sve_licitacije(newValue) {
       if (newValue != 0 && newValue != "nema_podataka") {
+        //obrisi sve i postavi da je prazan array
         this.arrayData = [];
         //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
         newValue.forEach((value) => {
@@ -200,45 +245,29 @@ export default {
         this.loadedData = "nema_podataka";
       }
     },
-
-    //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
-    //trazi iz Firebase stvari po tom kriterijumu
-    defaultSelected_sort_vrsta() {
+    get_selected_vrsta() {
       this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular
+      this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-        filter_Vrsta: this.defaultSelected_sort_vrsta,
-        filter_ListaStvari: this.defaultSelected_grupa,
-        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
     },
-    defaultSelected_grupa() {
+    get_selected_grupa() {
       this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular
+      this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-        filter_Vrsta: this.defaultSelected_sort_vrsta,
-        filter_ListaStvari: this.defaultSelected_grupa,
-        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
     },
-    defaultSelected_sortiranje_od_do() {
+    get_selected_sortiranje_od_do() {
       this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular
+      this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-        filter_Vrsta: this.defaultSelected_sort_vrsta,
-        filter_ListaStvari: this.defaultSelected_grupa,
-        filter_sortiranje_od_do: this.defaultSelected_sortiranje_od_do,
       });
-    },
-  },
-  computed: {
-    sve_licitacije: {
-      get() {
-        return this.$store.getters.get_sve_licitacije;
-      },
     },
   },
 

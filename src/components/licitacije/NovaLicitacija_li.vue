@@ -1,6 +1,6 @@
 <template>
   <div class="novaLicitacija_li">
-    <v-row justify="center">
+    <v-row v-if="isLoggedIn && isRegister" justify="center">
       <v-col cols="12" sm="10" md="5" class="pa-0">
         <v-card class="mx-2 my-4 mx-sm-4 my-sm-6 my-md-5" elevation="5">
           <v-card-title :style="return_boja()"> Nova licitacija </v-card-title>
@@ -103,6 +103,15 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!--ako nije logovan onda prikazi ovaj div-->
+    <div v-if="!isLoggedIn" class="nemaLicitacije">Molimo Vas logujte se</div>
+
+    <!--ako je logovan ali nije registrovan onda prikazi ovaj div-->
+    <div v-if="isLoggedIn && !isRegister" class="nemaLicitacije">
+      Da bi ste postavljali ili pregledali svoje licitacije morate biti
+      registrovani
+    </div>
   </div>
 </template>
 
@@ -111,6 +120,8 @@ import Vue from "vue";
 export default {
   data() {
     return {
+      isLoggedIn: false,
+      isRegister: false,
       grupa_lista: [],
       boja_title: "#988BC7",
       valid: false,
@@ -142,8 +153,38 @@ export default {
         Vue.nextTick(() => (this.pocetna_cena_u_RSD = result));
       }
     },
+    get_check_is_loggedIn(newValue) {
+      if (newValue) {
+        this.isLoggedIn = true;
+      } else {
+        this.isLoggedIn = false;
+      }
+    },
+
+    get_check_reg_korisnik(newValue) {
+      if (newValue.korisnik_id != null || newValue.korisnik_id != undefined) {
+        //ako ima korisnik_id znaci da je korisnik registrovan. A ako dobijamo korisnik_id znaci da je i trenutno logovan (ne moze da dobijemo podatak korisnik_id ako nije logovan)
+        this.isRegister = true;
+      } else if (
+        newValue.korisnik_id == null ||
+        newValue.korisnik_id == undefined
+      ) {
+        this.isRegister = false;
+      }
+    },
   },
   created() {
+    //mora....kada se menjaju stranice ne dobija initial state iz Vuexa
+    //postavljanje initial state iz Vuexa za isLoggedIn
+    this.isLoggedIn = this.$store.getters.get_IsLoggedIn;
+    //postavljanje initial state iz Vuexa za isRegister
+    if (
+      this.$store.getters.get_reg_korisnik.podaci.korisnik_id != null ||
+      this.$store.getters.get_reg_korisnik.podaci.korisnik_id != undefined
+    ) {
+      this.isRegister = true;
+    }
+
     //lista stvari iz Vuexa
     this.$store.getters.get_grupa.forEach((element) => {
       this.grupa_lista.push(element);
@@ -157,6 +198,21 @@ export default {
     //dodavanje na dno tabele - ako stavimo u VUEX onda ce da sortira negde na
     //sredini niza a ja zelim da bude na kraju
     this.grupa_lista.push("Neodredjeno");
+  },
+  computed: {
+    //da li je logovan korisnik
+    get_check_is_loggedIn: {
+      get() {
+        return this.$store.getters.get_IsLoggedIn;
+      },
+    },
+
+    // //podaci iz baze sa Marsa
+    get_check_reg_korisnik: {
+      get() {
+        return this.$store.getters.get_reg_korisnik.podaci;
+      },
+    },
   },
 
   methods: {

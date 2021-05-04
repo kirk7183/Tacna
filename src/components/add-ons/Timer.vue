@@ -56,16 +56,10 @@ export default {
         this.updateProgressBar();
         this.startTime;
       } else {
-        //kada izracuna razliku ako je 0 ili ispod 0 onda odradi ovaj block code-a
-        clearTimeout(this.timeinterval);
-        // this.times[3].time = this.times[2].time = this.times[1].time = this.times[0].time = 0;
-        this.progress = 0;
+        //nakon odbrojavanja da kada dodje sve do nula "0" da stavi zavrsena licitacija
         this.zavrsenoPoruka = "Završena licitacija";
-
-        // slanje u Vuex kako bi se prebacilo u listu zavrsenih licitacija
-        // setTimeout(() => {
-        // this.$store.dispatch("zavrsene_licitacije_move", this.single_data);
-        // }, 4000);
+        clearTimeout(this.timeinterval);
+        this.progress = 0;
       }
     },
     getTimeRemaining: function () {
@@ -76,6 +70,13 @@ export default {
         this.times[1].time = Math.floor((t / (1000 * 60 * 60)) % 24); //hours
         this.times[0].time = Math.floor(t / (1000 * 60 * 60 * 24)); //days
       } else {
+        //PRILIKOM PRVOG PRIKAZA STRANICE DA ODMAH STAVI DA JE ZAVRSENA LICITACIJA
+        //POCETAK
+        //kada izracuna razliku ako je 0 ili ispod 0 onda odradi ovaj block code-a
+        clearTimeout(this.timeinterval);
+        this.progress = 0;
+        this.zavrsenoPoruka = "Završena licitacija";
+        //KRAJ
         this.times[3].time = this.times[2].time = this.times[1].time = this.times[0].time = 0;
         this.progress = 0;
       }
