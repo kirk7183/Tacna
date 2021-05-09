@@ -32,6 +32,7 @@
                 ></v-radio>
               </v-layout>
             </v-radio-group>
+
             <v-text-field
               dense
               v-model="nudim"
@@ -74,6 +75,13 @@
               <v-radio name="active" label="24 h" value="1"></v-radio>
               <v-radio name="active" label="48 h" value="2"></v-radio>
             </v-radio-group>
+            <!--IMPORT COMPONENT insertImages PREDMET-->
+            <insertImages
+              :slikeZa="'predmet'"
+              @imaSlike="imaSlikeMethod"
+              :max="5"
+            ></insertImages>
+            <!--IMPORT KOMPONENT KRAJ-->
             <v-textarea
               v-model="opis_licitacije"
               :rules="rules"
@@ -86,11 +94,39 @@
               required
             ></v-textarea>
 
+            <!--samo za humanitarne licitacije POCETAK-->
+            <div v-if="vrsta_licitacije == 'Humanitarna'">
+              <hr style="margin: 25px 15px" />
+              <p class="osoba_naslov">
+                Osoba za koju se vrši humanitarna licitacija
+              </p>
+              <v-text-field
+                dense
+                v-model="nudim"
+                outlined
+                label="Ime"
+                counter
+                maxlength="20"
+                :rules="rules"
+                required
+              ></v-text-field>
+
+              <!--IMPORT COMPONENT insertImages za OSOBU ZA KOJU SE LICITIRA-->
+              <insertImages
+                :slikeZa="'primalacDonacije'"
+                @imaSlike="imaSlikeMethod"
+                :max="5"
+              ></insertImages>
+              <!--IMPORT KOMPONENT KRAJ-->
+            </div>
+            <!--samo za humanitarne licitacije KRAJ-->
+
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
                 color="success"
                 :disabled="!valid"
+                :loading="this.$store.state.LoadingButton"
                 min-width="80"
                 @click="postavi()"
                 >Postavi</v-btn
@@ -117,9 +153,12 @@
 
 <script>
 import Vue from "vue";
+import insertImages from "@/components/add-ons/insertImages.vue";
 export default {
+  components: { insertImages },
   data() {
     return {
+      broj: 0,
       isLoggedIn: false,
       isRegister: false,
       grupa_lista: [],
@@ -131,6 +170,7 @@ export default {
       pocetna_cena_u_RSD: null,
       trajanje_licitacije: "",
       opis_licitacije: "",
+      validatePic: null, //dobijamo preko $emit iz insertImages
       rules: [
         (v) => !!v || "Molimo Vas popunite polje",
         (v) => (v && v.length >= 4) || "Polje mora da ima 4 ili više karaktera",
@@ -173,6 +213,10 @@ export default {
       }
     },
   },
+  // mounted() {
+  //   this.personal = this.$refs.markdowndetails.filesFirebase;
+  //   console.log(this.personal);
+  // },
   created() {
     //mora....kada se menjaju stranice ne dobija initial state iz Vuexa
     //postavljanje initial state iz Vuexa za isLoggedIn
@@ -216,10 +260,13 @@ export default {
   },
 
   methods: {
+    imaSlikeMethod(newValue) {
+      this.validatePic = newValue;
+    },
     postavi() {
       //mora da se pokrene this.$refs.form.validate() inace nece izbaciti crvenim slovima da nesto ne valja tj. nece da validate
       var validnost = this.$refs.form.validate();
-      if (validnost) {
+      if (validnost && this.validatePic != null) {
         //brisanje tacke (.) posle treceg broja
         const result = this.pocetna_cena_u_RSD
           .replace(/\D/g, "")
@@ -247,6 +294,41 @@ export default {
           pocetak_datum: pocetak_datum,
           kraj_datum: kraj_datum,
         });
+
+        // //snimanje slika u firebase POCETAK
+        // let newIter = this.arrayFiles_forFirebase_predmet;
+        // console.log(newIter);
+        // // this.$store.state.LoadingButton = true;
+        // // this.$store.state.DisabledButton = true;
+
+        // for (const fileM of newIter) {
+        //   console.log(fileM);
+        //   this.broj += 1;
+        //   //  const fileName =
+        //   firebase
+        //     .storage()
+        //     .ref("humanitarne/slike/" + "slika" + "-" + this.broj)
+        //     .put(fileM);
+
+        //   // fileName.on(
+        //   //   `state_change`,
+        //   //   (snapshot) => {
+        //   //     this.uploadValue =
+        //   //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        //   //   },
+        //   //   (error) => {
+        //   //     console.log(error.message);
+        //   //   },
+        //   //   () => {
+        //   //     this.uploadValue = 100;
+        //   //     fileName.snapshot.ref.getDownloadURL().then((url) => {
+        //   //       this.picture = url;
+        //   //     });
+        //   //   }
+        //   // );
+        // }
+        // this.broj = 0;
+        // //snimanje slike KRAJ
       }
     },
     obrisi() {

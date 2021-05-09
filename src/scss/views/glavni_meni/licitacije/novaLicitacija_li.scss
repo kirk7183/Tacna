@@ -1,63 +1,72 @@
 .novaLicitacija_li {
-    .v-card__title {
-        margin-bottom: 20px !important;
+  .v-card__title {
+    margin-bottom: 20px !important;
+  }
+  .col {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .v-textarea {
+    padding: 0 12px !important;
+    margin: 0 !important;
+  }
+  .v-text-field {
+    padding: 0 12px !important;
+    margin: 0 !important;
+  }
+  .v-card__text {
+    padding: 0 !important;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+  }
+  // .v-btn {
+  //     width: 75px !important;
+  // }
+  .v-messages__message {
+    color: #ff5252 !important;
+  }
+  .radio_button {
+    margin: 0 !important;
+    p {
+      font-size: 14px;
+      margin: 0;
+      padding: 0 10px 0 22px;
     }
-    .col {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    .v-textarea {
-        padding: 0 12px !important;
-        margin: 0 !important;
-    }
-    .v-text-field {
-        padding: 0 12px !important;
-        margin: 0 !important;
-    }
-    .v-card__text {
-        padding: 0 !important;
-        margin-top: 10px;
-        text-align: center;
-        font-size: 14px;
-        ;
-    }
-    .v-btn {
-        width: 75px !important;
-    }
-    .v-messages__message {
-        color: #ff5252 !important
-    }
-    .radio_button {
-        margin: 0 !important;
-        p {
-            font-size: 14px;
-            margin: 0;
-            padding: 0 10px 0 22px;
-        }
-    }
-    .radio-button-vrsta {
-        padding: 0 10px 10px 22px;
-    }
-    .radio-button-vrsta.licna label {
-        color: $main-solidarnost;
-    }
-    .radio-button-vrsta.humanitarna label {
-        color: $success;
-    }
-    input,
-    textarea {
-        font-size: 14px;
-    }
-    //ZA INPUT GDE JE TYPE="NUMBER" DA SA DESNE STRANE NEMA DUGMENCE GORE DOLE
-    /* Chrome, Safari, Edge, Opera */
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    /* Firefox */
-    input[type=number] {
-        -moz-appearance: textfield;
-    }
-    //KRAJ ZA INPUT GDE JE TYPE="NUMBER"
+  }
+  .radio-button-vrsta {
+    padding: 0 10px 10px 22px;
+  }
+  .radio-button-vrsta.licna label {
+    color: $main-solidarnost;
+  }
+  .radio-button-vrsta.humanitarna label {
+    color: $success;
+  }
+  input,
+  textarea {
+    font-size: 14px;
+  }
+  //ZA INPUT GDE JE TYPE="NUMBER" DA SA DESNE STRANE NEMA DUGMENCE GORE DOLE
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  //KRAJ ZA INPUT GDE JE TYPE="NUMBER"
+  .osoba_naslov {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .ispis_input {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+  }
 }
