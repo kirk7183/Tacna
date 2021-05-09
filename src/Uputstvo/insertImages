@@ -1,0 +1,223 @@
+<template>
+  <div class="insert_images">
+    <div class="insertImg">
+      <input
+        type="file"
+        multiple
+        @change="previewImage"
+        accept="image/*"
+        style="display: none"
+        ref="inputPic"
+      />
+      <v-btn @click="$refs.inputPic.click()">Slike</v-btn>
+    </div>
+    <div class="progressBar">
+      <p>
+        Progress: {{ uploadValue.toFixed() + "%" }}
+
+        <progress :value="uploadValue" max="100"></progress>
+      </p>
+    </div>
+    <div class="previewImg">
+      <img class="preview" :src="picture" />
+      <br />
+      <v-btn @click="onUpload">Upload</v-btn>
+    </div>
+  </div>
+</template>
+
+<script>
+import firebase from "firebase";
+export default {
+  data() {
+    return {
+      imageData: null,
+      picture: null,
+      uploadValue: 0,
+      files: [],
+      broj: 0,
+    };
+  },
+  methods: {
+    previewImage(e) {
+      //ako korisnik odabere recimo 2fajla pa klikne ok i ono prikaze "2 files",
+      //pa klikne opet pa odabere jos 3 fajla...da api za upload ce prikazati samo ta 3 fajla ali array this.files = [];
+      //ce imati vec u nizu prva dva fajla i samo ce dodati ova 3 fajla i u firebase ce se snimiti sva 5 fajla zato na pocetku mora prazan niz
+      this.files = [];
+      let fileList = e.target.files || e.dataTransfer.files;
+      Array.from(Array(fileList.length).keys()).map((x) => {
+        this.files.push(fileList[x]);
+      });
+
+      //staro za 1 fajl
+      //   this.uploadValue = 0;
+      //   (this.picture = null), (this.imageData = event.target.files[0]);
+    },
+    onUpload() {
+      let newIter = this.files;
+
+      this.$store.state.LoadingButton = true;
+      this.$store.state.DisabledButton = true;
+
+      for (const fileM of newIter) {
+        this.broj += 1;
+
+        const fileName = firebase
+          .storage()
+          .ref("humanitarne/slike/" + "slika" + "-" + this.broj)
+          .put(fileM);
+
+        fileName.on(
+          `state_change`,
+          (snapshot) => {
+            this.uploadValue =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          },
+          (error) => {
+            console.log(error.message);
+          },
+          () => {
+            this.uploadValue = 100;
+            fileName.snapshot.ref.getDownloadURL().then((url) => {
+              this.picture = url;
+            });
+          }
+        );
+        //   .then(() => {
+        //     //     setTimeout(() => {
+        //     //       this.$store.state.LoadingButton = false;
+        //     //       this.$store.state.DisabledButton = false;
+        //     //       this.$store.dispatch("Snackbar_Message", {
+        //     //         boolean: true,
+        //     //         message: "Uspešno ste uneli novi rezultat",
+        //     //         color: "success",
+        //     //       });
+        //     //     }, 500);
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error delete document: ", error);
+        //   });
+      }
+      //   setTimeout(() => {
+      //     this.reset();
+      //     this.broj = 0;
+      //   }, 300);
+
+      //staro za 1 sliku
+      //   this.picture = null;
+      //   const storageRef = firebase
+      //     .storage()
+      //     .ref(`${this.imageData.name}`)
+      //     .put(this.imageData);
+      //   storageRef.on(
+      //     `state_change`,
+      //     (snapshot) => {
+      //       this.uploadValue =
+      //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      //     },
+      //     (error) => {
+      //       console.log(error.message);
+      //     },
+      //     () => {
+      //       this.uploadValue = 100;
+      //       storageRef.snapshot.ref.getDownloadURL().then((url) => {
+      //         this.picture = url;
+      //       });
+      //     }
+      //   );
+    },
+  },
+};
+</script>
+
+<style scoped>
+img.preview {
+  width: 50px;
+}
+</style>
+
+
+
+
+//drugo
+
+
+<template>
+  <v-container>
+    <v-row>
+      <v-col cols="12" class="mt-12 pt-md-6" align="center">
+        <span class="title font-weight-black">Image Handler</span>
+      </v-col>
+      <v-col cols="12" class="mt-12" align="center">
+          <!-- :rules="[rules.maxsize]" -->
+        <v-file-input
+          v-model="myFile"
+          outlined
+          accept="image/png, image/jpeg"
+          placeholder="Click to upload file"
+          @change="fileInput"
+          :disabled="processing"
+        >
+          <template v-slot:append-outer>
+            <v-progress-circular
+              v-if="processing"
+              color="grey"
+              indeterminate
+              small
+            />
+          </template>
+        </v-file-input>
+      </v-col>
+      <v-col cols="12" align="center">
+        <v-img :src="fileUrl" contain v-if="fileUrl" max-height="500"></v-img>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+//   import { mapState, mapMutations } from "vuex";
+// import { FirebaseFunctions, FirebaseStorage } from "@/services/firebase.js";
+import firebase from "firebase";
+export default {
+  data() {
+    return {
+      myFile: null,
+      processing: false,
+      fileUrl: null,
+    };
+  },
+  methods: {
+    async fileInput(file) {
+      try {
+        if (file && file.name) {
+          this.processing = true;
+
+          const fr = new FileReader();
+          fr.readAsDataURL(file);
+          fr.addEventListener("load", () => {
+            // this is to load image on the UI
+            // .. not related to file upload :)
+            this.fileURL = fr.result;
+          });
+          const imgData = new FormData();
+          imgData.append("image", this.myFile);
+          const filePath = `mypath/${Date.now()}-${file.name}`;
+          const metadata = { contentType: this.myFile.type };
+
+          await firebase
+            .storage()
+            .ref()
+            .child(filePath)
+            .put(this.myFile, metadata);
+          console.log("filePath: ", filePath);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.processing = false;
+      }
+    },
+  },
+};
+</script>

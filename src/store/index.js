@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import firebase from "firebase/app";
+import "firebase/storage";
 import $api from "@/api.js";
 import { setTimeout } from "core-js";
 Vue.use(Vuex);
@@ -8,6 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     IsLoggedIn: false,
+    LoadingButton: false,
     Facebook_user_data: {
       user_displayName: "Niste logovani",
       user_pic: null,
@@ -65,6 +67,7 @@ export default new Vuex.Store({
     selected_vrsta: "SVE",
     selected_grupa: "SVE",
     selected_sortiranje_od_do: "Preostalo vreme - manje",
+    licitacije_slike_predmet: [],
   },
   getters: {
     get_IsLoggedIn: (state) => {
@@ -108,6 +111,9 @@ export default new Vuex.Store({
     },
     get_selected_sortiranje_od_do: (state) => {
       return state.selected_sortiranje_od_do;
+    },
+    get_licitacije_slike_predmet: (state) => {
+      return state.licitacije_slike_predmet;
     },
   },
   mutations: {
@@ -244,6 +250,9 @@ export default new Vuex.Store({
     },
     SET_SELECTED_SORTIRANJE_OD_DO: (state, newValue) => {
       state.selected_sortiranje_od_do = newValue;
+    },
+    LICITACIJE_SLIKE_PREDMET: (state, newValue) => {
+      state.licitacije_slike_predmet = newValue.slike;
     },
   },
 
@@ -399,7 +408,7 @@ export default new Vuex.Store({
       commit("PRIVILEGIJE_PRIKAZI", newValue);
     },
     //POSTAVLJANJE NOVE LICITACIJE
-    nova_licitacija({ commit, getters }, payload) {
+    async nova_licitacija({ commit, getters }, payload) {
       var reg_korisnik = getters.get_reg_korisnik;
       //object reg_korisnik u sebi sadrzi object 'podaci' a u njemu podatke korisnika
       // var korisnik_id = reg_korisnik.podaci.korisnik_id;
@@ -435,6 +444,58 @@ export default new Vuex.Store({
         reg_korisnik.podaci.datum_reg != null &&
         reg_korisnik.podaci.dozvola != null
       ) {
+        this.state.LoadingButton = true; //prepraviti da ima mutation
+        //snimanje slika u firebase POCETAK
+        let newIter = getters.get_licitacije_slike_predmet;
+        let email = getters.get_reg_korisnik.podaci.email;
+        let slike_predmet_url = [];
+        // this.$store.state.DisabledButton = true;
+        let broj = 0;
+        for (const fileM of newIter) {
+          broj += 1;
+
+          const fileName = firebase
+            .storage()
+            .ref(
+              "licitacije/licne/" +
+                email +
+                "/" +
+                random_id +
+                "/slika" +
+                "-" +
+                broj
+            )
+            .put(fileM);
+
+          //% koliko je snimljen fajl u firebase a svaki pojedinacno
+          //i da dobijem nazad URL slike i posle je smestim u firestore
+          let uploadValue;
+          fileName.on(
+            `state_change`,
+            (snapshot) => {
+              uploadValue =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log("prvo ", uploadValue);
+            },
+            (error) => {
+              console.log(error.message);
+            },
+            () => {
+              uploadValue = 100;
+              fileName.snapshot.ref
+                .getDownloadURL()
+                .then((url) => {
+                  slike_predmet_url.push(url);
+                  console.log("drugo ", url);
+                })
+                .then(console.log("trece ", slike_predmet_url));
+            }
+          );
+        }
+        broj = 0;
+        //snimanje slika u firebase POCETAK
+
+        //snimanje podatak u firestore pocetak
         firestore_baza
           .set({
             random_id: random_id,
@@ -451,6 +512,7 @@ export default new Vuex.Store({
             korisnik_prezime: korisnik_prezime,
             korisnik_email: korisnik_email, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload. //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
             zavrsena_licitacija: false, //ovo postavljamo na pocetku da znamo da je licitacija u toku
+            slike_predmet: slike_predmet_url,
           })
           .then(() => {
             commit("TOGGLE_SNACKBAR", {
@@ -458,6 +520,7 @@ export default new Vuex.Store({
               message: "Uspešno ste uneli novu licitaciju",
               color: "success",
             });
+            this.state.LoadingButton = false; //prepraviti da ima mutation
           })
           .catch((error) => {
             console.log(error);
@@ -471,6 +534,7 @@ export default new Vuex.Store({
           color: "error",
         });
       }
+      //snimanje podatak u firestore kraj
     },
 
     //LICITACIJE U TOKU PRIKAZ (licitiram_li)
@@ -899,6 +963,11 @@ export default new Vuex.Store({
     //     commit("ZAVRSENE_LICITACIJE", tempLista_zavrs_Licitacija);
     //   });
     // },
+    licitacije_slike({ commit }, payload) {
+      if (payload.slikeZa === "predmet") {
+        commit("LICITACIJE_SLIKE_PREDMET", payload);
+      }
+    },
   },
   ///////////////////////////// MODULI /////////////////////////////
   modules: {

@@ -9,6 +9,7 @@
 @import "./add-ons/snackbar.scss";
 @import "./add-ons/choiceBar.scss";
 @import "./add-ons/timer.scss";
+@import "./add-ons/insertImages.scss";
 @import "./views/main/v-cards.scss";
 @import "./views/glavni_meni/solidarnost_online/banka_so.scss";
 @import "./views/glavni_meni/solidarnost_online/donacije_so.scss";
@@ -18,8 +19,9 @@
 @import "./components/dialogs/dialog_add_obavestenja.scss";
 @import "./views/glavni_meni/solidarnost_online/obavestenja_so.scss";
 @font-face {
-    font-family: "HennyPenny";
-    src: local("HennyPenny"), url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");
+  font-family: "HennyPenny";
+  src: local("HennyPenny"),
+    url(../assets/fonts/HennyPenny-Regular.ttf) format("truetype");
 }
 
 @import url("https://fonts.googleapis.com/css?family=Poppins");
@@ -27,44 +29,44 @@
 html,
 body,
 div.row {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box !important;
-    font-family: 'Poppins', 'Segoe UI historic';
-    font-size: 12px;
-    color: black;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box !important;
+  font-family: "Poppins", "Segoe UI historic";
+  font-size: 12px;
+  color: black;
 }
 
 .mainPage {
-    padding: 0 !important;
+  padding: 0 !important;
 }
 
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 div.col-left,
 div.col-right {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 //za APP.vue transition
 .v-main {
-    .fade-enter-active,
-    .fade-leave-active {
-        transition-duration: 0.3s;
-        transition-property: opacity;
-        transition-timing-function: ease;
-    }
-    .fade-enter,
-    .fade-leave-active {
-        opacity: 0;
-    }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition-duration: 0.3s;
+    transition-property: opacity;
+    transition-timing-function: ease;
+  }
+  .fade-enter,
+  .fade-leave-active {
+    opacity: 0;
+  }
 }
 
 .v-btn {
-    color: black !important;
+  color: black !important;
 }

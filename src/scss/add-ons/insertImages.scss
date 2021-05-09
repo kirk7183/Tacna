@@ -1,0 +1,96 @@
+.insertImages {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 95%;
+  height: 100%;
+  background: #f7fafc;
+  border: 0.5px solid #a3a8b1;
+  border-radius: 10px;
+  margin: 5px auto 24px;
+  padding: 15px;
+  position: relative;
+  .drop {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    border-radius: 10px;
+    position: absolute;
+    background-color: #f4f6ff;
+    left: 0;
+    border: 3px dashed #a3a8b1;
+  }
+  .error_insertImages {
+    text-align: center;
+    color: red;
+    font-size: 15px;
+  }
+  .beforeUpload {
+    width: 100%;
+    position: relative;
+    text-align: center;
+  }
+  .beforeUpload input {
+    width: 100%;
+    margin: auto;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    background: red;
+    display: block;
+  }
+  .beforeUpload input:hover {
+    cursor: pointer;
+  }
+  .beforeUpload .icon {
+    width: 150px;
+    margin: auto;
+    display: block;
+  }
+  .imgsPreview {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .imgsPreview .imageHolder {
+    width: 150px;
+    height: 150px;
+    background: #fff;
+    position: relative;
+    border-radius: 10px;
+    margin: 5px 5px;
+    display: inline-block;
+  }
+  .imgsPreview .imageHolder img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  .imgsPreview .imageHolder .delete {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 29px;
+    height: 29px;
+    color: #fff !important;
+    background: red;
+    border-radius: 50%;
+  }
+  .imgsPreview .imageHolder .delete:hover {
+    cursor: pointer;
+  }
+  .imgsPreview .imageHolder .delete .icon {
+    width: 66%;
+    height: 66%;
+    display: block;
+    margin: 4px auto;
+  }
+
+  .image_add {
+    background: $success !important;
+    margin: 10px;
+    height: 40px !important;
+    width: 40px !important;
+  }
+}
