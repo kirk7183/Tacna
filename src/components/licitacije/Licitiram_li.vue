@@ -321,7 +321,6 @@ export default {
     },
 
     get_check_reg_korisnik(newValue) {
-      console.log(newValue);
       if (newValue.korisnik_id != null || newValue.korisnik_id != undefined) {
         //ako ima korisnik_id znaci da je korisnik registrovan. A ako dobijamo korisnik_id znaci da je i trenutno logovan (ne moze da dobijemo podatak korisnik_id ako nije logovan)
         this.isRegister = true;

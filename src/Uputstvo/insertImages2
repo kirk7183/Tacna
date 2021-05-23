@@ -125,21 +125,9 @@
       </p>
     </div>
     <div class="imgsPreview" v-show="Imgs.length > 0">
-      <div class="imageHolder" v-for="(img, i) in perAndImg" :key="i">
-        <img :src="img.slika" />
-
-        <v-progress-circular
-          class="progress"
-          v-if="uploading == true"
-          :size="100"
-          :width="15"
-          :value="img.percent"
-          :rotate="-90"
-        >
-          {{ img.percent }}%
-        </v-progress-circular>
-        <!-- {{ img.percent }} -->
-        <span class="delete" @click="deleteImg(i)" v-if="uploading == false">
+      <div class="imageHolder" v-for="(img, i) in Imgs" :key="i">
+        <img :src="img" />
+        <span class="delete" @click="deleteImg(i)">
           <svg
             class="icon"
             xmlns="http://www.w3.org/2000/svg"
@@ -157,11 +145,21 @@
         </span>
       </div>
     </div>
-
-    <!--progress bar kada se odaberu slike (neprekidno vrti u krug)-->
-    <v-progress-circular v-if="loading == true" indeterminate color="primary">
-    </v-progress-circular>
-    <!--button za dodavanje novih slika. Pojavljuje se samo kada postoji jedna ili vise slika-->
+    <div class="delete" v-for="(keyName, bla, i) in uploadingImg" :key="bla">
+      <!-- :key="Object.keys(keyName)[i]" -->
+      {{ keyName }}-{{ bla }}-{{ i }}
+      <!-- {{ ("uploadingImagesArray[0]", uploadingImagesArray[0]) }} -->
+      <br />
+      <p v-for="(one, ii) in keyName" :key="ii">{{ one }}</p>
+    </div>
+    <!-- {{ this.$store.state.uploadingImagesArray }} -->
+    <!-- <div class="plus" @click="append" v-if="Imgs.length != 0">+</div> -->
+    <v-progress-circular
+      v-if="loading == true"
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+    <!--button za dodavanje novih slika. POjavljuje se samo kada postoji jedna ili vise slika-->
     <v-btn
       v-if="Imgs.length != 0 && Imgs.length != 5 && loading == false"
       @click="append"
@@ -191,35 +189,61 @@ export default {
     };
   },
   props: {
-    uploading: Boolean, //iz NovaLicitacija_li.vue procenat uploada slike
-    slikeZa: String, //iz NovaLicitacija_li.vue
+    slikeZa: String,
     max: Number,
     uploadMsg: String,
     maxError: String,
     fileError: String,
   },
   computed: {
-    uploadingImagesArray: {
-      get() {
-        return this.$store.getters.get_uploadingImagesArray;
-      },
-    },
-    //kada se slika odabere - da moze da se renderuje kroz v-for
-    perAndImg() {
-      return this.Imgs.map((slika, i) => {
-        //izvlacimo value iz objecta uploadingImg svaki put kada se procenat za upload promeni i smestamo u "perAndImg" koji ce se renderovati kroz v-for nakon svake promene procenta prilikom uploada
-        var value = Object.values(this.uploadingImg);
-
-        return {
-          slika: slika,
-          percent: value[i],
-        };
-      });
+    uploadingImagesArray() {
+      return this.$store.state.uploadingImagesArray;
     },
   },
   watch: {
-    uploadingImagesArray(newValue) {
-      this.uploadingImg = newValue;
+    async uploadingImagesArray(newValue) {
+      await this.$nextTick(() => {
+        this.uploadingImg = newValue;
+      });
+      //   console.log("newValue", newValue);
+      //   if (newValue != oldValue) {
+      //     //   console.log("oldValue", oldValue);
+      //     //   console.log("newValue", newValue);
+      //     newValue.forEach((value, index) => {
+      //       console.log("value", value);
+      //       console.log("index", index);
+      //   var a;
+      //   for (let index in newValue) {
+      //     //   console.log(newValue[item]);
+      //     // console.log(index); //index
+      //     // console.log(newValue); //array
+      //     console.log(newValue[index]);
+      //     //   this.$set(this.uploadingImg, index, myNewValue)
+      //     //   let one=newValue[item]
+      //     //   console.log(Object.keys(item));
+      //     //   for (let data in item) {
+      //     //   console.log(data);
+      //   }
+      //     // console.log(`${value}: ${index}`);
+      //     a = newValue[item];
+      //     // console.log(`${newValue[item]}`);
+      //     console.log(a);
+      //   }
+
+      //   for (let index = 0; index < newValue.length; index++) {
+      //   for (const prop in newValue) {
+      //     // const element = array[index];
+      //     // console.log(newValue[index]);
+      //     console.log(`newValue.${prop} = ${newValue[prop]}`);
+      //     });
+      //   }
+      //   this.uploadingImg = newValue;
+    },
+
+    "$store.state.uploadingImagesArray": function () {
+      //   console.log("insert ", this.$store.state.uploadingImagesArray[3]);
+      //   this.uploadingImg = this.$store.state.uploadingImagesArray;
+      //   this.$set(this.uploadingImg, 3, myNewValue)
     },
 
     //ako ima slika javi parentu i odradi validaciju (NovaLicitacija_li)

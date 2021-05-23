@@ -68,6 +68,7 @@ export default new Vuex.Store({
     selected_grupa: "SVE",
     selected_sortiranje_od_do: "Preostalo vreme - manje",
     licitacije_slike_predmet: [],
+    uploadingImagesArray: {},
   },
   getters: {
     get_IsLoggedIn: (state) => {
@@ -114,6 +115,9 @@ export default new Vuex.Store({
     },
     get_licitacije_slike_predmet: (state) => {
       return state.licitacije_slike_predmet;
+    },
+    get_uploadingImagesArray: (state) => {
+      return state.uploadingImagesArray;
     },
   },
   mutations: {
@@ -253,6 +257,17 @@ export default new Vuex.Store({
     },
     LICITACIJE_SLIKE_PREDMET: (state, newValue) => {
       state.licitacije_slike_predmet = newValue.slike;
+    },
+    UPLOAD_IMG_PERCENT: (state, payload) => {
+      //update procenat uplaoda slike u Firebase/storage
+      //ako vec postoji "key" sa istim imenom onda ce samo da update value
+      //array(state.uploadingImagesArray), key(payload.keyName), value(payload.uploadValue)
+      Vue.set(state.uploadingImagesArray, payload.keyName, payload.uploadValue);
+
+      //primer samo - za jedan objekat ali u state.uploadingImagesArray mora biti array [](uploadingImagesArray=[])
+      // Vue.set(state, "uploadingImagesArray", {
+      //   [payload.keyName]: payload.uploadValue,
+      // });
     },
   },
 
@@ -407,7 +422,8 @@ export default new Vuex.Store({
     show_privilegije({ commit }, newValue) {
       commit("PRIVILEGIJE_PRIKAZI", newValue);
     },
-    //POSTAVLJANJE NOVE LICITACIJE
+
+    //POSTAVLJANJE NOVE LICITACIJE )
     async nova_licitacija({ commit, getters }, payload) {
       var reg_korisnik = getters.get_reg_korisnik;
       //object reg_korisnik u sebi sadrzi object 'podaci' a u njemu podatke korisnika
@@ -450,7 +466,7 @@ export default new Vuex.Store({
         let email = getters.get_reg_korisnik.podaci.email;
         let slike_predmet_url = [];
         // this.$store.state.DisabledButton = true;
-        let broj = 0;
+        let broj = 0; //za naziv slike da bude slika-1, slika-2,slika-3 itd
         for (const fileM of newIter) {
           broj += 1;
 
@@ -469,62 +485,71 @@ export default new Vuex.Store({
 
           //% koliko je snimljen fajl u firebase a svaki pojedinacno
           //i da dobijem nazad URL slike i posle je smestim u firestore
-          let uploadValue;
+
+          //ako se nesto desava sa fajlom tj. kada uploadujemo u storage
           fileName.on(
             `state_change`,
+            //tokom rada procenat uploada
             (snapshot) => {
-              uploadValue =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              console.log("prvo ", uploadValue);
+              let keyName = snapshot.ref.fullPath; //key u objektu ce biti putanja do slike
+              this.uploadValue = Math.floor(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              ); //procenat upload-a
+              //commit koliko trenutno % je slika upload u Firebase. posle se ovaj podatak tj. % uploada slike preko computed i watch u "insertImages.vue" ocitava LIVE
+              commit("UPLOAD_IMG_PERCENT", {
+                keyName: keyName,
+                uploadValue: this.uploadValue,
+              });
             },
+            //ako ima greska
             (error) => {
               console.log(error.message);
             },
+            //kada je complete upload
             () => {
-              uploadValue = 100;
-              fileName.snapshot.ref
-                .getDownloadURL()
-                .then((url) => {
-                  slike_predmet_url.push(url);
-                  console.log("drugo ", url);
-                })
-                .then(console.log("trece ", slike_predmet_url));
+              this.uploadValue = 100;
+              fileName.snapshot.ref.getDownloadURL().then((url) => {
+                slike_predmet_url.push(url);
+                //kada je broj slika u arrayu (slike_predmet_url) koji smo spremili za storage jednak broju slika (newIter) koji je korisnik postavio
+                //tada sve odjednom ubaci u firebase
+                if (slike_predmet_url.length == newIter.length) {
+                  //snimanje podatak u firestore pocetak
+                  firestore_baza
+                    .set({
+                      random_id: random_id,
+                      vrsta_licitacije: payload.vrsta_licitacije,
+                      nudim: payload.nudim,
+                      nudim_lowerCase: payload.nudim.toLowerCase(), //mora zbog .sortBy u Firestore zato sto je case sensitive (npr. "Igor" ce da stavi ispred "ana" iako je "a" ispred "I". Medjutim casesensitive stavlja veliko slovo ispred malih slova)
+                      grupa: payload.grupa,
+                      pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
+                      trajanje_licitacije: payload.trajanje_licitacije,
+                      opis_licitacije: payload.opis_licitacije,
+                      pocetak_datum: payload.pocetak_datum,
+                      kraj_datum: payload.kraj_datum,
+                      korisnik_ime: korisnik_ime, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
+                      korisnik_prezime: korisnik_prezime,
+                      korisnik_email: korisnik_email, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload. //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
+                      zavrsena_licitacija: false, //ovo postavljamo na pocetku da znamo da je licitacija u toku
+                      slike_predmet: slike_predmet_url,
+                    })
+                    .then(() => {
+                      commit("TOGGLE_SNACKBAR", {
+                        boolean: true,
+                        message: "Uspešno ste uneli novu licitaciju",
+                        color: "success",
+                      });
+                      this.state.LoadingButton = false; //prepraviti da ima mutation
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }
+                //snimanje podatak u firestore kraj
+              });
             }
           );
         }
         broj = 0;
-        //snimanje slika u firebase POCETAK
-
-        //snimanje podatak u firestore pocetak
-        firestore_baza
-          .set({
-            random_id: random_id,
-            vrsta_licitacije: payload.vrsta_licitacije,
-            nudim: payload.nudim,
-            nudim_lowerCase: payload.nudim.toLowerCase(), //mora zbog .sortBy u Firestore zato sto je case sensitive (npr. "Igor" ce da stavi ispred "ana" iako je "a" ispred "I". Medjutim casesensitive stavlja veliko slovo ispred malih slova)
-            grupa: payload.grupa,
-            pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
-            trajanje_licitacije: payload.trajanje_licitacije,
-            opis_licitacije: payload.opis_licitacije,
-            pocetak_datum: payload.pocetak_datum,
-            kraj_datum: payload.kraj_datum,
-            korisnik_ime: korisnik_ime, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
-            korisnik_prezime: korisnik_prezime,
-            korisnik_email: korisnik_email, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload. //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
-            zavrsena_licitacija: false, //ovo postavljamo na pocetku da znamo da je licitacija u toku
-            slike_predmet: slike_predmet_url,
-          })
-          .then(() => {
-            commit("TOGGLE_SNACKBAR", {
-              boolean: true,
-              message: "Uspešno ste uneli novu licitaciju",
-              color: "success",
-            });
-            this.state.LoadingButton = false; //prepraviti da ima mutation
-          })
-          .catch((error) => {
-            console.log(error);
-          });
       }
       //ako nije registrovan ne moze da postavlja licitacije
       else {
@@ -674,7 +699,6 @@ export default new Vuex.Store({
       //SORTIRANJE 3ci V-SELECT
       //Preostalo vreme - manje
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - manje") {
-        console.log(this.state.selected_sortiranje_od_do);
         firestore_baza = await firestore_baza.orderBy("kraj_datum", "asc");
       }
       //Preostalo vreme - više
