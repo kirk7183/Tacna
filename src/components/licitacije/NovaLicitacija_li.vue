@@ -77,6 +77,7 @@
             </v-radio-group>
             <!--IMPORT COMPONENT insertImages PREDMET-->
             <insertImages
+              :uploading="uploading"
               :slikeZa="'predmet'"
               @imaSlike="imaSlikeMethod"
               :max="5"
@@ -102,7 +103,7 @@
               </p>
               <v-text-field
                 dense
-                v-model="nudim"
+                v-model="ime_osobe"
                 outlined
                 label="Ime"
                 counter
@@ -164,16 +165,18 @@ export default {
       grupa_lista: [],
       boja_title: "#988BC7",
       valid: false,
+      uploading: false,
       vrsta_licitacije: "",
       nudim: "",
       grupa: "",
       pocetna_cena_u_RSD: null,
       trajanje_licitacije: "",
       opis_licitacije: "",
+      ime_osobe: "",
       validatePic: null, //dobijamo preko $emit iz insertImages
       rules: [
         (v) => !!v || "Molimo Vas popunite polje",
-        (v) => (v && v.length >= 4) || "Polje mora da ima 4 ili više karaktera",
+        (v) => (v && v.length >= 3) || "Polje mora da ima 3 ili više karaktera",
         (v) => (v && !!v.trim()) || "Ne mozete da ostavite prazna polja",
       ],
       rules_number: [
@@ -267,6 +270,8 @@ export default {
       //mora da se pokrene this.$refs.form.validate() inace nece izbaciti crvenim slovima da nesto ne valja tj. nece da validate
       var validnost = this.$refs.form.validate();
       if (validnost && this.validatePic != null) {
+        //daj znak da se upload (uz pomoc component prop se salje do insertImages i tako se pokrece % upload progress bar)
+        this.uploading = true;
         //brisanje tacke (.) posle treceg broja
         const result = this.pocetna_cena_u_RSD
           .replace(/\D/g, "")

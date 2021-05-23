@@ -62,6 +62,7 @@
     margin: 5px 5px;
     display: inline-block;
   }
+
   .imgsPreview .imageHolder img {
     object-fit: cover;
     width: 100%;
@@ -79,6 +80,17 @@
   }
   .imgsPreview .imageHolder .delete:hover {
     cursor: pointer;
+  }
+  .imgsPreview .imageHolder .progress {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.7);
+    // color: $main-icon-color !important;
+    border-radius: 50%;
   }
   .imgsPreview .imageHolder .delete .icon {
     width: 66%;
