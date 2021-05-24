@@ -13,7 +13,7 @@
     </div>
     <!-- To inform user how to upload image -->
     <div v-show="Imgs.length == 0 && loading == false" class="beforeUpload">
-      <p class="ispis_input">Slika mora biti sa žiro-racunom</p>
+      <p class="ispis_input">{{ imgIspis }}</p>
       <input
         type="file"
         style="z-index: 1"
@@ -163,7 +163,7 @@
     </v-progress-circular>
     <!--button za dodavanje novih slika. Pojavljuje se samo kada postoji jedna ili vise slika-->
     <v-btn
-      v-if="Imgs.length != 0 && Imgs.length != 5 && loading == false"
+      v-if="Imgs.length != 0 && Imgs.length != $props.max && loading == false"
       @click="append"
       class="image_add mx-2"
       fab
@@ -186,11 +186,12 @@ export default {
       Imgs: [],
       loading: false,
       filesFirebase: [],
-      imaSlika: 0,
-      uploadingImg: [],
+      uploadingPercentPredmet: [],
     };
   },
   props: {
+    imgIspis: String, //iz NovaLicitacija_li.vue u zavisnosti da li je za Predmet ili Osobu za koju se vrsi licitacija
+    clearImages: Boolean, //iz NovaLicitacija_li.vue da li da obrise slike klikom na dugme "Obrisi"
     uploading: Boolean, //iz NovaLicitacija_li.vue procenat uploada slike
     slikeZa: String, //iz NovaLicitacija_li.vue
     max: Number,
@@ -199,16 +200,16 @@ export default {
     fileError: String,
   },
   computed: {
-    uploadingImagesArray: {
+    uploadObjPredmet: {
       get() {
-        return this.$store.getters.get_uploadingImagesArray;
+        return this.$store.getters.get_uploadObjPredmet;
       },
     },
     //kada se slika odabere - da moze da se renderuje kroz v-for
     perAndImg() {
       return this.Imgs.map((slika, i) => {
-        //izvlacimo value iz objecta uploadingImg svaki put kada se procenat za upload promeni i smestamo u "perAndImg" koji ce se renderovati kroz v-for nakon svake promene procenta prilikom uploada
-        var value = Object.values(this.uploadingImg);
+        //izvlacimo value iz objecta uploadingPercentPredmet svaki put kada se procenat za upload promeni i smestamo u "perAndImg" koji ce se renderovati kroz v-for nakon svake promene procenta prilikom uploada
+        var value = Object.values(this.uploadingPercentPredmet);
 
         return {
           slika: slika,
@@ -218,18 +219,36 @@ export default {
     },
   },
   watch: {
-    uploadingImagesArray(newValue) {
-      this.uploadingImg = newValue;
+    uploadObjPredmet(newValue) {
+      this.uploadingPercentPredmet = newValue;
     },
 
-    //ako ima slika javi parentu i odradi validaciju (NovaLicitacija_li)
+    //ako ima slika javi parentu koliko ih ima i odradi validaciju (NovaLicitacija_li)
     Imgs(newValue) {
-      if (newValue.length > 0) {
-        this.$emit("imaSlike", newValue.length);
-      } else {
-        this.$emit("imaSlike", null);
+      if (newValue.length >= 0) {
+        if (this.slikeZa === "predmet") {
+          this.$emit("imaSlikePredmet", newValue.length);
+        }
+
+        if (this.slikeZa === "primalacDonacije") {
+          this.$emit("imaSlikePrimalacDonacije", newValue.length);
+        }
       }
     },
+    clearImages(newValue) {
+      if (newValue === true) {
+        this.Imgs = [];
+        this.filesFirebase = [];
+        this.files = [];
+      }
+    },
+    // vrsta_licitacije(newValue){
+    //   if (newValue === "Lična"){
+    //     this.imgIspis = ""
+    //   } else if (newValue === "Humanitarna"){
+    //     this.imgIspis = ""
+    //   }
+    // }
   },
   methods: {
     dragOver() {
@@ -278,10 +297,8 @@ export default {
     deleteImg(index) {
       this.Imgs.splice(index, 1);
       this.files.splice(index, 1);
-      //   this.$emit("change", this.files);
       this.$refs.uploadInput.value = null;
       this.filesFirebase.splice(index, 1);
-      //   this.$store.dispatch("arrayFilesForFirebase", this.filesFirebase);
     },
     previewImgs(event) {
       //deo za prikaz slika POCETAK

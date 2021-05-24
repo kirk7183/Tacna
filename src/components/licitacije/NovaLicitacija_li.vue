@@ -6,6 +6,7 @@
           <v-card-title :style="return_boja()"> Nova licitacija </v-card-title>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-radio-group
+              ref="separatedRef"
               row
               v-model="vrsta_licitacije"
               mandatory
@@ -79,7 +80,9 @@
             <insertImages
               :uploading="uploading"
               :slikeZa="'predmet'"
-              @imaSlike="imaSlikeMethod"
+              :clearImages="clearImages"
+              :imgIspis="'Odaberite predmet koji nudite'"
+              @imaSlikePredmet="imaSlikeMethodPredmet"
               :max="5"
             ></insertImages>
             <!--IMPORT KOMPONENT KRAJ-->
@@ -103,7 +106,7 @@
               </p>
               <v-text-field
                 dense
-                v-model="ime_osobe"
+                v-model="imeOsobeZaDonaciju"
                 outlined
                 label="Ime"
                 counter
@@ -114,9 +117,12 @@
 
               <!--IMPORT COMPONENT insertImages za OSOBU ZA KOJU SE LICITIRA-->
               <insertImages
+                :uploading="uploading"
                 :slikeZa="'primalacDonacije'"
-                @imaSlike="imaSlikeMethod"
-                :max="5"
+                :clearImages="clearImages"
+                :imgIspis="'Slika osobe mora biti sa žiro-računom'"
+                @imaSlikePrimalacDonacije="imaSlikePrimalacDonacije"
+                :max="2"
               ></insertImages>
               <!--IMPORT KOMPONENT KRAJ-->
             </div>
@@ -132,7 +138,11 @@
                 @click="postavi()"
                 >Postavi</v-btn
               >
-              <v-btn color="error" min-width="80" @click="obrisi()"
+              <v-btn
+                color="error"
+                min-width="80"
+                :disabled="this.$store.state.LoadingButton"
+                @click="obrisi()"
                 >Obriši</v-btn
               >
             </v-card-actions>
@@ -172,8 +182,10 @@ export default {
       pocetna_cena_u_RSD: null,
       trajanje_licitacije: "",
       opis_licitacije: "",
-      ime_osobe: "",
-      validatePic: null, //dobijamo preko $emit iz insertImages
+      imeOsobeZaDonaciju: "",
+      clearImages: false,
+      validatePicPredmet: 0, //dobijamo preko $emit iz insertImages
+      validatePicPrimalacDonacije: 0, //dobijamo preko $emit iz insertImages
       rules: [
         (v) => !!v || "Molimo Vas popunite polje",
         (v) => (v && v.length >= 3) || "Polje mora da ima 3 ili više karaktera",
@@ -263,13 +275,33 @@ export default {
   },
 
   methods: {
-    imaSlikeMethod(newValue) {
-      this.validatePic = newValue;
+    imaSlikeMethodPredmet(newValue) {
+      this.validatePicPredmet = newValue;
+    },
+    imaSlikePrimalacDonacije(newValue) {
+      this.validatePicPrimalacDonacije = newValue;
     },
     postavi() {
       //mora da se pokrene this.$refs.form.validate() inace nece izbaciti crvenim slovima da nesto ne valja tj. nece da validate
-      var validnost = this.$refs.form.validate();
-      if (validnost && this.validatePic != null) {
+      let validnost = this.$refs.form.validate();
+      let validatePic = false;
+
+      //provera validnosti tj. da li je korisnik ubacio slike u zavisnosti da li je licna ili hummanitarna licitacija
+      if (this.vrsta_licitacije === "Lična") {
+        if (this.validatePicPredmet != 0) {
+          validatePic = true;
+        }
+      }
+      if (this.vrsta_licitacije === "Humanitarna") {
+        if (
+          this.validatePicPredmet != 0 &&
+          this.validatePicPrimalacDonacije != 0
+        ) {
+          validatePic = true;
+        }
+      }
+
+      if (validnost && validatePic) {
         //daj znak da se upload (uz pomoc component prop se salje do insertImages i tako se pokrece % upload progress bar)
         this.uploading = true;
         //brisanje tacke (.) posle treceg broja
@@ -298,6 +330,7 @@ export default {
           opis_licitacije: this.opis_licitacije,
           pocetak_datum: pocetak_datum,
           kraj_datum: kraj_datum,
+          imeOsobeZaDonaciju: this.imeOsobeZaDonaciju, //provera se u Vuex koja je vrsta licitacije. Upisivace se ovaj podatak u Firebase samo ako je vrsta licitacije humanitarna, zato sto u Licna vrsta licitacije nema da se upise ime osobe za koju se donira (posto je licna licitacija)
         });
 
         // //snimanje slika u firebase POCETAK
@@ -337,7 +370,25 @@ export default {
       }
     },
     obrisi() {
+      this.clearImages = true; //slanje do child insertImages da obrise slike
+      this.$store.dispatch("clearUploadingImagesObj"); //slanje u Vuex da obrise slike koje je pre toga uploadovao (ukoliko postoje)
+      this.uploading = false; //da postavi krug sa % na false
+
+      //posle 1 sekunde vrati na false zato sto je u child poslato kao prop koji uz pomoc watch slusa promene...ako ostane na "true" onda nema koju promenu da slusa kada joj ponovo posaljemo "true"
+      setTimeout(() => {
+        this.clearImages = false;
+      }, 1000);
+
+      //posto ne znam kako da ne resetuje samo jedan stvar (radio button za vrstu licitacije) morao sam ovako da odradim. Da zapamtim trenutnu vrstu licitacije i posle da je vratim na staro posle 100ms
+      var trenutna_vrsta_licitacije = this.vrsta_licitacije;
+
+      //resetovanje forme
       this.$refs.form.reset();
+
+      //vracanje na staru vrstu licitacije pre reseta forme
+      setTimeout(() => {
+        this.vrsta_licitacije = trenutna_vrsta_licitacije;
+      }, 100);
     },
     return_boja() {
       return "background-color:" + this.boja_title;
