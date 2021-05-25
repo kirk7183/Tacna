@@ -205,6 +205,11 @@ export default {
         return this.$store.getters.get_uploadObjPredmet;
       },
     },
+    uploadObjPrimalacDonacije: {
+      get() {
+        return this.$store.getters.get_uploadObjPrimalacDonacije;
+      },
+    },
     //kada se slika odabere - da moze da se renderuje kroz v-for
     perAndImg() {
       return this.Imgs.map((slika, i) => {
@@ -220,7 +225,16 @@ export default {
   },
   watch: {
     uploadObjPredmet(newValue) {
-      this.uploadingPercentPredmet = newValue;
+      //ako je componenta importovana za "Predmet"
+      if (this.slikeZa === "predmet") {
+        this.uploadingPercentPredmet = newValue;
+      }
+    },
+    uploadObjPrimalacDonacije(newValue) {
+      //ako je componenta importovana za "Primalac donacije"
+      if (this.slikeZa === "primalacDonacije") {
+        this.uploadingPercentPredmet = newValue;
+      }
     },
 
     //ako ima slika javi parentu koliko ih ima i odradi validaciju (NovaLicitacija_li)

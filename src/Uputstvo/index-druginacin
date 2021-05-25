@@ -8,7 +8,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    uploadingImagesArray: [],
     IsLoggedIn: false,
     LoadingButton: false,
     Facebook_user_data: {
@@ -69,6 +68,9 @@ export default new Vuex.Store({
     selected_grupa: "SVE",
     selected_sortiranje_od_do: "Preostalo vreme - manje",
     licitacije_slike_predmet: [],
+    licitacije_slike_primalac_donacije: [],
+    uploadObjPredmet: {},
+    uploadObjPrimalacDonacije: {},
   },
   getters: {
     get_IsLoggedIn: (state) => {
@@ -115,6 +117,15 @@ export default new Vuex.Store({
     },
     get_licitacije_slike_predmet: (state) => {
       return state.licitacije_slike_predmet;
+    },
+    get_licitacije_slike_primalac_donacije: (state) => {
+      return state.licitacije_slike_primalac_donacije;
+    },
+    get_uploadObjPredmet: (state) => {
+      return state.uploadObjPredmet;
+    },
+    get_uploadObjPrimalacDonacije: (state) => {
+      return state.uploadObjPrimalacDonacije;
     },
   },
   mutations: {
@@ -254,6 +265,33 @@ export default new Vuex.Store({
     },
     LICITACIJE_SLIKE_PREDMET: (state, newValue) => {
       state.licitacije_slike_predmet = newValue.slike;
+    },
+    LICITACIJE_SLIKE_PRIMALAC_DONACIJE: (state, newValue) => {
+      state.licitacije_slike_primalac_donacije = newValue.slike;
+    },
+    UPLOAD_IMG_PERCENT_PREDMET: (state, payload) => {
+      //update procenat uplaoda slike u Firebase/storage
+      //ako vec postoji "key" sa istim imenom onda ce samo da update value
+      //array(state.uploadObjPredmet), key(payload.keyName), value(payload.uploadValue)
+      Vue.set(state.uploadObjPredmet, payload.keyName, payload.uploadValue);
+
+      //primer samo - za jedan objekat ali u state.uploadObjPredmet mora biti array [](uploadObjPredmet=[])
+      // Vue.set(state, "uploadObjPredmet", {
+      //   [payload.keyName]: payload.uploadValue,
+      // });
+    },
+    UPLOAD_IMG_PERCENT_PRIMALAC_DONACIJE: (state, payload) => {
+      //update procenat uplaoda slike u Firebase/storage
+      //ako vec postoji "key" sa istim imenom onda ce samo da update value
+      //array(state.uploadObjPredmet), key(payload.keyName), value(payload.uploadValue)
+      Vue.set(
+        state.uploadObjPrimalacDonacije,
+        payload.keyName,
+        payload.uploadValue
+      );
+    },
+    CLEAR_UPLOADING_IMAGES_OBJECT: (state) => {
+      state.uploadObjPredmet = {}; //DODATI I ZA primalacDonacije
     },
   },
 
@@ -408,8 +446,17 @@ export default new Vuex.Store({
     show_privilegije({ commit }, newValue) {
       commit("PRIVILEGIJE_PRIKAZI", newValue);
     },
-    //POSTAVLJANJE NOVE LICITACIJE
-    async nova_licitacija({ commit, getters }, payload) {
+
+    //proba
+    async proba() {
+      for (let i = 0; i <= 5000; i++) {
+        console.log(i);
+      }
+      console.log("nesto");
+    },
+
+    //NOVA LICITACIJA )
+    async nova_licitacija({ commit, dispatch, getters }, payload) {
       var reg_korisnik = getters.get_reg_korisnik;
       //object reg_korisnik u sebi sadrzi object 'podaci' a u njemu podatke korisnika
       // var korisnik_id = reg_korisnik.podaci.korisnik_id;
@@ -447,55 +494,116 @@ export default new Vuex.Store({
       ) {
         this.state.LoadingButton = true; //prepraviti da ima mutation
         //snimanje slika u firebase POCETAK
-        let newIter = getters.get_licitacije_slike_predmet;
+        let newIterPredmet = getters.get_licitacije_slike_predmet;
+        let newIterPrimalacDonacije =
+          getters.get_licitacije_slike_primalac_donacije;
         let email = getters.get_reg_korisnik.podaci.email;
         let slike_predmet_url = [];
-        // this.$store.state.DisabledButton = true;
-        let broj = 0; //za naziv slike da bude slika-1, slika-2,slika-3 itd
-        for (const fileM of newIter) {
-          broj += 1;
+        let slike_primalac_donacije_url = [];
+        let brojPredmeta = 0; //za naziv slike da bude predmet-1, predmet-2,predmet-3 itd
+        let brojPrimalacDonacije = 0; //za naziv slike da bude slika-1, slika-2,slika-3 itd
 
-          const fileName = firebase
+        //obavestenje
+        commit("TOGGLE_SNACKBAR", {
+          boolean: true,
+          message: "Snimanje je u toku, budite strpljivi",
+          color: "orange",
+        });
+
+        //slike primalacDonacije POCETAK
+        if (payload.vrsta_licitacije === "Humanitarna") {
+          try {
+            await dispatch("proba");
+          } finally {
+            for (const primalacDonacije of newIterPrimalacDonacije) {
+              brojPrimalacDonacije += 1;
+
+              const fileNamePrimalacDonacije = firebase
+                .storage()
+                .ref(
+                  "licitacije/" +
+                    payload.vrsta_licitacije.toLowerCase() +
+                    "/" +
+                    email +
+                    "/" +
+                    random_id +
+                    "/primalacDonacije" +
+                    "-" +
+                    brojPrimalacDonacije
+                )
+                .put(primalacDonacije);
+
+              //ako se nesto desava sa fajlom tj. kada uploadujemo u storage
+              fileNamePrimalacDonacije.on(
+                `state_change`,
+                //tokom rada procenat uploada
+                (snapshot) => {
+                  let keyName = snapshot.ref.fullPath; //key u objektu ce biti putanja do slike
+                  this.uploadValue = Math.floor(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                  ); //procenat upload-a
+                  //commit koliko trenutno % je slika upload u Firebase. posle se ovaj podatak tj. % uploada slike preko computed i watch u "insertImages.vue" ocitava LIVE
+                  commit("UPLOAD_IMG_PERCENT_PRIMALAC_DONACIJE", {
+                    keyName: keyName,
+                    uploadValue: this.uploadValue,
+                  });
+                },
+                //ako ima greska
+                (error) => {
+                  console.log(error.message);
+                },
+                //kada je complete upload tj. kada je sve zavrseno vezano za taj dokument u petlji
+                () => {
+                  this.uploadValue = 100;
+                  fileNamePrimalacDonacije.snapshot.ref
+                    .getDownloadURL()
+                    .then((url) => {
+                      slike_primalac_donacije_url.push(url);
+                    });
+                }
+              );
+            }
+            brojPrimalacDonacije = 0;
+          }
+        }
+        //slike primalacDonacije KRAJ
+
+        //slike predmeta i snimanje podataka u bazi
+        for (const predmet of newIterPredmet) {
+          brojPredmeta += 1;
+
+          const fileNamePredmet = firebase
             .storage()
             .ref(
-              "licitacije/licne/" +
+              "licitacije/" +
+                payload.vrsta_licitacije.toLowerCase() +
+                "/" +
                 email +
                 "/" +
                 random_id +
-                "/slika" +
+                "/predmet" +
                 "-" +
-                broj
+                brojPredmeta
             )
-            .put(fileM);
+            .put(predmet);
 
           //% koliko je snimljen fajl u firebase a svaki pojedinacno
           //i da dobijem nazad URL slike i posle je smestim u firestore
-          let uploadValue;
 
           //ako se nesto desava sa fajlom tj. kada uploadujemo u storage
-          fileName.on(
+          fileNamePredmet.on(
             `state_change`,
             //tokom rada procenat uploada
             (snapshot) => {
               let keyName = snapshot.ref.fullPath; //key u objektu ce biti putanja do slike
-              uploadValue =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100; //procenat upload-a
-
-              //provera da li kljuc (u objektu) vec postoji ako postoji snimi na vec postojeci, a ako ne postoji snimi pod novim kljucem(sve ovo se radi da se ne bi duplirali kljucevi npr. licitacije/licne/kirk7183@yahoo.co.uk/1762719/slika-1 da se push-uje svaki put kada se procenat uploada promeni)
-              var index = this.state.uploadingImagesArray.findIndex(
-                (it) => Object.keys(it)[0] == keyName
-              );
-              //ako key objekta ne postoji dodaj ga
-              if (index === -1) {
-                this.state.uploadingImagesArray.push({
-                  [keyName]: uploadValue,
-                });
-                //ako key objekta postoji onda zadrzi key ali promeni njegovu vrednost
-              } else {
-                this.state.uploadingImagesArray[index] = {
-                  [keyName]: uploadValue,
-                };
-              }
+              this.uploadValue = Math.floor(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              ); //procenat upload-a
+              //commit koliko trenutno % je slika upload u Firebase. posle se ovaj podatak tj. % uploada slike preko computed i watch u "insertImages.vue" ocitava LIVE
+              commit("UPLOAD_IMG_PERCENT_PREDMET", {
+                keyName: keyName,
+                uploadValue: this.uploadValue,
+              });
             },
             //ako ima greska
             (error) => {
@@ -503,31 +611,42 @@ export default new Vuex.Store({
             },
             //kada je complete upload
             () => {
-              uploadValue = 100;
-              fileName.snapshot.ref.getDownloadURL().then((url) => {
+              this.uploadValue = 100;
+              fileNamePredmet.snapshot.ref.getDownloadURL().then((url) => {
                 slike_predmet_url.push(url);
-                //kada je broj slika u arrayu (slike_predmet_url) koji smo spremili za storage jednak broju slika (newIter) koji je korisnik postavio
-                //tada sve odjednom ubaci u firebase
-                if (slike_predmet_url.length == newIter.length) {
-                  //snimanje podatak u firestore pocetak
+                //kada je broj slika u arrayu koje smo snimili u firebase (slike_predmet_url) jednak broju slika (newIterPredmet) koji je korisnik postavio
+                //tada sve odjednom ubaci u firebase. Tj. kada prodje kroz sve slike i snime se u bazu tada mu je broj slika koji je korisnik uneo jednak.
+                //NAPOMENA (code ispod se nece odradjivati svaki put kada se prodje kroz petlju vec samo ako je broj slike u petlji jednak broju slika koji je korisnik uneo)
+                if (slike_predmet_url.length == newIterPredmet.length) {
+                  //pravljenje object-a koji kasnije snimamo u Firebase
+                  var celaLicitacija = {
+                    random_id: random_id,
+                    vrsta_licitacije: payload.vrsta_licitacije,
+                    nudim: payload.nudim,
+                    nudim_lowerCase: payload.nudim.toLowerCase(), //mora zbog .sortBy u Firestore zato sto je case sensitive (npr. "Igor" ce da stavi ispred "ana" iako je "a" ispred "I". Medjutim casesensitive stavlja veliko slovo ispred malih slova)
+                    grupa: payload.grupa,
+                    pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
+                    trajanje_licitacije: payload.trajanje_licitacije,
+                    opis_licitacije: payload.opis_licitacije,
+                    pocetak_datum: payload.pocetak_datum,
+                    kraj_datum: payload.kraj_datum,
+                    korisnik_ime: korisnik_ime, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
+                    korisnik_prezime: korisnik_prezime,
+                    korisnik_email: korisnik_email, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload. //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
+                    zavrsena_licitacija: false, //ovo postavljamo na pocetku da znamo da je licitacija u toku
+                    slike_predmet: slike_predmet_url,
+                    slike_primalac_donacije: slike_primalac_donacije_url,
+                  };
+
+                  //ako je Humanitarna donacija samo Object-u "celaLicitacija" dodaj ime osobe (kljuc i value) za koju se vrsi donacija
+                  if (payload.vrsta_licitacije === "Humanitarna") {
+                    celaLicitacija.imeOsobeZaDonaciju =
+                      payload.imeOsobeZaDonaciju;
+                  }
+
+                  //snimanje objecta u firestore pocetak
                   firestore_baza
-                    .set({
-                      random_id: random_id,
-                      vrsta_licitacije: payload.vrsta_licitacije,
-                      nudim: payload.nudim,
-                      nudim_lowerCase: payload.nudim.toLowerCase(), //mora zbog .sortBy u Firestore zato sto je case sensitive (npr. "Igor" ce da stavi ispred "ana" iako je "a" ispred "I". Medjutim casesensitive stavlja veliko slovo ispred malih slova)
-                      grupa: payload.grupa,
-                      pocetna_cena_u_RSD: payload.pocetna_cena_u_RSD,
-                      trajanje_licitacije: payload.trajanje_licitacije,
-                      opis_licitacije: payload.opis_licitacije,
-                      pocetak_datum: payload.pocetak_datum,
-                      kraj_datum: payload.kraj_datum,
-                      korisnik_ime: korisnik_ime, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
-                      korisnik_prezime: korisnik_prezime,
-                      korisnik_email: korisnik_email, //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload. //direktno je izvuceno na pocetku zato sto je sa MARS-a podataka a ne sa fronta, zato ne treba payload.
-                      zavrsena_licitacija: false, //ovo postavljamo na pocetku da znamo da je licitacija u toku
-                      slike_predmet: slike_predmet_url,
-                    })
+                    .set(celaLicitacija)
                     .then(() => {
                       commit("TOGGLE_SNACKBAR", {
                         boolean: true,
@@ -545,7 +664,7 @@ export default new Vuex.Store({
             }
           );
         }
-        broj = 0;
+        brojPredmeta = 0;
       }
       //ako nije registrovan ne moze da postavlja licitacije
       else {
@@ -616,6 +735,7 @@ export default new Vuex.Store({
     //     });
     // },
 
+    //PRIKAZ LICITACIJA
     async sortingChange({ commit }, payload) {
       let firestore_baza = await firebase
         .firestore()
@@ -673,7 +793,6 @@ export default new Vuex.Store({
       //ako NIJE vrsta licitacije ="SVE" onda pretrazi po onome sto je prosledjeno kao payload
       //u suprotnom ako odaberemo "SVE" onda nece imati ogranicenja i prikazace sve podatke
       if (this.state.selected_vrsta != "SVE") {
-        console.log(this.state.selected_vrsta);
         firestore_baza = await firestore_baza.where(
           "vrsta_licitacije",
           "==",
@@ -684,7 +803,6 @@ export default new Vuex.Store({
       //ako NIJE lista stvari ="SVE" onda pretrazi po onome sto je prosledjeno kao payload
       //u suprotnom ako odaberemo "SVE" onda nece imati ogranicenja i prikazace sve podatke
       if (this.state.selected_grupa != "SVE") {
-        console.log(this.state.selected_grupa);
         firestore_baza = await firestore_baza.where(
           "grupa",
           "==",
@@ -695,7 +813,6 @@ export default new Vuex.Store({
       //SORTIRANJE 3ci V-SELECT
       //Preostalo vreme - manje
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - manje") {
-        console.log(this.state.selected_sortiranje_od_do);
         firestore_baza = await firestore_baza.orderBy("kraj_datum", "asc");
       }
       //Preostalo vreme - više
@@ -988,6 +1105,12 @@ export default new Vuex.Store({
       if (payload.slikeZa === "predmet") {
         commit("LICITACIJE_SLIKE_PREDMET", payload);
       }
+      if (payload.slikeZa === "primalacDonacije") {
+        commit("LICITACIJE_SLIKE_PRIMALAC_DONACIJE", payload);
+      }
+    },
+    clearUploadingImagesObj({ commit }) {
+      commit("CLEAR_UPLOADING_IMAGES_OBJECT");
     },
   },
   ///////////////////////////// MODULI /////////////////////////////
