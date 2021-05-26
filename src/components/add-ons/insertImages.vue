@@ -243,7 +243,7 @@ export default {
         if (this.slikeZa === "predmet") {
           this.$emit("imaSlikePredmet", newValue.length);
         }
-
+        console.log(this.slikeZa);
         if (this.slikeZa === "primalacDonacije") {
           this.$emit("imaSlikePrimalacDonacije", newValue.length);
         }
@@ -252,17 +252,11 @@ export default {
     clearImages(newValue) {
       if (newValue === true) {
         this.Imgs = [];
-        this.filesFirebase = [];
         this.files = [];
+        this.filesFirebase = [];
+        this.$refs.uploadInput.value = null;
       }
     },
-    // vrsta_licitacije(newValue){
-    //   if (newValue === "Lična"){
-    //     this.imgIspis = ""
-    //   } else if (newValue === "Humanitarna"){
-    //     this.imgIspis = ""
-    //   }
-    // }
   },
   methods: {
     dragOver() {
