@@ -291,7 +291,10 @@ export default new Vuex.Store({
       );
     },
     CLEAR_UPLOADING_IMAGES_OBJECT: (state) => {
-      state.uploadObjPredmet = {}; //DODATI I ZA primalacDonacije
+      state.uploadObjPredmet = [];
+      state.uploadObjPrimalacDonacije = [];
+      state.licitacije_slike_predmet = [];
+      state.licitacije_slike_primalac_donacije = [];
     },
   },
 
@@ -448,7 +451,7 @@ export default new Vuex.Store({
     },
 
     //primalac_donacije_slike_upload
-    async primalac_donacije_slike_upload({ commit, getters }, payload) {
+    primalac_donacije_slike_upload({ commit, getters }, payload) {
       let newIterPrimalacDonacije =
         getters.get_licitacije_slike_primalac_donacije;
       let brojPrimalacDonacije = 0; //za naziv slike da bude slika-1, slika-2,slika-3 itd
@@ -493,7 +496,7 @@ export default new Vuex.Store({
           },
           //kada je complete upload tj. kada je sve zavrseno vezano za taj dokument u petlji
           () => {
-            this.uploadValue = 100;
+            // this.uploadValue = 100;
             fileNamePrimalacDonacije.snapshot.ref
               .getDownloadURL()
               .then((url) => {
@@ -502,8 +505,9 @@ export default new Vuex.Store({
           }
         );
       }
+      console.log(slike_primalac_donacije_url);
       brojPrimalacDonacije = 0;
-      return slike_primalac_donacije_url;
+      return Promise.all(slike_primalac_donacije_url);
     },
 
     //NOVA LICITACIJA )
@@ -564,16 +568,15 @@ export default new Vuex.Store({
         if (payload.vrsta_licitacije === "Humanitarna") {
           // try {
           //obradjuju se slike (snimaju u Storage Firebase) i vraca njihov URL kako bi se smestio u Firestore
-          return (slike_primalac_donacije_url = await dispatch(
-            "primalac_donacije_slike_upload",
-            {
-              redirectPayload: payload,
-              email,
-              random_id,
-            }
-          ).then(() => {
-            console.log("done");
-          }));
+          await dispatch("primalac_donacije_slike_upload", {
+            redirectPayload: payload,
+            email,
+            random_id,
+          }).then((response) => {
+            console.log("response ", response);
+          });
+
+          // .then(() => {  console.log("done"); });
           // console.log(slike_primalac_donacije_url);
           //  slike_primalac_donacije_url;
           // }

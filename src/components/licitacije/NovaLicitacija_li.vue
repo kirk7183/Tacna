@@ -379,17 +379,30 @@ export default {
         this.clearImages = false;
       }, 1000);
 
+      //nisam mogao ovde da koristim "this.$refs.form.reset();" zato sto resetuje i vrsta_licitacije i sve se poremeti zbog toga
+      this.nudim = "";
+      this.grupa = "";
+      this.pocetna_cena_u_RSD = "";
+      this.trajanje_licitacije = "";
+      this.opis_licitacije = "";
+      this.imeOsobeZaDonaciju = "";
+
+      //resetovanje validacije (da ne prikazuje crvene kreske sta nije dobro uneto)
+      this.$refs.form.resetValidation(); // this.$refs.form.reset() bi resetovalo i polja kao sto su radio button
+
       //posto ne znam kako da ne resetuje samo jedan stvar (radio button za vrstu licitacije) morao sam ovako da odradim. Da zapamtim trenutnu vrstu licitacije i posle da je vratim na staro posle 100ms
-      var trenutna_vrsta_licitacije = this.vrsta_licitacije;
+      // var trenutna_vrsta_licitacije = this.vrsta_licitacije;
 
       //resetovanje forme
-      this.$refs.form.reset();
+      // this.$refs.form.reset();
 
       //vracanje na staru vrstu licitacije pre reseta forme
-      setTimeout(() => {
-        this.vrsta_licitacije = trenutna_vrsta_licitacije;
-      }, 100);
+      // setTimeout(() => {
+
+      //   this.vrsta_licitacije = trenutna_vrsta_licitacije;
+      // }, 100);
     },
+
     return_boja() {
       return "background-color:" + this.boja_title;
     },
