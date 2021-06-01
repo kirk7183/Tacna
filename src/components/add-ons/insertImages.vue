@@ -243,7 +243,7 @@ export default {
         if (this.slikeZa === "predmet") {
           this.$emit("imaSlikePredmet", newValue.length);
         }
-        console.log(this.slikeZa);
+
         if (this.slikeZa === "primalacDonacije") {
           this.$emit("imaSlikePrimalacDonacije", newValue.length);
         }
