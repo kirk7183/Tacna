@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="extraOption_Fab_div">
     <div class="ExtraOption_Fab">
       <v-fab-transition>
         <v-speed-dial

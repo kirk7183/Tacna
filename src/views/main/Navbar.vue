@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="navbar_div">
     <v-app-bar color="#988BC7">
       <v-app-bar-nav-icon @click="iconClose"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>

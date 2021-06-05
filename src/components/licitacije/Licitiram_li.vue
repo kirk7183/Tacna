@@ -1,7 +1,9 @@
 <template>
   <div class="licitiram_li">
+    <!--@scroll="handleScroll"-->
     <v-layout justify-center wrap>
       <v-flex xs7 sm10 md3>
+        <p class="sortiranje text">Vrste</p>
         <v-select
           class="sortiranje"
           :items="sort_vrsta"
@@ -12,6 +14,7 @@
         ></v-select>
       </v-flex>
       <v-flex xs7 sm5 md3>
+        <p class="sortiranje text">Grupe</p>
         <v-select
           class="sortiranje"
           :items="grupa"
@@ -22,6 +25,7 @@
         ></v-select>
       </v-flex>
       <v-flex xs7 sm5 md3>
+        <p class="sortiranje text">Sortiranje</p>
         <v-select
           class="sortiranje"
           :items="sortiranje_od_do"
@@ -194,6 +198,11 @@ export default {
   },
 
   created() {
+    // this.handleScroll();
+    // const container = document.querySelector(".licitiram_li");
+
+    // container.addEventListener("scroll", this.handleScroll);
+
     //posto je this.switch=null na pocetku treba da se stavi da je true da bi u *watch
     //"switch1" pratio promenu i pokrenuo u Vuex "licitacije_podaci" ili
     //"moje_licitacije" u zavisnosti da li je "switch1" true ili false
@@ -403,6 +412,27 @@ export default {
   },
 
   methods: {
+    // handleScroll(e) {
+    //   console.log("dff");
+    //   if (e.target.scrollHeight - 100 <= e.target.scrollTop) {
+    //     alert("oi sou Eduardo Martins");
+    //   }
+    // },
+    // handleScroll({ target: { scrollTop, clientHeight, scrollHeight } }) {
+    // handleScroll() {
+    //   // console.log("|scroll");
+    //   // console.log(event);
+    //   const container = document.querySelector(".licitiram_li");
+
+    //   // container.addEventListener("scroll", this.handleScroll);
+    //   // console.log(container);
+    //   console.log(container.scrollHeight);
+    //   // if (scrollTop + clientHeight >= scrollHeight) {
+    //   //   console.log("|novo ocitavanje");
+    //   //   // this.loadMorePosts();
+    //   // }
+    // },
+
     switch1_false() {
       //ako vec nije FALSE onda prebaci na FALSE
       if (this.switch1 != false) {

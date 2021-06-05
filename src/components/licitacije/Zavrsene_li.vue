@@ -2,6 +2,7 @@
   <div class="licitiram_li">
     <v-layout justify-center wrap>
       <v-flex xs7 sm10 md3>
+        <p class="sortiranje text">Vrste</p>
         <v-select
           class="sortiranje"
           :items="sort_vrsta"
@@ -12,6 +13,7 @@
         ></v-select>
       </v-flex>
       <v-flex xs7 sm5 md3>
+        <p class="sortiranje text">Grupe</p>
         <v-select
           class="sortiranje"
           :items="grupa"
@@ -22,6 +24,7 @@
         ></v-select>
       </v-flex>
       <v-flex xs7 sm5 md3>
+        <p class="sortiranje text">Sortiranje</p>
         <v-select
           class="sortiranje"
           :items="sortiranje_od_do"
