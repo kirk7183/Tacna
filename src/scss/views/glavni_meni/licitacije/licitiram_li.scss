@@ -38,10 +38,18 @@
     color: $main-icon-color;
   }
   .sortiranje {
-    padding-top: 50px !important;
     padding-left: 15px !important;
     padding-right: 15px !important;
   }
+
+  .sortiranje.text {
+    font-size: 1.2rem;
+    padding-top: 50px !important;
+    padding-left: 27px !important;
+    // padding-right: 12px !important;
+    margin-bottom: 5px;
+  }
+
   .switch_title {
     width: 200px;
 
@@ -93,6 +101,10 @@
    supported by Chrome, Edge, Opera and Firefox */
   }
 
+  // .licitiram_li::-webkit-scrollbar {
+  //   display: none;
+  // }
+
   //za TAG  <transition name="fade_out">
   // .list-item {
   //   display: inline-block;
@@ -107,3 +119,8 @@
   //   -o-transition: all 2s;
   // }
 }
+// .licitiram_li {
+//   border: 2px solid red;
+//   max-height: 99vh; //99vh
+//   overflow: auto;
+// }

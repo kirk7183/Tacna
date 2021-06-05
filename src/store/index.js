@@ -761,8 +761,9 @@ export default new Vuex.Store({
         .collection("licitacije_u_toku");
 
       var datum = new Date();
-
+      //pre svakog prikaza licitacija na licitacije_li
       //POSTAVLJANJE "zavrsena_licitacija" na true tj. ako je datum i vreme vreci od trenutka kada smo otvorili stranicu (znaci da je licitacija gotova)
+
       await firestore_baza
         .where("kraj_datum", "<=", datum)
         .where("zavrsena_licitacija", "==", false)
@@ -805,7 +806,7 @@ export default new Vuex.Store({
           "zavrsena_licitacija",
           "==",
           zavrseno
-        );
+        ); //u zavisnosti da li smo na licitacije_li - licitacije u toku ili u zavrsene_li dobijamo zavrseno = false ili true
       }
 
       //VRSTA LICITACIJE
@@ -828,15 +829,19 @@ export default new Vuex.Store({
           `${this.state.selected_grupa}`
         );
       }
-
+      let latestDoc; //za paginaciju poslednji dokument (ne sme NULL da bude zato sto ce onda gresku da pravi kod descending)
       //SORTIRANJE 3ci V-SELECT
       //Preostalo vreme - manje
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - manje") {
-        firestore_baza = await firestore_baza.orderBy("kraj_datum", "asc");
+        firestore_baza = await firestore_baza
+          .orderBy("kraj_datum", "asc")
+          .startAfter(latestDoc || 0);
       }
       //Preostalo vreme - više
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - više") {
-        firestore_baza = await firestore_baza.orderBy("kraj_datum", "desc");
+        firestore_baza = await firestore_baza
+          .orderBy("kraj_datum", "desc")
+          .endBefore(latestDoc || 0);
       }
       //Naziv A-Z
       if (this.state.selected_sortiranje_od_do == "Naziv A-Z") {
@@ -867,9 +872,12 @@ export default new Vuex.Store({
 
       //PRIKAZ SORTIRANJA KOJE SMO GORE ODABRALI  *POCETAK
       //pozivanje komande za slanje ka Firebase uz limit od najvise 10 rezultata
-      await firestore_baza
 
-        .limit(10)
+      // let latestDoc; //pocetno stanje odakle pocinje da prikazuje dokumente iz Firestora
+      console.log("na pocetku", latestDoc);
+      await firestore_baza
+        // .startAt("rpy2h5YsheogEPtuIWQh") //ako je latestDoc null ili undefined onda ce poceti od O (nulte) pozicije u array-u
+        .limit(15)
         .get()
         .then((querySnapshot) => {
           let tempListaLicitacija = [];
@@ -883,10 +891,18 @@ export default new Vuex.Store({
                 ...doc.data(),
               };
               tempListaLicitacija.push(data);
+              latestDoc = doc.id;
+              console.log(latestDoc);
             });
+
+            // latestDoc = querySnapshot.docs[querySnapshot.docs.length - 1]; //za infinity scroll https://www.youtube.com/watch?v=vYBc7Le5G6s
+            // latestDoc = querySnapshot.docs.length - 1; //za infinity scroll https://www.youtube.com/watch?v=vYBc7Le5G6s
+            // latestDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+            console.log("na kraju", querySnapshot.docs.length);
           }
           commit("SVE_LICITACIJE", tempListaLicitacija);
-        });
+        })
+        .catch((a) => console.log(a));
       //PRIKAZ SORTIRANJA KOJE SMO GORE ODABRALI *KRAJ
     },
 
