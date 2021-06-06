@@ -71,6 +71,7 @@ export default new Vuex.Store({
     licitacije_slike_primalac_donacije: [],
     uploadObjPredmet: {},
     uploadObjPrimalacDonacije: {},
+    latestDoc: "",
   },
   getters: {
     get_IsLoggedIn: (state) => {
@@ -763,7 +764,7 @@ export default new Vuex.Store({
       var datum = new Date();
       //pre svakog prikaza licitacija na licitacije_li
       //POSTAVLJANJE "zavrsena_licitacija" na true tj. ako je datum i vreme vreci od trenutka kada smo otvorili stranicu (znaci da je licitacija gotova)
-
+      console.log("await firestore_baza");
       await firestore_baza
         .where("kraj_datum", "<=", datum)
         .where("zavrsena_licitacija", "==", false)
@@ -792,7 +793,6 @@ export default new Vuex.Store({
       //Jedini glavni kriterijum ovde je da ocitava .limit
 
       let zavrseno = payload.zavrseno; //true(zavrsene licitacije) ili false(u toku licitacije)
-
       //ako je switch false znaci da je kliknuto na "moje licitacije" i tada trazimo licitacije onoga ko je logovan preko FaceBook-a
       //u suprotnom ovaj block koda se nece desiti tj. to znaci da je switch=true tj. da je na "Licitacije u toku" i sortiranje ce se vrsiti za sve korisnike koji imaju u toku neku licitaciju
       if (payload.switch == false) {
@@ -808,7 +808,6 @@ export default new Vuex.Store({
           zavrseno
         ); //u zavisnosti da li smo na licitacije_li - licitacije u toku ili u zavrsene_li dobijamo zavrseno = false ili true
       }
-
       //VRSTA LICITACIJE
       //ako NIJE vrsta licitacije ="SVE" onda pretrazi po onome sto je prosledjeno kao payload
       //u suprotnom ako odaberemo "SVE" onda nece imati ogranicenja i prikazace sve podatke
@@ -829,19 +828,16 @@ export default new Vuex.Store({
           `${this.state.selected_grupa}`
         );
       }
-      let latestDoc; //za paginaciju poslednji dokument (ne sme NULL da bude zato sto ce onda gresku da pravi kod descending)
       //SORTIRANJE 3ci V-SELECT
       //Preostalo vreme - manje
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - manje") {
-        firestore_baza = await firestore_baza
-          .orderBy("kraj_datum", "asc")
-          .startAfter(latestDoc || 0);
+        firestore_baza = await firestore_baza.orderBy("kraj_datum", "asc");
+        // .startAfter(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
       }
       //Preostalo vreme - više
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - više") {
-        firestore_baza = await firestore_baza
-          .orderBy("kraj_datum", "desc")
-          .endBefore(latestDoc || 0);
+        firestore_baza = await firestore_baza.orderBy("kraj_datum", "desc");
+        // .endBefore(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
       }
       //Naziv A-Z
       if (this.state.selected_sortiranje_od_do == "Naziv A-Z") {
@@ -874,14 +870,25 @@ export default new Vuex.Store({
       //pozivanje komande za slanje ka Firebase uz limit od najvise 10 rezultata
 
       // let latestDoc; //pocetno stanje odakle pocinje da prikazuje dokumente iz Firestora
-      console.log("na pocetku", latestDoc);
+      console.log("na pocetku", this.state.latestDoc);
+
+      let tempListaLicitacija = []; //array
+      if (
+        this.state.sve_licitacije &&
+        this.state.sve_licitacije === "nema_podataka"
+      ) {
+        tempListaLicitacija = this.state.sve_licitacije;
+        console.log("tempListaLicitacije", tempListaLicitacija);
+      } else {
+        tempListaLicitacija = [];
+      }
+
       await firestore_baza
-        // .startAt("rpy2h5YsheogEPtuIWQh") //ako je latestDoc null ili undefined onda ce poceti od O (nulte) pozicije u array-u
         .limit(15)
         .get()
         .then((querySnapshot) => {
-          let tempListaLicitacija = [];
           if (querySnapshot.empty) {
+            tempListaLicitacija = []; //isprazni array ako nesto postoji u njemu
             tempListaLicitacija.push("nema_podataka");
           } else {
             //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
@@ -891,14 +898,15 @@ export default new Vuex.Store({
                 ...doc.data(),
               };
               tempListaLicitacija.push(data);
-              latestDoc = doc.id;
-              console.log(latestDoc);
+              this.state.latestDoc = doc.id;
+              console.log("latestDoc", this.state.latestDoc);
             });
 
             // latestDoc = querySnapshot.docs[querySnapshot.docs.length - 1]; //za infinity scroll https://www.youtube.com/watch?v=vYBc7Le5G6s
             // latestDoc = querySnapshot.docs.length - 1; //za infinity scroll https://www.youtube.com/watch?v=vYBc7Le5G6s
             // latestDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
             console.log("na kraju", querySnapshot.docs.length);
+            console.log("---------------------------------");
           }
           commit("SVE_LICITACIJE", tempListaLicitacija);
         })

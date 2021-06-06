@@ -350,28 +350,31 @@ export default {
     },
 
     get_selected_vrsta() {
-      this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular za ocitavanje
-      this.$store.dispatch("sortingChange", {
-        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
-        zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
-      });
+      this.prikazi_Licitacije();
+      // this.arrayData = []; //isprazni sve iz liste
+      // this.loadedData = false; //pokreni circular za ocitavanje
+      // this.$store.dispatch("sortingChange", {
+      //   switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+      //   zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+      // });
     },
     get_selected_grupa() {
-      this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular za ocitavanje
-      this.$store.dispatch("sortingChange", {
-        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
-        zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
-      });
+      this.prikazi_Licitacije();
+      // this.arrayData = []; //isprazni sve iz liste
+      // this.loadedData = false; //pokreni circular za ocitavanje
+      // this.$store.dispatch("sortingChange", {
+      //   switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+      //   zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+      // });
     },
     get_selected_sortiranje_od_do() {
-      this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular za ocitavanje
-      this.$store.dispatch("sortingChange", {
-        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
-        zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
-      });
+      this.prikazi_Licitacije();
+      // this.arrayData = []; //isprazni sve iz liste
+      // this.loadedData = false; //pokreni circular za ocitavanje
+      // this.$store.dispatch("sortingChange", {
+      //   switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+      //   zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+      // });
     },
 
     // //kada se u v-select odabere nesto on salje sve informacije u Vuex koji
@@ -412,26 +415,14 @@ export default {
   },
 
   methods: {
-    // handleScroll(e) {
-    //   console.log("dff");
-    //   if (e.target.scrollHeight - 100 <= e.target.scrollTop) {
-    //     alert("oi sou Eduardo Martins");
-    //   }
-    // },
-    // handleScroll({ target: { scrollTop, clientHeight, scrollHeight } }) {
-    // handleScroll() {
-    //   // console.log("|scroll");
-    //   // console.log(event);
-    //   const container = document.querySelector(".licitiram_li");
-
-    //   // container.addEventListener("scroll", this.handleScroll);
-    //   // console.log(container);
-    //   console.log(container.scrollHeight);
-    //   // if (scrollTop + clientHeight >= scrollHeight) {
-    //   //   console.log("|novo ocitavanje");
-    //   //   // this.loadMorePosts();
-    //   // }
-    // },
+    prikazi_Licitacije() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular za ocitavanje
+      this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+        zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+      });
+    },
 
     switch1_false() {
       //ako vec nije FALSE onda prebaci na FALSE

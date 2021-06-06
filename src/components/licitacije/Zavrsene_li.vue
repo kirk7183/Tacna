@@ -104,6 +104,14 @@
             </v-card>
           </div>
         </v-layout>
+        <v-row class="justify-center">
+          <v-btn
+            v-if="loadedData & (arrayData.length >= 15)"
+            @click="prikazi_Licitacije"
+          >
+            Prikazi još
+          </v-btn>
+        </v-row>
       </div>
     </div>
     <!--ako nema podataka ocitanih iz vuexa onda prikazi ovaj div-->
@@ -156,12 +164,6 @@ export default {
   },
 
   created() {
-    //da povuce podatke iz firebase-a za zavrsene licitacije
-    this.$store.dispatch("sortingChange", {
-      switch: true, //ako je true onda je za sve licitacije, ako je false onda znaci da je kliknuto na moje licitacije
-      zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-    });
-
     //array sort_vrsta iz Vuexa (Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
@@ -190,8 +192,17 @@ export default {
     if (
       this.get_selected_sortiranje_od_do == "Preostalo vreme - manje" ||
       this.get_selected_sortiranje_od_do == "Preostalo vreme - više"
-    )
+    ) {
+      //svaka promena u WATCH za "get_selected_sortiranje_od_do" poziva metodu "prikazi_Licitacije()"
       this.get_selected_sortiranje_od_do = "Naziv A-Z";
+    } else {
+      //ali ako uslov nije ispunjen onda moramo explicitno da pozovemo metodu sa posebnim parametrima za "switch" i "zavrseno"
+      //da povuce podatke iz firebase-a za zavrsene licitacije
+      this.$store.dispatch("sortingChange", {
+        switch: true, //ako je true onda je za sve licitacije, ako je false onda znaci da je kliknuto na moje licitacije
+        zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
+      });
+    }
   },
   computed: {
     get_sve_licitacije: {
@@ -249,32 +260,37 @@ export default {
       }
     },
     get_selected_vrsta() {
-      this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular za ocitavanje
-      this.$store.dispatch("sortingChange", {
-        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
-        zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-      });
+      this.prikazi_Licitacije();
+      // this.arrayData = []; //isprazni sve iz liste
+      // this.loadedData = false; //pokreni circular za ocitavanje
+      // this.$store.dispatch("sortingChange", {
+      //   switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+      //   zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
+      // });
     },
     get_selected_grupa() {
-      this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular za ocitavanje
-      this.$store.dispatch("sortingChange", {
-        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
-        zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-      });
+      this.prikazi_Licitacije();
+      // this.arrayData = []; //isprazni sve iz liste
+      // this.loadedData = false; //pokreni circular za ocitavanje
+      // this.$store.dispatch("sortingChange", {
+      //   switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+      //   zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
+      // });
     },
     get_selected_sortiranje_od_do() {
-      this.arrayData = []; //isprazni sve iz liste
-      this.loadedData = false; //pokreni circular za ocitavanje
-      this.$store.dispatch("sortingChange", {
-        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
-        zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-      });
+      this.prikazi_Licitacije();
     },
   },
 
   methods: {
+    prikazi_Licitacije() {
+      this.arrayData = []; //isprazni sve iz liste
+      this.loadedData = false; //pokreni circular za ocitavanje
+      this.$store.dispatch("sortingChange", {
+        switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
+        zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
+      });
+    },
     // STAVLJA 3 TACKICE NAKON ODREDJENOG BROJA KARAKTERA KOJI PROSLEDJUJEMO METODI
     truncate(source, size) {
       return source.length > size ? source.slice(0, size - 1) + "…" : source;
