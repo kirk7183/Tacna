@@ -852,17 +852,8 @@ export default new Vuex.Store({
       }
       //Preostalo vreme - više
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - više") {
-        firestore_baza = await firestore_baza;
-
-        if (this.state.latestDoc === "") {
-          firestore_baza = await firestore_baza
-            .orderBy("kraj_datum", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .endAt(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
-        } else {
-          firestore_baza = await firestore_baza
-            .orderBy("kraj_datum", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .startAfter(this.state.latestDoc); //ako ima neki podatak u latestDoc
-        }
+        firestore_baza = await firestore_baza.orderBy("kraj_datum", "desc");
+        // .startAfter(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
       }
       //Naziv A-Z
       if (this.state.selected_sortiranje_od_do == "Naziv A-Z") {
@@ -892,17 +883,10 @@ export default new Vuex.Store({
       }
       //Cena opadajuce
       if (this.state.selected_sortiranje_od_do == "Cena opadajuće") {
-        firestore_baza = await firestore_baza;
-
-        if (this.state.latestDoc === "") {
-          firestore_baza = await firestore_baza
-            .orderBy("pocetna_cena_u_RSD", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .endAt(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
-        } else {
-          firestore_baza = await firestore_baza
-            .orderBy("pocetna_cena_u_RSD", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .startAfter(this.state.latestDoc); //ako ima neki podatak u latestDoc
-        }
+        firestore_baza = await firestore_baza
+          // .where("kraj_datum", ">=", datum)
+          // .orderBy("kraj_datum") //ovo moram da stavim zato sto Firestore trazi da *first orderBy* bude po .where koji je iznad
+          .orderBy("pocetna_cena_u_RSD", "desc"); //pa sam tek onda radio pretrazivanje koje meni treba
       }
       //SORTIRANJE KRAJ
 
@@ -924,21 +908,21 @@ export default new Vuex.Store({
       // }
 
       const data = await firestore_baza.limit(15).get();
+   
+      // if (payload.prikazi_jos) {
       this.state.tempListaLicitacija = [];
-
-      //ako nema podataka u bazi za zadati kriterijum
-      if (data.docs.length === 0 && this.state.tempListaLicitacija === 0) {
-        this.state.tempListaLicitacija.push("nema_podataka");
-        console.log("length je 0");
-      }
       console.log("tempListaLicitacija", this.state.tempListaLicitacija);
+      // }
+      // else {
+      // }
 
       data.forEach((querySnapshot) => {
-        if (querySnapshot.exists) {
-          // console.log("querySnapshot", querySnapshot);
-          // // this.state.tempListaLicitacija = []; //isprazni array ako nesto postoji u njemu
-          // this.state.tempListaLicitacija.push("nema_podataka");
-
+        console.log("querySnapshot", querySnapshot);
+        if (!querySnapshot.exists) {
+          console.log("querySnapshot", querySnapshot);
+          // this.state.tempListaLicitacija = []; //isprazni array ako nesto postoji u njemu
+          this.state.tempListaLicitacija.push("nema_podataka");
+        } else {
           console.log("u data foreach");
           //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
           // querySnapshot..forEach((doc) => {

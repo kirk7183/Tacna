@@ -128,6 +128,14 @@
             </v-card>
           </div>
         </v-layout>
+        <v-row class="justify-center">
+          <v-btn
+            v-if="loadedData & (arrayData.length >= 15)"
+            @click="prikazi_jos"
+          >
+            Prikazi još
+          </v-btn>
+        </v-row>
       </div>
     </div>
     <!--ako nije logovan i switch1 = false tj. na levo je (moje licitacije) onda prikazi ovaj div-->
@@ -166,6 +174,7 @@ export default {
       isRegister: false,
       boja_licitacije: null,
       arrayData: [],
+      prikaziJos: false,
       Meseci: [
         "Januar",
         "Februar",
@@ -241,9 +250,9 @@ export default {
   },
 
   computed: {
-    get_sve_licitacije: {
+    get_tempListaLicitacija: {
       get() {
-        return this.$store.getters.get_sve_licitacije;
+        return this.$store.state.tempListaLicitacija;
       },
     },
 
@@ -290,10 +299,12 @@ export default {
   watch: {
     //motri na computed get_sve_licitacije kada dobije podatke
     //ovo je na pocetku kada se ocitavaju SVE stvari (pocetno ocitavanje je po preostalom vremenu)
-    get_sve_licitacije(newValue) {
+    get_tempListaLicitacija(newValue) {
+      console.log("newValue", newValue);
       if (newValue != 0 && newValue != "nema_podataka") {
-        //obrisi sve i postavi da je prazan array
-        this.arrayData = [];
+        if (!this.prikaziJos) {
+          this.arrayData = [];
+        }
         //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
         newValue.forEach((value) => {
           this.arrayData.push(value);
@@ -311,9 +322,11 @@ export default {
     switch1() {
       this.arrayData = []; //isprazni sve iz liste
       this.loadedData = false; //pokreni circular
+      console.log("loadedData", false);
       this.$store.dispatch("sortingChange", {
         switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+        prikazi_jos: this.prikaziJos, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
       });
     },
 
@@ -339,6 +352,7 @@ export default {
           this.$store.dispatch("sortingChange", {
             switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
             zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+            prikazi_jos: this.prikaziJos, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
           });
         }
       } else if (
@@ -368,6 +382,7 @@ export default {
       // });
     },
     get_selected_sortiranje_od_do() {
+      this.prikaziJos = false;
       this.prikazi_Licitacije();
       // this.arrayData = []; //isprazni sve iz liste
       // this.loadedData = false; //pokreni circular za ocitavanje
@@ -415,12 +430,17 @@ export default {
   },
 
   methods: {
+    prikazi_jos() {
+      this.prikaziJos = true;
+      this.prikazi_Licitacije();
+    },
     prikazi_Licitacije() {
-      this.arrayData = []; //isprazni sve iz liste
+      // this.arrayData = []; //isprazni sve iz liste
       this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
         switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: false, //da se zna da li trazimo zavrsene ili u toku licitacije
+        prikazi_jos: this.prikaziJos, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
       });
     },
 

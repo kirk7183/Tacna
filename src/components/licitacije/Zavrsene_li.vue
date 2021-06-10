@@ -107,7 +107,7 @@
         <v-row class="justify-center">
           <v-btn
             v-if="loadedData & (arrayData.length >= 15)"
-            @click="prikazi_Licitacije"
+            @click="prikazi_jos"
           >
             Prikazi još
           </v-btn>
@@ -132,6 +132,7 @@ export default {
       boja_licitacije: null,
       arrayData: [],
       korisnik_id: "",
+      prikaziJos: false,
       Meseci: [
         "Januar",
         "Februar",
@@ -201,13 +202,14 @@ export default {
       this.$store.dispatch("sortingChange", {
         switch: true, //ako je true onda je za sve licitacije, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
+        prikazi_jos: this.prikaziJos, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
       });
     }
   },
   computed: {
-    get_sve_licitacije: {
+    get_tempListaLicitacija: {
       get() {
-        return this.$store.getters.get_sve_licitacije;
+        return this.$store.state.tempListaLicitacija;
       },
     },
 
@@ -242,11 +244,13 @@ export default {
   watch: {
     //motri na computed sve_licitacije kada dobije podatke
     //ovo je na pocetku kada se ocitavaju SVE stvari (pocetno ocitavanje je po preostalom vremenu)
-    get_sve_licitacije(newValue) {
+    get_tempListaLicitacija(newValue) {
+      // deep: true, //gleda promene unutar arraya https://michaelnthiessen.com/how-to-watch-nested-data-vue/
       if (newValue != 0 && newValue != "nema_podataka") {
-        //obrisi sve i postavi da je prazan array
-        this.arrayData = [];
-        //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
+        if (!this.prikaziJos) {
+          this.arrayData = [];
+        }
+
         newValue.forEach((value) => {
           this.arrayData.push(value);
         });
@@ -278,17 +282,23 @@ export default {
       // });
     },
     get_selected_sortiranje_od_do() {
+      this.prikaziJos = false;
       this.prikazi_Licitacije();
     },
   },
 
   methods: {
+    prikazi_jos() {
+      this.prikaziJos = true;
+      this.prikazi_Licitacije();
+    },
     prikazi_Licitacije() {
-      this.arrayData = []; //isprazni sve iz liste
+      // this.arrayData = []; //isprazni sve iz liste
       this.loadedData = false; //pokreni circular za ocitavanje
       this.$store.dispatch("sortingChange", {
         switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
+        prikazi_jos: this.prikaziJos, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
       });
     },
     // STAVLJA 3 TACKICE NAKON ODREDJENOG BROJA KARAKTERA KOJI PROSLEDJUJEMO METODI
