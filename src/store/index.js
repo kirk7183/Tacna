@@ -73,6 +73,8 @@ export default new Vuex.Store({
     uploadObjPrimalacDonacije: {},
     latestDoc: "", //za paginaciju
     tempListaLicitacija: [],
+    showLimit: 15,
+    show_prikazi_jos: true,
   },
   getters: {
     get_IsLoggedIn: (state) => {
@@ -128,6 +130,9 @@ export default new Vuex.Store({
     },
     get_uploadObjPrimalacDonacije: (state) => {
       return state.uploadObjPrimalacDonacije;
+    },
+    get_show_prikazi_jos: (state) => {
+      return state.show_prikazi_jos;
     },
   },
   mutations: {
@@ -303,6 +308,9 @@ export default new Vuex.Store({
       state.uploadObjPrimalacDonacije = [];
       state.licitacije_slike_predmet = [];
       state.licitacije_slike_primalac_donacije = [];
+    },
+    PRIKAZI_JOS: (state, payload) => {
+      state.show_prikazi_jos = payload;
     },
   },
 
@@ -820,9 +828,7 @@ export default new Vuex.Store({
           zavrseno
         ); //u zavisnosti da li smo na licitacije_li - licitacije u toku ili u zavrsene_li dobijamo zavrseno = false ili true
       }
-      console.log("zavrseno", payload.zavrseno);
-      console.log("switch", payload.switch);
-      console.log(firestore_baza);
+
       //VRSTA LICITACIJE
       //ako NIJE vrsta licitacije ="SVE" onda pretrazi po onome sto je prosledjeno kao payload
       //u suprotnom ako odaberemo "SVE" onda nece imati ogranicenja i prikazace sve podatke
@@ -843,6 +849,7 @@ export default new Vuex.Store({
           `${this.state.selected_grupa}`
         );
       }
+
       //SORTIRANJE 3ci V-SELECT
       //Preostalo vreme - manje
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - manje") {
@@ -852,8 +859,6 @@ export default new Vuex.Store({
       }
       //Preostalo vreme - više
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - više") {
-        firestore_baza = await firestore_baza;
-
         if (this.state.latestDoc === "") {
           firestore_baza = await firestore_baza
             .orderBy("kraj_datum", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
@@ -892,8 +897,6 @@ export default new Vuex.Store({
       }
       //Cena opadajuce
       if (this.state.selected_sortiranje_od_do == "Cena opadajuće") {
-        firestore_baza = await firestore_baza;
-
         if (this.state.latestDoc === "") {
           firestore_baza = await firestore_baza
             .orderBy("pocetna_cena_u_RSD", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
@@ -922,24 +925,39 @@ export default new Vuex.Store({
       // } else {
       //   // this.state.tempListaLicitacija = [];
       // }
+      const showLimit = await this.state.showLimit;
 
-      const data = await firestore_baza.limit(15).get();
+      const data = await firestore_baza.limit(showLimit).get();
       this.state.tempListaLicitacija = [];
 
       //ako nema podataka u bazi za zadati kriterijum
-      if (data.docs.length === 0 && this.state.tempListaLicitacija === 0) {
+      //ali samo prilikom odabira (tj. koriscenja nekih od 3 v-select)
+      //nece prikazati ako dodjemo do dna liste klikom na prikazi jos, a nema vise nicega na listi
+      if (
+        data.empty &&
+        this.state.tempListaLicitacija.length === 0 &&
+        payload.prikazi_jos === false
+      ) {
         this.state.tempListaLicitacija.push("nema_podataka");
         console.log("length je 0");
       }
-      console.log("tempListaLicitacija", this.state.tempListaLicitacija);
+      // ako broj prikazanih podataka nije isti kao trazeni broj podataka (showLImit) i ako ne postoji poslednji podatak (tj. ne postoji podatak nakon ponovnog klika na prikazi jos)
+      if (data.docs.length !== showLimit || !data.docs.lastItem) {
+        commit("PRIKAZI_JOS", false);
+      }
 
       data.forEach((querySnapshot) => {
         if (querySnapshot.exists) {
+          // if (data..doc.length == 15) {
+          //   querySnapshot..ref.
+          // if (!querySnapshot.exists){
+
+          // }
           // console.log("querySnapshot", querySnapshot);
           // // this.state.tempListaLicitacija = []; //isprazni array ako nesto postoji u njemu
           // this.state.tempListaLicitacija.push("nema_podataka");
 
-          console.log("u data foreach");
+          // console.log("u data foreach");
           //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
           // querySnapshot..forEach((doc) => {
           const data = {
@@ -948,8 +966,8 @@ export default new Vuex.Store({
           };
 
           this.state.tempListaLicitacija.push(data);
-          console.log("latestDoc", querySnapshot.id);
-          // this.state.latestDoc = querySnapshot.id;
+
+          // this.state.latestDoxc = querySnapshot.id;
 
           // });
 
@@ -978,7 +996,9 @@ export default new Vuex.Store({
           // latestDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
           // console.log("na kraju", querySnapshot.docs.length);
           console.log("---------------------------------");
+          // }
         }
+        console.log("latestDoc", querySnapshot.id);
       });
       console.log("posle ------");
       this.state.latestDoc = data.docs[data.docs.length - 1];
@@ -1230,6 +1250,9 @@ export default new Vuex.Store({
     },
     clearUploadingImagesObj({ commit }) {
       commit("CLEAR_UPLOADING_IMAGES_OBJECT");
+    },
+    set_prikazi_jos({ commit }, payload) {
+      commit("PRIKAZI_JOS", payload);
     },
   },
   ///////////////////////////// MODULI /////////////////////////////
