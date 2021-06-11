@@ -69,7 +69,7 @@
       ></v-progress-circular>
     </div>
     <!--ako ima podataka prikazi ih, ako nema podataka prikazi div na dnu stranice (v-else)-->
-    <div v-if="loadedData == true">
+    <div v-if="loadedData != 'nema_podataka'">
       <div>
         <v-layout row wrap justify-center>
           <div
@@ -129,8 +129,13 @@
           </div>
         </v-layout>
         <v-row class="justify-center">
+          <!--ako su podaci ocitani (loadedData=== true), ako nema sta vise da se prikaze (get_show_prikazi_jos ===false) i ako ima podataka u arrayData tj. ako ima vise od trazenog limita (da ne prikaze dugme ako ima samo recimo 7 podatka a trazi se minimum 15 tj. treba 16. podatak da bi se pokazao na sledecoj strani) -->
           <v-btn
-            v-if="loadedData & (arrayData.length >= 15)"
+            v-if="
+              loadedData &
+              (get_show_prikazi_jos != false) &
+              (arrayData.length >= get_showLimit)
+            "
             @click="prikazi_jos"
           >
             Prikazi još
@@ -207,6 +212,8 @@ export default {
   },
 
   created() {
+    this.get_show_prikazi_jos = true; //da vrati na pocetno stanje (buttom prikazi jos) svaki put kada se predje sa druge stranice na ovu
+
     // this.handleScroll();
     // const container = document.querySelector(".licitiram_li");
 
@@ -295,17 +302,33 @@ export default {
       },
     },
     //v-select odabrano KRAJ
+
+    //limit koliko da prikaze podataka (paginacija)
+    get_showLimit: {
+      get() {
+        return this.$store.state.showLimit;
+      },
+    },
+    //da li je dugme "prikazi jos" false tj. da li mu je zabranjeno da se pokaze
+    get_show_prikazi_jos: {
+      get() {
+        return this.$store.getters.get_show_prikazi_jos;
+      },
+      set(newValue) {
+        this.$store.dispatch("set_prikazi_jos", newValue);
+      },
+    },
   },
   watch: {
     //motri na computed get_sve_licitacije kada dobije podatke
     //ovo je na pocetku kada se ocitavaju SVE stvari (pocetno ocitavanje je po preostalom vremenu)
     get_tempListaLicitacija(newValue) {
-      console.log("newValue", newValue);
-      if (newValue != 0 && newValue != "nema_podataka") {
-        if (!this.prikaziJos) {
-          this.arrayData = [];
-        }
-        //i dodaj svaki podatak iz Vuex-a u novi array "arrayData"
+      //ako dobijemo novi podatak iz baze a nismo kliknuli na prikazi jos button, to znaci da smokoristili neki od 3 v-selecta ili presli sa neke stranice na ovu, i tada nam treba nov array
+      if (!this.prikaziJos) {
+        this.arrayData = [];
+      }
+
+      if (newValue.length !== 0 && newValue != "nema_podataka") {
         newValue.forEach((value) => {
           this.arrayData.push(value);
         });
@@ -317,10 +340,18 @@ export default {
       else if (newValue == "nema_podataka") {
         this.loadedData = "nema_podataka";
       }
+
+      // if (
+      //   newValue.length !== 0 &&
+      //   this.arrayData.length === this.$store.getters.get_sve_licitacije.length
+      // ) {
+      //   console.log("ISTO JE");
+      // }
     },
 
     switch1() {
       this.arrayData = []; //isprazni sve iz liste
+      // this.get_show_prikazi_jos = true; //da vrati na pocetno stanje ((buttom prikazi jos)) svaki put kada se predje sa druge stranice na ovu
       this.loadedData = false; //pokreni circular
       console.log("loadedData", false);
       this.$store.dispatch("sortingChange", {
@@ -336,6 +367,7 @@ export default {
       } else if (!newValue) {
         this.isLoggedIn = false;
         //dodatna opcija ako je i switch1 na levo(false) tj. na moje licitacije onda obrisi arrayData array
+        //tj. kada se odjavi da obrise prethodni spisak za "Moje licitacije" zato sto nije logovan
         if (!this.switch1) {
           this.arrayData = [];
         }
@@ -364,6 +396,8 @@ export default {
     },
 
     get_selected_vrsta() {
+      this.prikaziJos = false;
+      this.get_show_prikazi_jos = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
       this.prikazi_Licitacije();
       // this.arrayData = []; //isprazni sve iz liste
       // this.loadedData = false; //pokreni circular za ocitavanje
@@ -373,6 +407,8 @@ export default {
       // });
     },
     get_selected_grupa() {
+      this.prikaziJos = false;
+      this.get_show_prikazi_jos = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
       this.prikazi_Licitacije();
       // this.arrayData = []; //isprazni sve iz liste
       // this.loadedData = false; //pokreni circular za ocitavanje
@@ -383,6 +419,7 @@ export default {
     },
     get_selected_sortiranje_od_do() {
       this.prikaziJos = false;
+      this.get_show_prikazi_jos = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
       this.prikazi_Licitacije();
       // this.arrayData = []; //isprazni sve iz liste
       // this.loadedData = false; //pokreni circular za ocitavanje
