@@ -1,7 +1,7 @@
 <template>
   <div class="licitiram_li">
-    <v-layout justify-center wrap>
-      <v-flex xs7 sm10 md3>
+    <v-layout justify-center wrap class="layout-first">
+      <v-flex xs11 sm10 md3>
         <p class="sortiranje text">Vrste</p>
         <v-select
           class="sortiranje"
@@ -12,7 +12,7 @@
           outlined
         ></v-select>
       </v-flex>
-      <v-flex xs7 sm5 md3>
+      <v-flex xs11 sm5 md3>
         <p class="sortiranje text">Grupe</p>
         <v-select
           class="sortiranje"
@@ -23,7 +23,7 @@
           outlined
         ></v-select>
       </v-flex>
-      <v-flex xs7 sm5 md3>
+      <v-flex xs11 sm5 md3>
         <p class="sortiranje text">Sortiranje</p>
         <v-select
           class="sortiranje"
@@ -46,78 +46,79 @@
     </div>
     <!--ako ima podataka prikazi ih, ako nema podataka prikazi div na dnu stranice-->
     <div v-if="loadedData != 'nema_podataka'">
-      <div>
-        <v-layout row wrap justify-center>
-          <div
-            v-for="single in arrayData"
-            :key="single.random_id"
-            class="list-item"
+      <!-- <div> -->
+      <v-layout row wrap justify-center>
+        <!-- <v-flex xs11 sm5 md3> -->
+        <div
+          v-for="single in arrayData"
+          :key="single.random_id"
+          class="list-item"
+        >
+          <v-card
+            class="card_licitacije mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
+            elevation="5"
+            :min-width="$vuetify.breakpoint.smAndUp ? `260` : `90vw`"
           >
-            <v-card
-              class="card_licitacije mx-2 my-4 mx-sm-4 my-sm-6 my-md-5"
-              elevation="5"
-              min-width="260"
-              max-width="300"
-            >
-              <!--poziv da se uradi prerada datuma i vremena kako bi se rezultat poslao u komponentu 
+            <!--poziv da se uradi prerada datuma i vremena kako bi se rezultat poslao u komponentu 
                Timer. Bez ovoga nece da prikaze datum. Inace ne vraca nikakav prikaz. Ovo se radi zato sto 
                ako artikal nema vreme onda ce da izbaci  "Trenutno nema završenih licitacija za traženi kriterijum"
                sto znaci da ce artikle da prebaci u kolekciju "licitacije zavrsene"-->
-              {{ pocetak_datumPrerada(single.pocetak_datum) }}
-              {{ kraj_datumPrerada(single.kraj_datum) }}
+            {{ pocetak_datumPrerada(single.pocetak_datum) }}
+            {{ kraj_datumPrerada(single.kraj_datum) }}
 
-              <!--NUDIM - TITLE-->
-              <!-- koja boja za title (licna- #988BC7 ili humanitarna-success)-->
-              <v-card-title :style="vrsta_licit(single.vrsta_licitacije)">
-                <b>{{ truncate(single.nudim, 25) }}</b>
-              </v-card-title>
-              <!--KRAJ NUDIM - TITLE-->
+            <!--NUDIM - TITLE-->
+            <!-- koja boja za title (licna- #988BC7 ili humanitarna-success)-->
+            <v-card-title :style="vrsta_licit(single.vrsta_licitacije)">
+              <b>{{ truncate(single.nudim, 25) }}</b>
+            </v-card-title>
+            <!--KRAJ NUDIM - TITLE-->
 
-              <div class="box">
-                <!--GRUPA -->
-                <v-card-text class="text-center">
-                  <b>Grupa:</b>
-                  <p>{{ truncate(single.grupa, 35) }}</p>
-                </v-card-text>
-                <v-card-text class="text-center">
-                  <b>Početna cena u RSD:</b>
-                  <p>{{ pocetna_cena_u_RSD(single.pocetna_cena_u_RSD) }},00</p>
-                </v-card-text>
-                <!--KRAJ GRUPA-->
+            <div class="box">
+              <!--GRUPA -->
+              <v-card-text class="text-center">
+                <b>Grupa:</b>
+                <p>{{ truncate(single.grupa, 35) }}</p>
+              </v-card-text>
+              <v-card-text class="text-center">
+                <b>Početna cena u RSD:</b>
+                <p>{{ pocetna_cena_u_RSD(single.pocetna_cena_u_RSD) }},00</p>
+              </v-card-text>
+              <!--KRAJ GRUPA-->
 
-                <!--REAL-TIME PREOSTALO VREME LICITACIJE-->
-                <!--IMPORT COMPONENT-->
-                <v-card-text class="text-center">
-                  <b>Preostalo vreme:</b>
-                </v-card-text>
-                <div class="row justify-center">
-                  <Timer
-                    :single_data="single"
-                    :startTime="pocetak"
-                    :endTime="kraj"
-                    class="timera"
-                  ></Timer>
-                </div>
-                <!--KRAJ IMPORTA -->
-                <!--KRAJ REAL-TIME PREOSTALO VREME LICITACIJE-->
+              <!--REAL-TIME PREOSTALO VREME LICITACIJE-->
+              <!--IMPORT COMPONENT-->
+              <v-card-text class="text-center">
+                <b>Preostalo vreme:</b>
+              </v-card-text>
+              <div class="row justify-center">
+                <Timer
+                  :single_data="single"
+                  :startTime="pocetak"
+                  :endTime="kraj"
+                  class="timera"
+                ></Timer>
               </div>
-            </v-card>
-          </div>
-        </v-layout>
-        <v-row class="justify-center">
-          <!--ako su podaci ocitani (loadedData=== true), ako nema sta vise da se prikaze (get_show_prikazi_jos ===false) i ako ima podataka u arrayData tj. ako ima vise od trazenog limita (da ne prikaze dugme ako ima samo recimo 7 podatka a trazi se minimum 15 tj. treba 16. podatak da bi se pokazao na sledecoj strani) -->
-          <v-btn
-            v-if="
-              loadedData &
-              (get_show_prikazi_jos != false) &
-              (arrayData.length >= get_showLimit)
-            "
-            @click="prikazi_jos"
-          >
-            Prikazi još
-          </v-btn>
-        </v-row>
-      </div>
+              <!--KRAJ IMPORTA -->
+              <!--KRAJ REAL-TIME PREOSTALO VREME LICITACIJE-->
+            </div>
+          </v-card>
+        </div>
+        <!-- </v-flex> -->
+      </v-layout>
+      <v-row class="justify-center">
+        <!--ako su podaci ocitani (loadedData=== true), ako nema sta vise da se prikaze (get_show_prikazi_jos_button ===false) i ako ima podataka u arrayData tj. ako ima vise od trazenog limita (da ne prikaze dugme ako ima samo recimo 7 podatka a trazi se minimum 15 tj. treba 16. podatak da bi se pokazao na sledecoj strani) -->
+        <v-btn
+          v-if="
+            loadedData &
+            (get_show_prikazi_jos_button != false) &
+            (arrayData.length >= get_showLimit)
+          "
+          @click="prikazi_jos_method"
+        >
+          Prikazi još
+        </v-btn>
+      </v-row>
+      <!-- </div> -->
     </div>
     <!--ako nema podataka ocitanih iz vuexa onda prikazi ovaj div-->
     <div v-if="loadedData == 'nema_podataka'" class="nemaLicitacije">
@@ -137,7 +138,7 @@ export default {
       boja_licitacije: null,
       arrayData: [],
       korisnik_id: "",
-      prikaziJos: false,
+      prikaziJosClick: false,
       Meseci: [
         "Januar",
         "Februar",
@@ -170,7 +171,7 @@ export default {
   },
 
   created() {
-    this.get_show_prikazi_jos = true; //da vrati na pocetno stanje ((buttom prikazi jos)) svaki put kada se predje sa druge stranice na ovu
+    this.get_show_prikazi_jos_button = true; //da vrati na pocetno stanje ((button prikazi jos)) svaki put kada se predje sa druge stranice na ovu
     //array sort_vrsta iz Vuexa (Sve,licna,humanitarna)
     this.sort_vrsta = this.$store.getters.get_sort_vrsta;
     this.sort_vrsta.unshift("SVE"); //naknado na vrh liste dodaje "SVE" za listanje svih grupa
@@ -208,14 +209,14 @@ export default {
       this.$store.dispatch("sortingChange", {
         // switch: true, //ako je true onda je za sve licitacije, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-        prikazi_jos: this.prikaziJos, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
+        prikaziJosClick: this.prikaziJosClick, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
       });
     }
   },
   computed: {
     get_tempListaLicitacija: {
       get() {
-        return this.$store.state.tempListaLicitacija;
+        return this.$store.getters.get_tempListaLicitacija;
       },
     },
 
@@ -254,22 +255,22 @@ export default {
     },
 
     //da li je dugme "prikazi jos" false tj. da li mu je zabranjeno da se pokaze
-    get_show_prikazi_jos: {
+    get_show_prikazi_jos_button: {
       get() {
-        return this.$store.getters.get_show_prikazi_jos;
+        return this.$store.getters.get_show_prikazi_jos_button;
       },
       set(newValue) {
-        this.$store.dispatch("set_prikazi_jos", newValue);
+        this.$store.dispatch("set_prikazi_jos_button", newValue);
       },
     },
   },
 
   watch: {
-    //motri na computed sve_licitacije kada dobije podatke
+    //motri na computed get_tempListaLicitacija kada dobije podatke
     //ovo je na pocetku kada se ocitavaju SVE stvari (pocetno ocitavanje je po preostalom vremenu)
     get_tempListaLicitacija(newValue) {
       //ako dobijemo novi podatak iz baze a nismo kliknuli na prikazi jos button, to znaci da smokoristili neki od 3 v-selecta ili presli sa neke stranice na ovu, i tada nam treba nov array
-      if (!this.prikaziJos) {
+      if (!this.prikaziJosClick) {
         this.arrayData = [];
       }
 
@@ -294,8 +295,8 @@ export default {
       // }
     },
     get_selected_vrsta() {
-      this.prikaziJos = false;
-      this.get_show_prikazi_jos = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
+      this.prikaziJosClick = false;
+      this.get_show_prikazi_jos_button = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
       this.prikazi_Licitacije();
       // this.arrayData = []; //isprazni sve iz liste
       // this.loadedData = false; //pokreni circular za ocitavanje
@@ -305,8 +306,8 @@ export default {
       // });
     },
     get_selected_grupa() {
-      this.prikaziJos = false;
-      this.get_show_prikazi_jos = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
+      this.prikaziJosClick = false;
+      this.get_show_prikazi_jos_button = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
       this.prikazi_Licitacije();
       // this.arrayData = []; //isprazni sve iz liste
       // this.loadedData = false; //pokreni circular za ocitavanje
@@ -316,15 +317,15 @@ export default {
       // });
     },
     get_selected_sortiranje_od_do() {
-      this.prikaziJos = false;
-      this.get_show_prikazi_jos = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
+      this.prikaziJosClick = false;
+      this.get_show_prikazi_jos_button = true; //da vrati na pocetno stanje svaki put kada se koristi neki v-select
       this.prikazi_Licitacije();
     },
   },
 
   methods: {
-    prikazi_jos() {
-      this.prikaziJos = true;
+    prikazi_jos_method() {
+      this.prikaziJosClick = true;
       this.prikazi_Licitacije();
     },
     prikazi_Licitacije() {
@@ -333,7 +334,7 @@ export default {
       this.$store.dispatch("sortingChange", {
         // switch: this.switch1, //ako je true onda je za sve sortiranje, ako je false onda znaci da je kliknuto na moje licitacije
         zavrseno: true, //da se zna da li trazimo zavrsene ili u toku licitacije
-        prikazi_jos: this.prikaziJos, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
+        prikaziJosClick: this.prikaziJosClick, //da li je kliknuto na dugme prikazi jos ili je koriscen v-select(vrsta,grupa ili sortiranje)
       });
     },
     // STAVLJA 3 TACKICE NAKON ODREDJENOG BROJA KARAKTERA KOJI PROSLEDJUJEMO METODI
