@@ -73,8 +73,9 @@ export default new Vuex.Store({
     uploadObjPrimalacDonacije: {},
     latestDoc: "", //za paginaciju
     tempListaLicitacija: [],
-    showLimit: 15,
-    show_prikazi_jos: true,
+    showLimit: 30, //koliko da prikaze licitacija
+    show_prikazi_jos_button: true,
+    switch: true,
   },
   getters: {
     get_IsLoggedIn: (state) => {
@@ -131,8 +132,14 @@ export default new Vuex.Store({
     get_uploadObjPrimalacDonacije: (state) => {
       return state.uploadObjPrimalacDonacije;
     },
-    get_show_prikazi_jos: (state) => {
-      return state.show_prikazi_jos;
+    get_show_prikazi_jos_button: (state) => {
+      return state.show_prikazi_jos_button;
+    },
+    get_tempListaLicitacija: (state) => {
+      return state.tempListaLicitacija;
+    },
+    get_latestDoc: (state) => {
+      return state.latestDoc;
     },
   },
   mutations: {
@@ -169,7 +176,7 @@ export default new Vuex.Store({
       state.privilegije_boolean = payload;
     },
     SVE_LICITACIJE(state, payload) {
-      if (payload.prikazi_jos === false) {
+      if (payload.prikaziJosClick === false) {
         state.sve_licitacije = [];
       }
       payload.tempListaLicitacija.forEach((doc) => {
@@ -180,34 +187,44 @@ export default new Vuex.Store({
     // ZAVRSENE_LICITACIJE(state, payload) {
     //   state.zavrsene_licitacije = payload;
     // },
-    ADD_LICITACIJE(state, obj_licit) {
-      //provera da li doc_id postoji u "state.sve_licitacije" sa doc_id koji mu prosledjujemo
-      //kao novi podatak za ubacivanje u "state.sve_licitacije".
-      const index = state.sve_licitacije.findIndex(
-        (item) => item.random_id == obj_licit.random_id
-      );
-      //ako je rezultat nije "0" ili veci(1) tj. ako je rezultat "-1" znaci da ne postoji
-      //podatak sa tim doc_id u bazi, sto znaci da ako ubacimo podatak onda nece biti dupliranja
-
-      if (!(index >= 0)) {
-        state.sve_licitacije.push({
-          doc_id: obj_licit.doc_id,
-          random_id: obj_licit.random_id,
-          vrsta_licitacije: obj_licit.vrsta_licitacije,
-          nudim: obj_licit.nudim,
-          grupa: obj_licit.grupa,
-          pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
-          trajanje_licitacije: obj_licit.trajanje_licitacije,
-          opis_licitacije: obj_licit.opis_licitacije,
-          pocetak_datum: obj_licit.pocetak_datum,
-          kraj_datum: obj_licit.kraj_datum,
-          korisnik_ime: obj_licit.korisnik_ime,
-          korisnik_prezime: obj_licit.korisnik_prezime,
-        });
+    TEMP_LISTA_LICITACIJA(state, payload) {
+      if (payload === undefined) {
+        state.tempListaLicitacija = [];
       } else {
-        console.log("dupli podatak ADD LICITACIJE");
+        state.tempListaLicitacija.push(payload);
       }
     },
+    LATEST_DOC_UPDATE(state, payload) {
+      state.latestDoc = payload;
+    },
+    // ADD_LICITACIJE(state, obj_licit) {
+    //   //provera da li doc_id postoji u "state.sve_licitacije" sa doc_id koji mu prosledjujemo
+    //   //kao novi podatak za ubacivanje u "state.sve_licitacije".
+    //   const index = state.sve_licitacije.findIndex(
+    //     (item) => item.random_id == obj_licit.random_id
+    //   );
+    //   //ako je rezultat nije "0" ili veci(1) tj. ako je rezultat "-1" znaci da ne postoji
+    //   //podatak sa tim doc_id u bazi, sto znaci da ako ubacimo podatak onda nece biti dupliranja
+
+    //   if (!(index >= 0)) {
+    //     state.sve_licitacije.push({
+    //       doc_id: obj_licit.doc_id,
+    //       random_id: obj_licit.random_id,
+    //       vrsta_licitacije: obj_licit.vrsta_licitacije,
+    //       nudim: obj_licit.nudim,
+    //       grupa: obj_licit.grupa,
+    //       pocetna_cena_u_RSD: obj_licit.pocetna_cena_u_RSD,
+    //       trajanje_licitacije: obj_licit.trajanje_licitacije,
+    //       opis_licitacije: obj_licit.opis_licitacije,
+    //       pocetak_datum: obj_licit.pocetak_datum,
+    //       kraj_datum: obj_licit.kraj_datum,
+    //       korisnik_ime: obj_licit.korisnik_ime,
+    //       korisnik_prezime: obj_licit.korisnik_prezime,
+    //     });
+    //   } else {
+    //     console.log("dupli podatak ADD LICITACIJE");
+    //   }
+    // },
 
     // ADD_ZAVRSENU(state, obj_licit) {
     //   //provera da li doc_id postoji u "state.sve_licitacije" sa random_id koji mu prosledjujemo
@@ -309,8 +326,8 @@ export default new Vuex.Store({
       state.licitacije_slike_predmet = [];
       state.licitacije_slike_primalac_donacije = [];
     },
-    PRIKAZI_JOS: (state, payload) => {
-      state.show_prikazi_jos = payload;
+    PRIKAZI_JOS_BUTTON: (state, payload) => {
+      state.show_prikazi_jos_button = payload;
     },
   },
 
@@ -801,11 +818,19 @@ export default new Vuex.Store({
           });
         });
       //PODESAVANJE - DA LI JE KORISCENO DUGME "PRIKAZI JOS" ILI JE NOV SORT ODABRAN
-      if (payload.prikazi_jos === false) {
+      if (payload.prikaziJosClick === false) {
         console.log("prikazi_jos je FALSE");
-        this.state.latestDoc = "";
+        // this.state.latestDoc = "";
+        commit("LATEST_DOC_UPDATE", ""); //prazan String
       }
 
+      // variable is undefined or null
+      // if (typeof payload.switch !== "undefined" || payload.switch !== null) {
+      //   if (payload.switch !== this.state.switch) {
+      //     this.state.latestDoc = "";
+      //     console.log("NIJE ISTOOOO");
+      //   }
+      // }
       //SORTIRANJE POCETAK
 
       //kada se prvi put ocita stranica licitacije_li onda ocitava iz baze podatke sa filterom
@@ -855,36 +880,36 @@ export default new Vuex.Store({
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - manje") {
         firestore_baza = await firestore_baza
           .orderBy("kraj_datum", "asc")
-          .startAfter(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
+          .startAfter(this.getters.get_latestDoc || 0); //ako ima neki podatak u latestDoc
       }
       //Preostalo vreme - više
       if (this.state.selected_sortiranje_od_do == "Preostalo vreme - više") {
-        if (this.state.latestDoc === "") {
+        if (this.getters.get_latestDoc === "") {
           firestore_baza = await firestore_baza
             .orderBy("kraj_datum", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .endAt(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
+            .endAt(this.getters.get_latestDoc || 0); //ako ima neki podatak u latestDoc
         } else {
           firestore_baza = await firestore_baza
             .orderBy("kraj_datum", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .startAfter(this.state.latestDoc); //ako ima neki podatak u latestDoc
+            .startAfter(this.getters.get_latestDoc); //ako ima neki podatak u latestDoc
         }
       }
       //Naziv A-Z
       if (this.state.selected_sortiranje_od_do == "Naziv A-Z") {
         firestore_baza = await firestore_baza
           .orderBy("nudim_lowerCase", "asc") //pa sam tek onda radio pretrazivanje koje meni treba
-          .startAfter(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
+          .startAfter(this.getters.get_latestDoc || 0); //ako ima neki podatak u latestDoc
       }
       //Naziv Z-A
       if (this.state.selected_sortiranje_od_do == "Naziv Z-A") {
-        if (this.state.latestDoc === "") {
+        if (this.getters.get_latestDoc === "") {
           firestore_baza = await firestore_baza
             .orderBy("nudim_lowerCase", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .endAt(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
+            .endAt(this.getters.get_latestDoc || 0); //ako ima neki podatak u latestDoc
         } else {
           firestore_baza = await firestore_baza
             .orderBy("nudim_lowerCase", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .startAfter(this.state.latestDoc); //ako ima neki podatak u latestDoc
+            .startAfter(this.getters.get_latestDoc); //ako ima neki podatak u latestDoc
         }
       }
       //Cena rastuce
@@ -893,18 +918,18 @@ export default new Vuex.Store({
           // .where("kraj_datum", ">=", datum)
           // .orderBy("kraj_datum") //ovo moram da stavim zato sto Firestore trazi da *first orderBy* bude po .where koji je iznad
           .orderBy("pocetna_cena_u_RSD", "asc") //pa sam tek onda radio pretrazivanje koje meni treba
-          .startAfter(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
+          .startAfter(this.getters.get_latestDoc || 0); //ako ima neki podatak u latestDoc
       }
       //Cena opadajuce
       if (this.state.selected_sortiranje_od_do == "Cena opadajuće") {
         if (this.state.latestDoc === "") {
           firestore_baza = await firestore_baza
             .orderBy("pocetna_cena_u_RSD", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .endAt(this.state.latestDoc || 0); //ako ima neki podatak u latestDoc
+            .endAt(this.getters.get_latestDoc || 0); //ako ima neki podatak u latestDoc
         } else {
           firestore_baza = await firestore_baza
             .orderBy("pocetna_cena_u_RSD", "desc") //pa sam tek onda radio pretrazivanje koje meni treba
-            .startAfter(this.state.latestDoc); //ako ima neki podatak u latestDoc
+            .startAfter(this.getters.get_latestDoc); //ako ima neki podatak u latestDoc
         }
       }
       //SORTIRANJE KRAJ
@@ -913,7 +938,7 @@ export default new Vuex.Store({
       //pozivanje komande za slanje ka Firebase uz limit od najvise 10 rezultata
 
       // let latestDoc; //pocetno stanje odakle pocinje da prikazuje dokumente iz Firestora
-      console.log("latestDoc je: ", this.state.latestDoc);
+      console.log("latestDoc je: ", this.getters.get_latestDoc);
 
       // let tempListaLicitacija = []; //array
       // if (
@@ -928,85 +953,45 @@ export default new Vuex.Store({
       const showLimit = await this.state.showLimit;
 
       const data = await firestore_baza.limit(showLimit).get();
-      this.state.tempListaLicitacija = [];
-
+      // this.state.tempListaLicitacija = [];
+      commit("TEMP_LISTA_LICITACIJA"); //saljemo undefined. U mutation ako je undefined onda da obrise ceo array, tj. pocetno stanje je []
       //ako nema podataka u bazi za zadati kriterijum
       //ali samo prilikom odabira (tj. koriscenja nekih od 3 v-select)
       //nece prikazati ako dodjemo do dna liste klikom na prikazi jos, a nema vise nicega na listi
       if (
         data.empty &&
-        this.state.tempListaLicitacija.length === 0 &&
-        payload.prikazi_jos === false
+        this.getters.get_tempListaLicitacija.length === 0 &&
+        payload.prikaziJosClick === false
       ) {
-        this.state.tempListaLicitacija.push("nema_podataka");
+        // this.state.tempListaLicitacija.push("nema_podataka");
+        commit("TEMP_LISTA_LICITACIJA", "nema_podataka");
         console.log("length je 0");
       }
       // ako broj prikazanih podataka nije isti kao trazeni broj podataka (showLImit) i ako ne postoji poslednji podatak (tj. ne postoji podatak nakon ponovnog klika na prikazi jos)
       if (data.docs.length !== showLimit || !data.docs.lastItem) {
-        commit("PRIKAZI_JOS", false);
+        commit("PRIKAZI_JOS_BUTTON", false);
       }
-
       data.forEach((querySnapshot) => {
         if (querySnapshot.exists) {
-          // if (data..doc.length == 15) {
-          //   querySnapshot..ref.
-          // if (!querySnapshot.exists){
-
-          // }
-          // console.log("querySnapshot", querySnapshot);
-          // // this.state.tempListaLicitacija = []; //isprazni array ako nesto postoji u njemu
-          // this.state.tempListaLicitacija.push("nema_podataka");
-
-          // console.log("u data foreach");
-          //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
-          // querySnapshot..forEach((doc) => {
           const data = {
             doc_id: querySnapshot.id,
             ...querySnapshot.data(),
           };
-
-          this.state.tempListaLicitacija.push(data);
-
-          // this.state.latestDoxc = querySnapshot.id;
-
-          // });
-
-          // await firestore_baza
-          //   .limit(15)
-          //   .get()
-          //   .then((querySnapshot) => {
-          //     if (querySnapshot.empty) {
-          //       console.log("querySnapshot", querySnapshot);
-          //       this.state.tempListaLicitacija = []; //isprazni array ako nesto postoji u njemu
-          //       this.state.tempListaLicitacija.push("nema_podataka");
-          //     } else {
-          //       //ako ima podataka pravi se niz svih korisnika tj. njihovih licitacija
-          //       querySnapshot.forEach((doc) => {
-          //         const data = {
-          //           doc_id: doc.id,
-          //           ...doc.data(),
-          //         };
-          //         this.state.tempListaLicitacija.push(data);
-          //         this.state.latestDoc = doc.id;
-          //         console.log("latestDoc", this.state.latestDoc);
-          //       });
-
-          // latestDoc = querySnapshot.docs[querySnapshot.docs.length - 1]; //za infinity scroll https://www.youtube.com/watch?v=vYBc7Le5G6s
-          // latestDoc = querySnapshot.docs.length - 1; //za infinity scroll https://www.youtube.com/watch?v=vYBc7Le5G6s
-          // latestDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-          // console.log("na kraju", querySnapshot.docs.length);
+          commit("TEMP_LISTA_LICITACIJA", data);
+          // this.state.tempListaLicitacija.push(data);
           console.log("---------------------------------");
-          // }
         }
         console.log("latestDoc", querySnapshot.id);
       });
       console.log("posle ------");
-      this.state.latestDoc = data.docs[data.docs.length - 1];
+      // this.state.latestDoc = data.docs[data.docs.length - 1];
+      commit("LATEST_DOC_UPDATE", data.docs[data.docs.length - 1]);
+      console.log("latestDoc sad je:", this.state.latestDoc);
+      //dodavanje ukupnoj listi licitacija
       commit("SVE_LICITACIJE", {
-        prikazi_jos: payload.prikazi_jos,
-        tempListaLicitacija: this.state.tempListaLicitacija,
+        prikaziJosClick: payload.prikaziJosClick,
+        tempListaLicitacija: this.getters.get_tempListaLicitacija,
       });
-      // .catch((a) => console.log(a));
       //PRIKAZ SORTIRANJA KOJE SMO GORE ODABRALI *KRAJ
     },
 
@@ -1251,8 +1236,11 @@ export default new Vuex.Store({
     clearUploadingImagesObj({ commit }) {
       commit("CLEAR_UPLOADING_IMAGES_OBJECT");
     },
-    set_prikazi_jos({ commit }, payload) {
-      commit("PRIKAZI_JOS", payload);
+    set_prikazi_jos_button({ commit }, payload) {
+      commit("PRIKAZI_JOS_BUTTON", payload);
+    },
+    set_latestDoc({ commit }, payload) {
+      commit("LATEST_DOC_UPDATE", payload);
     },
   },
   ///////////////////////////// MODULI /////////////////////////////
