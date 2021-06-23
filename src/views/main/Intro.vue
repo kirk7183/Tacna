@@ -19,7 +19,7 @@
               id="XMLID_2_"
               class="st0"
               d="M0,294.6c0,0,76-99.2,379.2-88.2c166.7,6.1,249.5,91.9,472.7,39.7
-	c260.7-60.9,548.1,39.6,548.1,39.6v74.9L0,351.9"
+  c260.7-60.9,548.1,39.6,548.1,39.6v74.9L0,351.9"
             />
           </svg>
 
@@ -99,8 +99,8 @@
           </div>
           <div class="img-boxes">
             <a target="_blank" :href="saradnja3()">
-              <img :src="saradnja3()" alt="img3-saradnja"
-            /></a>
+              <img :src="saradnja3()" alt="img3-saradnja" class="saradnja3" />
+            </a>
           </div>
         </div>
       </div>
@@ -144,11 +144,15 @@ export default {
   computed: {
     breakpoints() {
       switch (this.$vuetify.breakpoint.name) {
-        case "lg":
         case "xl":
           return {
-            "sm-breakpoint md-breakpoint lg-breakpoint": this.$vuetify
-              .breakpoint.lgAndUp,
+            "sm-breakpoint md-breakpoint lg-breakpoint xl-breakpoint":
+              this.$vuetify.breakpoint.xlOnly,
+          };
+        case "lg":
+          return {
+            "sm-breakpoint md-breakpoint lg-breakpoint":
+              this.$vuetify.breakpoint.lgAndUp,
           };
         case "md":
           return {
