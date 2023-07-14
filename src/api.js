@@ -1,6 +1,6 @@
 import axios from 'axios';
 const API = axios.create({
-    baseURL: 'http://031n122.mars1.mars-hosting.com'
+    baseURL: 'https://031n122.mars1.mars-hosting.com'
 });
 
 export default {

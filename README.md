@@ -52,3 +52,11 @@ SPA (Single-page application) shop application. Sellers can CRUD their products 
 ## Live demo
 
     http://031n122.mars1.mars-hosting.com/
+
+## Troubleshot
+
+Za gresku - Tacna
+Install Node version 16.11.0
+
+Nvm use 16.11.0 for “npm run serve” and “npm run build”
+Nvm use 16.13.0 for “firebase deploy”
